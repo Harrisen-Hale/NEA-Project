@@ -7,4 +7,5 @@ public final class Constants {
     final static int TICKS_PER_SECOND = 60;
     final static float SECONDS_PER_TICK = 1/60f;
     final static int I_TICKS = 26;
+    final static int ROLL_LENGTH = 40;
 }

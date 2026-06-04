@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
-public class Tile {
-    private Vector2 position;
+public class Tile extends GameObject{
+
     private Texture texture;
 
     public Tile(int x, int y, String textureName){

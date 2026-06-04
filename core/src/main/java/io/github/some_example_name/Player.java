@@ -7,18 +7,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 
-public class Player {
-    private int health;
-    private int stamina;
-    private int sprintStaminaCost;
+public class Player extends GameObject{
+    private float health;
+    private float stamina;
+    private float sprintStaminaCost;
+    private int souls;
 
-    private Vector2 position;
     private Vector2 velocity;
     private Vector2 moveVector; // unit vector in movement direction
+    private Vector2 lookVector; // unit vector in facing direction
     private Vector2 lookTarget;
     private int ticksSinceMoveInput;
     private int ticksWhileMoveInput;
@@ -27,6 +29,9 @@ public class Player {
     private boolean canMove;
     private boolean rotationalTrackingEnabled;
     private boolean lockedOn;
+    private float rollCoefficient;
+    private int currentRollTick;
+    private boolean isRolling;
 
     private Texture textureIdle;
     private Texture textureRoll;
@@ -47,10 +52,14 @@ public class Player {
         canMove = true;
         rotationalTrackingEnabled = true;
         lockedOn = false;
+        rollCoefficient = 1/25f;
+        currentRollTick = 0;
+        isRolling = false;
 
         health = 100;
         stamina = 100;
-        sprintStaminaCost = 1;
+        sprintStaminaCost = 0.5f;
+        souls = 0;
     }
 
     public void logicTick(OrthographicCamera camera){
@@ -71,23 +80,22 @@ public class Player {
         if (canMove){
             directionalMovement();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F)){
-            Sound fah = Gdx.audio.newSound(Gdx.files.internal(AssetDirectory.Player.Audio.FAH));
-            fah.play(0.3f);
-        }
+        combatController();
+        position.add(velocity);
     }
 
     private void directionalMovement(){
-        boolean up = Gdx.input.isKeyPressed(Input.Keys.W);
-        boolean left = Gdx.input.isKeyPressed(Input.Keys.A);
-        boolean down = Gdx.input.isKeyPressed(Input.Keys.S);
-        boolean right = Gdx.input.isKeyPressed(Input.Keys.D);
-        boolean sprint = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
+        boolean up = Gdx.input.isKeyPressed(ControlsDirectory.Movement.UP);
+        boolean left = Gdx.input.isKeyPressed(ControlsDirectory.Movement.LEFT);
+        boolean down = Gdx.input.isKeyPressed(ControlsDirectory.Movement.DOWN);
+        boolean right = Gdx.input.isKeyPressed(ControlsDirectory.Movement.RIGHT);
+        boolean sprint = Gdx.input.isKeyPressed(ControlsDirectory.Movement.SPRINT);
         boolean anyDirPressed = (up || down || left || right);
         float speedCoefficient;
 
         if (sprint && stamina > 0){
-            speedCoefficient = 1/35f;
+            speedCoefficient = 1/32f;
+            stamina -= sprintStaminaCost;
         }else {
             speedCoefficient = 1/55f;
         }
@@ -136,7 +144,41 @@ public class Player {
             }
             velocity = moveVector.cpy().scl(dampingFactor*speedCoefficient);
         }
-        position.add(velocity);
+    }
+
+    private void combatController(){
+        boolean isRollPressed = Gdx.input.isKeyPressed(ControlsDirectory.Movement.ROLL);
+        if (canMove) {
+            if (isRollPressed && !isRolling){
+                isRolling = true;
+            }
+        }
+        if (isRolling){
+            roll();
+        }
+    }
+
+    private void roll(){
+        if (currentRollTick == 0){
+            canMove = false;
+            rotationalTrackingEnabled = false;
+            setSprite(rollAnim.getCurrentFrame());
+            Sound rollSFX = AssetDirectory.Audio.Player.ROLL;
+            rollSFX.play(0.3f);
+        }
+        if (rollAnim.update()){
+            setSprite(rollAnim.getCurrentFrame());
+        }
+        velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentRollTick / Constants.ROLL_LENGTH), 2))+((double) (4 * (currentRollTick / Constants.ROLL_LENGTH))))));
+        currentRollTick++;
+        if (currentRollTick == Constants.ROLL_LENGTH){
+            isRolling = false;
+            canMove = true;
+            rotationalTrackingEnabled = true;
+            currentRollTick = 0;
+            rollAnim.reset();
+
+        }
     }
 
     private void rotationController(Vector2 target){
@@ -154,6 +196,8 @@ public class Player {
         }else {
             facing = theta;
         }
+        float angle = (float) (facing*(Math.PI/180));//converting to radians
+        lookVector = new Vector2(1,0).mul(new Matrix3(new float[]{(float) Math.cos(angle),(float)Math.sin(angle),0,(float)-Math.sin(angle),(float)Math.cos(angle),0,0,0,0}));
     }
 
     private void setWorldMousePosition(OrthographicCamera camera){
@@ -169,12 +213,18 @@ public class Player {
     }
 
     private void loadTextures(){
-        textureIdle = new Texture(Gdx.files.internal(AssetDirectory.Player.Textures.IDLE));
-        textureRoll = new Texture(Gdx.files.internal(AssetDirectory.Player.Textures.ROLL));
+        textureIdle = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.IDLE));
+        textureRoll = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.ROLL));
 
-        rollAnim = new AnimationStateMachine(new Texture[]{textureIdle,textureRoll,textureIdle}, new int[]{7,26,7});
+        rollAnim = new AnimationStateMachine(new Texture[]{textureIdle,textureRoll,textureIdle}, new int[]{10,20,10});
 
         currentSprite = new Sprite(textureIdle);
+        currentSprite.setSize(1f, 1f);
+        currentSprite.setOriginCenter();
+    }
+
+    private void setSprite(Texture newTexture){
+        currentSprite = new Sprite(newTexture);
         currentSprite.setSize(1f, 1f);
         currentSprite.setOriginCenter();
     }
@@ -185,5 +235,9 @@ public class Player {
 
     public void setLookTarget(Vector2 lookTarget) {
         this.lookTarget = lookTarget;
+    }
+
+    public void addSouls(int numSouls) {
+        this.souls += numSouls;
     }
 }

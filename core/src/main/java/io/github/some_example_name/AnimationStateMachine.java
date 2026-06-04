@@ -15,14 +15,11 @@ public class AnimationStateMachine {
         currentDurationRemaining = durations[0];
     }
 
-    public boolean update(){ // returns true when animation complete
+    public boolean update(){ // returns true if frame changed
         if (currentDurationRemaining == 0){
-            if (currentFrameIndex == animFrames.length){
-                return true;
-            }else {
-                currentFrameIndex++;
-                currentDurationRemaining = durations[currentFrameIndex];
-            }
+            currentFrameIndex++;
+            currentDurationRemaining = durations[currentFrameIndex];
+            return true;
         }else {
             currentDurationRemaining--;
         }
@@ -31,5 +28,14 @@ public class AnimationStateMachine {
 
     public Texture getCurrentFrame(){
         return animFrames[currentFrameIndex];
+    }
+
+    public int getCurrentFrameIndex() {
+        return currentFrameIndex;
+    }
+
+    public void reset(){
+        currentFrameIndex = 0;
+        currentDurationRemaining = durations[0];
     }
 }

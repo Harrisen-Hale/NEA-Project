@@ -3,7 +3,7 @@ package io.github.some_example_name;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -59,8 +59,8 @@ public class Game {
     }
 
     private void centreCamera(){ // will be generalised to accept an anchor later
-        Vector2 target = player.getPosition().cpy();
-        camera.position.set(target.x, target.y, 0);
+        Vector3 target = new Vector3(player.getPosition().cpy().x, player.getPosition().cpy().y, 0);
+        camera.position.lerp(target, 0.25f);
     }
 
     public void resize(int width, int height) {
@@ -71,4 +71,9 @@ public class Game {
         batch.dispose();
     }
 
+    public static class EventHandler{
+        public static void grantSouls(int numSouls, Player player){
+            player.addSouls(numSouls);
+        }
+    }
 }
