@@ -13,9 +13,12 @@ import com.badlogic.gdx.math.Vector3;
 
 
 public class Player extends GameObject{
+    private float maxHealth;
     private float health;
+    private float maxStamina;
     private float stamina;
     private float sprintStaminaCost;
+    private float rollStaminaCost;
     private int souls;
 
     private Vector2 velocity;
@@ -24,6 +27,7 @@ public class Player extends GameObject{
     private Vector2 lookTarget;
     private int ticksSinceMoveInput;
     private int ticksWhileMoveInput;
+    private int ticksSinceStaminaUsed;
     private float facing;
     private boolean inControl;
     private boolean canMove;
@@ -48,6 +52,7 @@ public class Player extends GameObject{
         facing = 0;
         ticksSinceMoveInput = 0;
         ticksWhileMoveInput = 0;
+        ticksSinceStaminaUsed = 0;
         inControl = true;
         canMove = true;
         rotationalTrackingEnabled = true;
@@ -56,9 +61,12 @@ public class Player extends GameObject{
         currentRollTick = 0;
         isRolling = false;
 
-        health = 100;
-        stamina = 100;
-        sprintStaminaCost = 0.5f;
+        maxHealth = 100;
+        health = maxHealth;
+        maxStamina = 100;
+        stamina = maxStamina;
+        sprintStaminaCost = 0.25f;
+        rollStaminaCost = 15f;
         souls = 0;
     }
 
@@ -93,9 +101,11 @@ public class Player extends GameObject{
         boolean anyDirPressed = (up || down || left || right);
         float speedCoefficient;
 
-        if (sprint && stamina > 0){
-            speedCoefficient = 1/32f;
-            stamina -= sprintStaminaCost;
+        if (sprint && stamina > sprintStaminaCost){
+            speedCoefficient = 1/28f;
+            if (anyDirPressed) {
+                stamina -= sprintStaminaCost;
+            }
         }else {
             speedCoefficient = 1/55f;
         }
@@ -147,10 +157,11 @@ public class Player extends GameObject{
     }
 
     private void combatController(){
-        boolean isRollPressed = Gdx.input.isKeyPressed(ControlsDirectory.Movement.ROLL);
+        boolean isRollPressed = Gdx.input.isKeyJustPressed(ControlsDirectory.Movement.ROLL);
         if (canMove) {
-            if (isRollPressed && !isRolling){
+            if (isRollPressed && !isRolling && stamina >= rollStaminaCost){
                 isRolling = true;
+                stamina -= rollStaminaCost;
             }
         }
         if (isRolling){
@@ -200,6 +211,10 @@ public class Player extends GameObject{
         lookVector = new Vector2(1,0).mul(new Matrix3(new float[]{(float) Math.cos(angle),(float)Math.sin(angle),0,(float)-Math.sin(angle),(float)Math.cos(angle),0,0,0,0}));
     }
 
+    private void staminaRegeneration(){
+
+    }
+
     private void setWorldMousePosition(OrthographicCamera camera){
         Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouse);
@@ -223,6 +238,8 @@ public class Player extends GameObject{
         currentSprite.setOriginCenter();
     }
 
+    // getters and setters
+
     private void setSprite(Texture newTexture){
         currentSprite = new Sprite(newTexture);
         currentSprite.setSize(1f, 1f);
@@ -233,11 +250,45 @@ public class Player extends GameObject{
         return position;
     }
 
+    public float getMaxHealth() {
+        return maxHealth;
+    }
+
+    public float getHealth() {
+        return health;
+    }
+
+    public float getMaxStamina() {
+        return maxStamina;
+    }
+
+    public float getStamina() {
+        return stamina;
+    }
+
+    public int getSouls() {
+        return souls;
+    }
+
     public void setLookTarget(Vector2 lookTarget) {
         this.lookTarget = lookTarget;
     }
 
     public void addSouls(int numSouls) {
         this.souls += numSouls;
+    }
+
+    public void damageHealth(float damage) {
+        this.health -= damage;
+        if (health < 0){
+            health = 0;
+        }
+    }
+
+    public void healHealth(float heal) {
+        this.health += heal;
+        if (health > maxHealth){
+            health = maxHealth;
+        }
     }
 }

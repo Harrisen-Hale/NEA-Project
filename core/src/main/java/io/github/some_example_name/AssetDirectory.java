@@ -9,6 +9,11 @@ public final class AssetDirectory {
             public static final String IDLE = "textures/player/player_idle.png";
             public static final String ROLL = "textures/player/player_roll.png";
         }
+        public static final class UI {
+            public static final String HEALTH_BAR = "textures/ui/health_bar.png";
+            public static final String STAMINA_BAR = "textures/ui/stamina_bar.png";
+            public static final String BACKGROUND_BAR = "textures/ui/background_bar.png";
+        }
     }
     public static final class Audio{
         public static final class Player {
