@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Game {
     private SpriteBatch batch;
     private OrthographicCamera camera;
+    private Vector3 cameraTarget;
     private ShapeRenderer sr;
     private FitViewport viewport;
     private TickManager tickManager;
@@ -62,7 +63,7 @@ public class Game {
         ScreenUtils.clear(0f, 0f, 0f, 1f);
         viewport.apply();
         camera.update();
-        centreCamera();
+        trackCamera();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         // all worldly draw calls go here
@@ -80,9 +81,13 @@ public class Game {
         batch.end();
     }
 
-    private void centreCamera(){ // will be generalised to accept an anchor later
-        Vector3 target = new Vector3(player.getPosition().cpy().x, player.getPosition().cpy().y, 0);
-        camera.position.lerp(target, 0.25f);
+    private void trackCamera(){
+        if (!player.isLockedOn()){
+            cameraTarget = new Vector3(player.getPosition().cpy().x, player.getPosition().cpy().y, 0);
+        }else {
+
+        }
+        camera.position.lerp(cameraTarget, 0.25f);
     }
 
     public void resize(int width, int height) {
@@ -91,6 +96,7 @@ public class Game {
 
     public void dispose(){
         batch.dispose();
+        AssetDirectory.dispose();
     }
 
     public static class EventHandler{
@@ -103,5 +109,6 @@ public class Game {
         public static void healPlayer(float heal, Player player){
             player.healHealth(heal);
         }
+
     }
 }

@@ -1,7 +1,6 @@
 package io.github.some_example_name;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,12 +12,19 @@ import com.badlogic.gdx.math.Vector3;
 
 
 public class Player extends GameObject{
+
+    private float rollCoefficient;
+    private float sprintStaminaCost;
+    private float rollStaminaCost;
+    private final int iTicks = 26;
+    private final int ROLL_LENGTH = 40; // ticks
+    private final float STAMINA_REGEN_DELAY = 100; // ticks
+    private final float STAMINA_REGEN_RATE = 1; // per tick
+
     private float maxHealth;
     private float health;
     private float maxStamina;
     private float stamina;
-    private float sprintStaminaCost;
-    private float rollStaminaCost;
     private int souls;
 
     private Vector2 velocity;
@@ -33,12 +39,9 @@ public class Player extends GameObject{
     private boolean canMove;
     private boolean rotationalTrackingEnabled;
     private boolean lockedOn;
-    private float rollCoefficient;
     private int currentRollTick;
     private boolean isRolling;
 
-    private Texture textureIdle;
-    private Texture textureRoll;
     private Sprite currentSprite;
     private Vector2 worldMousePosition;
 
@@ -46,33 +49,13 @@ public class Player extends GameObject{
 
     public Player(){
         loadTextures();
-        position = new Vector2(0,0);
-        velocity = new Vector2(0,0);
-        moveVector = new Vector2(0,0);
-        facing = 0;
-        ticksSinceMoveInput = 0;
-        ticksWhileMoveInput = 0;
-        ticksSinceStaminaUsed = 0;
-        inControl = true;
-        canMove = true;
-        rotationalTrackingEnabled = true;
-        lockedOn = false;
-        rollCoefficient = 1/25f;
-        currentRollTick = 0;
-        isRolling = false;
-
-        maxHealth = 100;
-        health = maxHealth;
-        maxStamina = 100;
-        stamina = maxStamina;
-        sprintStaminaCost = 0.25f;
-        rollStaminaCost = 15f;
-        souls = 0;
+        initialiseBaseValuesAndConstants();
     }
 
     public void logicTick(OrthographicCamera camera){
         setWorldMousePosition(camera);
         playerController();
+        staminaRegeneration();
     }
 
     private void playerController(){
@@ -101,10 +84,10 @@ public class Player extends GameObject{
         boolean anyDirPressed = (up || down || left || right);
         float speedCoefficient;
 
-        if (sprint && stamina > sprintStaminaCost){
+        if (sprint && stamina > 0){
             speedCoefficient = 1/28f;
             if (anyDirPressed) {
-                stamina -= sprintStaminaCost;
+                takeStamina(sprintStaminaCost);
             }
         }else {
             speedCoefficient = 1/55f;
@@ -159,9 +142,8 @@ public class Player extends GameObject{
     private void combatController(){
         boolean isRollPressed = Gdx.input.isKeyJustPressed(ControlsDirectory.Movement.ROLL);
         if (canMove) {
-            if (isRollPressed && !isRolling && stamina >= rollStaminaCost){
+            if (isRollPressed && !isRolling && stamina > 0){
                 isRolling = true;
-                stamina -= rollStaminaCost;
             }
         }
         if (isRolling){
@@ -170,19 +152,19 @@ public class Player extends GameObject{
     }
 
     private void roll(){
-        if (currentRollTick == 0){
+        if (currentRollTick == 0){ // start of roll
             canMove = false;
             rotationalTrackingEnabled = false;
+            takeStamina(rollStaminaCost);
             setSprite(rollAnim.getCurrentFrame());
-            Sound rollSFX = AssetDirectory.Audio.Player.ROLL;
-            rollSFX.play(0.3f);
+            AssetDirectory.Audio.Player.ROLL.play(0.3f);
         }
         if (rollAnim.update()){
             setSprite(rollAnim.getCurrentFrame());
         }
-        velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentRollTick / Constants.ROLL_LENGTH), 2))+((double) (4 * (currentRollTick / Constants.ROLL_LENGTH))))));
+        velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentRollTick / ROLL_LENGTH), 2))+((double) (4 * (currentRollTick / ROLL_LENGTH))))));
         currentRollTick++;
-        if (currentRollTick == Constants.ROLL_LENGTH){
+        if (currentRollTick == ROLL_LENGTH){
             isRolling = false;
             canMove = true;
             rotationalTrackingEnabled = true;
@@ -212,7 +194,13 @@ public class Player extends GameObject{
     }
 
     private void staminaRegeneration(){
-
+        if (ticksSinceStaminaUsed > STAMINA_REGEN_DELAY && stamina < maxStamina){
+            stamina += STAMINA_REGEN_RATE;
+            if (stamina > maxStamina){
+                stamina = maxStamina;
+            }
+        }
+        ticksSinceStaminaUsed++;
     }
 
     private void setWorldMousePosition(OrthographicCamera camera){
@@ -228,14 +216,38 @@ public class Player extends GameObject{
     }
 
     private void loadTextures(){
-        textureIdle = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.IDLE));
-        textureRoll = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.ROLL));
+        Texture textureIdle = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.IDLE));
+        Texture textureRoll = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.ROLL));
 
-        rollAnim = new AnimationStateMachine(new Texture[]{textureIdle,textureRoll,textureIdle}, new int[]{10,20,10});
+        rollAnim = new AnimationStateMachine(new Texture[]{textureIdle, textureRoll, textureIdle}, new int[]{10,20,10});
 
         currentSprite = new Sprite(textureIdle);
         currentSprite.setSize(1f, 1f);
         currentSprite.setOriginCenter();
+    }
+
+    private void initialiseBaseValuesAndConstants(){
+        rollCoefficient = 1/25f;
+        sprintStaminaCost = 0.25f;
+        rollStaminaCost = 30f;
+        position = new Vector2(0,0);
+        velocity = new Vector2(0,0);
+        moveVector = new Vector2(0,0);
+        facing = 0;
+        ticksSinceMoveInput = 0;
+        ticksWhileMoveInput = 0;
+        ticksSinceStaminaUsed = 0;
+        inControl = true;
+        canMove = true;
+        rotationalTrackingEnabled = true;
+        lockedOn = false;
+        currentRollTick = 0;
+        isRolling = false;
+        maxHealth = 100;
+        health = maxHealth;
+        maxStamina = 100;
+        stamina = maxStamina;
+        souls = 0;
     }
 
     // getters and setters
@@ -283,6 +295,7 @@ public class Player extends GameObject{
         if (health < 0){
             health = 0;
         }
+        AssetDirectory.Audio.Player.HURT.play(0.3f);
     }
 
     public void healHealth(float heal) {
@@ -290,5 +303,17 @@ public class Player extends GameObject{
         if (health > maxHealth){
             health = maxHealth;
         }
+    }
+
+    public void takeStamina(float amount){
+        stamina -= amount;
+        if (stamina < 0){
+            stamina = 0;
+        }
+        ticksSinceStaminaUsed = 0;
+    }
+
+    public boolean isLockedOn() {
+        return lockedOn;
     }
 }

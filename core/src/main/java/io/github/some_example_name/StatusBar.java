@@ -7,9 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class StatusBar extends UIElement{
 
-    private Texture textureHealth;
-    private Texture textureStamina;
-    private Texture textureBackground;
     private Sprite barSprite;
     private Sprite backGroundSprite;
 
@@ -31,24 +28,21 @@ public class StatusBar extends UIElement{
     }
 
     private void loadTextures(int barType){
-        textureHealth = new Texture(Gdx.files.internal(AssetDirectory.Textures.UI.HEALTH_BAR));
-        textureStamina = new Texture(Gdx.files.internal(AssetDirectory.Textures.UI.STAMINA_BAR));
-        textureBackground = new Texture(Gdx.files.internal(AssetDirectory.Textures.UI.BACKGROUND_BAR));
 
         if (barType == 0){
-            barSprite = new Sprite(textureHealth);
+            barSprite = new Sprite(new Texture(Gdx.files.internal(AssetDirectory.Textures.UI.HEALTH_BAR)));
             barSprite.setSize(barWidth, barHeight);
         }else if (barType == 1) {
-            barSprite = new Sprite(textureStamina);
+            barSprite = new Sprite(new Texture(Gdx.files.internal(AssetDirectory.Textures.UI.STAMINA_BAR)));
             barSprite.setSize(barWidth, barHeight);
         }else if (barType == 2){
-            barSprite = new Sprite(textureHealth);
+            barSprite = new Sprite(new Texture(Gdx.files.internal(AssetDirectory.Textures.UI.HEALTH_BAR)));
             barSprite.setSize(barWidth, barHeight);
         }
         assert barSprite != null;
         barSprite.setOriginCenter();
 
-        backGroundSprite = new Sprite(textureBackground);
+        backGroundSprite = new Sprite(new Texture(Gdx.files.internal(AssetDirectory.Textures.UI.BACKGROUND_BAR)));
         backGroundSprite.setSize(barWidth, barHeight);
         backGroundSprite.setOriginCenter();
     }

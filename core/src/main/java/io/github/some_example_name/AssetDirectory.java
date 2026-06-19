@@ -17,12 +17,17 @@ public final class AssetDirectory {
     }
     public static final class Audio{
         public static final class Player {
-            public static final Sound FAH = Gdx.audio.newSound(Gdx.files.internal("audio/player/fah.ogg"));
-            public static final Sound ROLL = Gdx.audio.newSound(Gdx.files.internal("audio/player/ROLL_SFX.ogg"));
+            public static final Sound ROLL = Gdx.audio.newSound(Gdx.files.internal("audio/player/roll.ogg"));
+            public static final Sound HURT = Gdx.audio.newSound(Gdx.files.internal("audio/player/player_hurt.ogg"));
         }
     }
 
     public static final class Scene{
         public static final String MUD = "textures/scene/mud_1.png";
+    }
+
+    public static void dispose(){
+        Audio.Player.ROLL.dispose();
+        Audio.Player.HURT.dispose();
     }
 }
