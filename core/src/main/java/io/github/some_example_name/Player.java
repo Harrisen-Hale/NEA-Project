@@ -18,8 +18,8 @@ public class Player extends GameObject{
     private float rollStaminaCost;
     private final int iTicks = 26;
     private final int ROLL_LENGTH = 40; // ticks
-    private final float STAMINA_REGEN_DELAY = 100; // ticks
-    private final float STAMINA_REGEN_RATE = 1; // per tick
+    private final float STAMINA_REGEN_DELAY = 120; // ticks
+    private final float STAMINA_REGEN_RATE = 0.33f; // per tick
 
     private float maxHealth;
     private float health;
