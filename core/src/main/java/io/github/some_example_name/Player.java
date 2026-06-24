@@ -1,7 +1,6 @@
 package io.github.some_example_name;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -18,8 +17,8 @@ public class Player extends GameObject{
     private float rollStaminaCost;
     private final int iTicks = 26;
     private final int ROLL_LENGTH = 40; // ticks
-    private final float STAMINA_REGEN_DELAY = 120; // ticks
-    private final float STAMINA_REGEN_RATE = 0.33f; // per tick
+    private final float STAMINA_REGEN_DELAY = 90; // ticks
+    private final float STAMINA_REGEN_RATE = 0.5f; // per tick
 
     private float maxHealth;
     private float health;
@@ -40,12 +39,15 @@ public class Player extends GameObject{
     private boolean rotationalTrackingEnabled;
     private boolean lockedOn;
     private int currentRollTick;
-    private boolean isRolling;
+    private int actionState; // 0 - Idle, 1 - Roll,
+    private CircularQueue actionBuffer;
 
     private Sprite currentSprite;
     private Vector2 worldMousePosition;
 
     private AnimationStateMachine rollAnim;
+
+    private SoundLooper walkLoop;
 
     public Player(){
         loadTextures();
@@ -137,16 +139,29 @@ public class Player extends GameObject{
             }
             velocity = moveVector.cpy().scl(dampingFactor*speedCoefficient);
         }
+
+        // sfx
+        if (velocity.len() > 0 && actionState == 0){
+            walkLoop.play();
+        }else{
+            walkLoop.reset();
+        }
     }
 
     private void combatController(){
         boolean isRollPressed = Gdx.input.isKeyJustPressed(ControlsDirectory.Movement.ROLL);
-        if (canMove) {
-            if (isRollPressed && !isRolling && stamina > 0){
-                isRolling = true;
+
+        // full buffer is accounted for in enqueue method
+        if (stamina > 0) {
+            if (isRollPressed){
+                actionBuffer.enqueue(1);
             }
         }
-        if (isRolling){
+
+        if (actionState == 0  && stamina > 0 && actionBuffer.notEmpty()){
+            actionState = actionBuffer.dequeue();
+        }
+        if (actionState == 1){
             roll();
         }
     }
@@ -165,7 +180,7 @@ public class Player extends GameObject{
         velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentRollTick / ROLL_LENGTH), 2))+((double) (4 * (currentRollTick / ROLL_LENGTH))))));
         currentRollTick++;
         if (currentRollTick == ROLL_LENGTH){
-            isRolling = false;
+            actionState = 0;
             canMove = true;
             rotationalTrackingEnabled = true;
             currentRollTick = 0;
@@ -242,12 +257,15 @@ public class Player extends GameObject{
         rotationalTrackingEnabled = true;
         lockedOn = false;
         currentRollTick = 0;
-        isRolling = false;
+        actionState = 0;
         maxHealth = 100;
         health = maxHealth;
         maxStamina = 100;
         stamina = maxStamina;
         souls = 0;
+        actionBuffer = new CircularQueue(3);
+
+        walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
     }
 
     // getters and setters

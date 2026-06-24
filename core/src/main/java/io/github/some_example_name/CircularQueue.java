@@ -1,10 +1,11 @@
 package io.github.some_example_name;
 
+
 public class CircularQueue {
     int[] queue;
     int length;
     int frontPointer = 0;
-    int rearPointer = -1;
+    int rearPointer = 0;
 
     public CircularQueue(int lengthArg){
         length = lengthArg;
@@ -13,21 +14,21 @@ public class CircularQueue {
 
     public void enqueue(int element){
         if (!isFull()) {
+            queue[rearPointer] = element;
             rearPointer++;
             rearPointer = rearPointer % length; // cyclic structure
-            queue[rearPointer] = element;
         }
     }
 
     public int peek(){
-        if (!isEmpty()) {
+        if (notEmpty()) {
             return queue[frontPointer];
         }
         else return -1;
     }
 
     public int dequeue(){
-        if (!isEmpty()){
+        if (notEmpty()){
             int foreElement = queue[frontPointer];
             frontPointer++;
             frontPointer = frontPointer % length;
@@ -37,10 +38,10 @@ public class CircularQueue {
     }
 
     public int getNumElements(){
-        if (frontPointer <= rearPointer){
-            return rearPointer - frontPointer + 1;
+        if (rearPointer == frontPointer){
+            return 0;
         }else {
-            return length - (frontPointer - rearPointer) + 1;
+            return Math.abs(frontPointer - rearPointer);
         }
     }
 
@@ -48,7 +49,13 @@ public class CircularQueue {
         return (getNumElements() == length);
     }
 
-    public boolean isEmpty(){
-        return (getNumElements() == 0);
+    public boolean notEmpty(){
+        return (getNumElements() != 0);
+    }
+
+    public void wipe(){
+        queue = new int[length];
+        rearPointer = 0;
+        frontPointer = 0;
     }
 }

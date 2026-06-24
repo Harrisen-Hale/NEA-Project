@@ -19,6 +19,7 @@ public final class AssetDirectory {
         public static final class Player {
             public static final Sound ROLL = Gdx.audio.newSound(Gdx.files.internal("audio/player/roll.ogg"));
             public static final Sound HURT = Gdx.audio.newSound(Gdx.files.internal("audio/player/player_hurt.ogg"));
+            public static final Sound WALK = Gdx.audio.newSound(Gdx.files.internal("audio/player/player_walk.ogg"));
         }
     }
 
