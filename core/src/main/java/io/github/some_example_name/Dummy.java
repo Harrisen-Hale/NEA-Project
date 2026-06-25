@@ -27,11 +27,13 @@ public class Dummy extends Entity{
         currentSprite.setOriginCenter();
     }
 
-    public void draw(Batch batch){
+    public void drawBody(Batch batch){
         currentSprite.setPosition(position.x-0.5f, position.y-0.5f);
         currentSprite.setRotation(facing);
         currentSprite.draw(batch);
+    }
 
+    public void drawEffects(Batch batch){
         healthBar.setPosition(new Vector2(position.x-(healthBar.getBarWidth()/2f), position.y+0.45f));
         healthBar.draw(batch);
     }

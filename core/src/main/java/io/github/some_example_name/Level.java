@@ -7,7 +7,15 @@ public class Level {
     protected Player player;
     protected Entity[] entities; // stores all non-player entities in the level
 
-    public void drawAll(SpriteBatch batch) {
+    public void drawAllBodies(SpriteBatch batch) {
 
+    }
+
+    public void drawAllEffects(SpriteBatch batch) {
+
+    }
+
+    public Entity[] getEntities() {
+        return entities;
     }
 }

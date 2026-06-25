@@ -3,6 +3,8 @@ package io.github.some_example_name;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
@@ -26,6 +28,10 @@ public class Game {
     private Player player;
     private HUD hud;
 
+    private int lockedEntityIndex;
+    private Vector2 lockedEntityPosition;
+    private Sprite lockDot;
+
     public void initialise(){
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
@@ -38,6 +44,8 @@ public class Game {
         hud = new HUD();
         hud.updateMaxHealth(player.getMaxHealth());
         hud.updateMaxStamina(player.getMaxStamina());
+        loadTextures();
+
 
         level1 = new Level_1(player);
         currentLevel = level1;
@@ -55,6 +63,7 @@ public class Game {
     public void logicTick(){
         player.logicTick(camera);
         hud.updatePlayerHealthAndStamina(player.getMaxHealth(), player.getHealth(), player.getMaxStamina(), player.getStamina());
+        lockOn();
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)){ // Debug
             EventHandler.damagePlayer(25, player);
         }
@@ -70,9 +79,15 @@ public class Game {
         trackCamera();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
         // all worldly draw calls go here
-        currentLevel.drawAll(batch);
+            // first render layer (background, entity bodies etc.)
+        currentLevel.drawAllBodies(batch);
         player.draw(batch);
+
+            // second render layer (effects)
+        drawLockDot();
+        currentLevel.drawAllEffects(batch);
         batch.end();
 
         batch.setProjectionMatrix(new Matrix4(new float[]{1,0,0,0, // revert projection to identity, effectively switching to screen space coordinates
@@ -90,11 +105,12 @@ public class Game {
         if (isLockOnPressed) {
             player.toggleLockOn();
             if (player.isLockedOn()){ // initial lock on
-
+                lockedEntityIndex = findClosestEntity(player.getPosition(), currentLevel.getEntities());
             }
         }
         if (player.isLockedOn()){
-
+            lockedEntityPosition = currentLevel.getEntities()[lockedEntityIndex].getPosition();
+            player.setLookTarget(lockedEntityPosition);
         }
     }
 
@@ -109,11 +125,26 @@ public class Game {
 
     private void trackCamera(){
         if (!player.isLockedOn()){
-            cameraTarget = new Vector3(player.getPosition().cpy().x, player.getPosition().cpy().y, 0);
+            cameraTarget = new Vector3(player.getPosition().x, player.getPosition().y, 0);
         }else {
-
+            cameraTarget = new Vector3((player.getPosition().x+lockedEntityPosition.x)/2f, (player.getPosition().y+lockedEntityPosition.y)/2f, 0); // centres camera between player and tracked enemy
         }
         camera.position.lerp(cameraTarget, 0.25f);
+    }
+
+    private void drawLockDot(){ // indicate lock-on
+        if (player.isLockedOn()){
+            lockDot.setPosition(lockedEntityPosition.x-0.05f, lockedEntityPosition.y-0.05f);
+            lockDot.draw(batch);
+        }
+    }
+
+    private void loadTextures(){
+        Texture lockDotTexture = new Texture(Gdx.files.internal(AssetDirectory.Textures.Misc.LOCK_DOT));
+
+        lockDot = new Sprite(lockDotTexture);
+        lockDot.setSize(0.1f, 0.1f);
+        lockDot.setOriginCenter();
     }
 
     public void resize(int width, int height) {

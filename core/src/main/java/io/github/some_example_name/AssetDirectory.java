@@ -16,6 +16,7 @@ public final class AssetDirectory {
         }
         public static final class Misc {
             public static final String NOT_FOUND = "textures/misc/texture_not_found.png";
+            public static final String LOCK_DOT = "textures/misc/lock_dot.png";
         }
         public static final class Entity {
             public static final String DUMMY = "textures/entity/dummy.png";

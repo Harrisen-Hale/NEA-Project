@@ -29,10 +29,13 @@ public class Entity extends GameObject{
 
     }
 
-    public void draw(Batch batch){
+    public void drawBody(Batch batch){
         currentSprite.setPosition(position.x-0.5f, position.y-0.5f);
         currentSprite.setRotation(facing);
         currentSprite.draw(batch);
+    }
+    public void drawEffects(Batch batch){
+
     }
 
     protected void loadTextures(){

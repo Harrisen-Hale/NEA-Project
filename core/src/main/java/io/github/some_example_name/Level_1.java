@@ -19,9 +19,13 @@ public class Level_1 extends Level{
         entities[0] = dummy;
     }
 
-    public void drawAll(SpriteBatch batch){
+    public void drawAllBodies(SpriteBatch batch){
         drawTiles(batch);
-        drawEntities(batch);
+        drawEntityBodies(batch);
+    }
+
+    public void drawAllEffects(SpriteBatch batch){
+        drawEntityEffects(batch);
     }
 
     private void drawTiles(SpriteBatch batch){
@@ -33,9 +37,14 @@ public class Level_1 extends Level{
     }
 
 
-    private void drawEntities(SpriteBatch batch){
+    private void drawEntityBodies(SpriteBatch batch){
         for (Entity e : entities){
-            e.draw(batch);
+            e.drawBody(batch);
+        }
+    }
+    private void drawEntityEffects(SpriteBatch batch){
+        for (Entity e : entities){
+            e.drawEffects(batch);
         }
     }
 }

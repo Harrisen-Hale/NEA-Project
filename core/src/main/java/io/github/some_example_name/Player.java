@@ -91,8 +91,20 @@ public class Player extends Entity{
         if (anyDirPressed){
             moveVector = new Vector2(0,0);
         }
-        if (lockedOn){
-
+        if (lockedOn){ // strafe
+            Vector2 f = (lookTarget.cpy().sub(position)).nor(); // direction vector from player to target
+            if (up){
+                moveVector.add(f);
+            }
+            if (down){
+                moveVector.mulAdd(f, -1);
+            }
+            if (left){
+                moveVector.add(new Vector2(-f.y, f.x));
+            }
+            if (right){
+                moveVector.add(new Vector2(f.y, -f.x));
+            }
         }
         else {
             setLookTarget(worldMousePosition);
