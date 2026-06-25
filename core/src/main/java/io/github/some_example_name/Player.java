@@ -258,12 +258,12 @@ public class Player extends GameObject{
         lockedOn = false;
         currentRollTick = 0;
         actionState = 0;
-        maxHealth = 100;
+        maxHealth = 500;
         health = maxHealth;
-        maxStamina = 100;
+        maxStamina = 500;
         stamina = maxStamina;
         souls = 0;
-        actionBuffer = new CircularQueue(3);
+        actionBuffer = new CircularQueue(2);
 
         walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
     }

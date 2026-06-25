@@ -1,11 +1,14 @@
 package io.github.some_example_name;
 
 
+import java.util.Arrays;
+
 public class CircularQueue {
     int[] queue;
     int length;
     int frontPointer = 0;
     int rearPointer = 0;
+    int numElements = 0;
 
     public CircularQueue(int lengthArg){
         length = lengthArg;
@@ -17,6 +20,7 @@ public class CircularQueue {
             queue[rearPointer] = element;
             rearPointer++;
             rearPointer = rearPointer % length; // cyclic structure
+            numElements++;
         }
     }
 
@@ -32,17 +36,14 @@ public class CircularQueue {
             int foreElement = queue[frontPointer];
             frontPointer++;
             frontPointer = frontPointer % length;
+            numElements--;
             return foreElement;
         }
         return -1;
     }
 
     public int getNumElements(){
-        if (rearPointer == frontPointer){
-            return 0;
-        }else {
-            return Math.abs(frontPointer - rearPointer);
-        }
+        return numElements;
     }
 
     public boolean isFull(){
