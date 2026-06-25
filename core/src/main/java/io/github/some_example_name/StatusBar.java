@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 
 public class StatusBar extends UIElement{
 
@@ -13,9 +14,9 @@ public class StatusBar extends UIElement{
     private final float barHeight;
     private float barWidth;
 
-    public StatusBar(int barType, float xPos, float yPos){ // Bar types: 0 - Player Health, 1 - Player Stamina, 2 - Boss Health
-        barHeight = 1/27.5f;
-        barWidth = 1;
+    public StatusBar(int barType, float xPos, float yPos, float barHeightArg, float barWidthArg){ // Bar types: 0 - Player Health, 1 - Player Stamina, 2 - Boss Health
+        barHeight = barHeightArg;
+        barWidth = barWidthArg;
 
         loadTextures(barType);
         barSprite.setPosition(xPos, yPos);
@@ -55,5 +56,18 @@ public class StatusBar extends UIElement{
         barWidth = lengthScale;
         barSprite.setSize(barWidth, barHeight);
         backGroundSprite.setSize(barWidth, barHeight);
+    }
+
+    public void setPosition(Vector2 positionArg) {
+        barSprite.setPosition(positionArg.x, positionArg.y);
+        backGroundSprite.setPosition(positionArg.x, positionArg.y);
+    }
+
+    public float getBarHeight() {
+        return barHeight;
+    }
+
+    public float getBarWidth() {
+        return barWidth;
     }
 }

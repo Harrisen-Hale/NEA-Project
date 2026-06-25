@@ -12,4 +12,7 @@ public final class ControlsDirectory {
         public static final int SPRINT = Input.Keys.SHIFT_LEFT;
         public static final int ROLL = Input.Keys.SPACE;
     }
+    public static final class Combat{
+        public static final int LOCK_ON = Input.Keys.F;
+    }
 }

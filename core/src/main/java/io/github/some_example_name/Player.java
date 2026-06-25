@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 
-public class Player extends GameObject{
+public class Player extends Entity{
 
     private float rollCoefficient;
     private float sprintStaminaCost;
@@ -20,20 +20,14 @@ public class Player extends GameObject{
     private final float STAMINA_REGEN_DELAY = 90; // ticks
     private final float STAMINA_REGEN_RATE = 0.5f; // per tick
 
-    private float maxHealth;
-    private float health;
     private float maxStamina;
     private float stamina;
-    private int souls;
+    private boolean vulnerable;
 
-    private Vector2 velocity;
-    private Vector2 moveVector; // unit vector in movement direction
-    private Vector2 lookVector; // unit vector in facing direction
     private Vector2 lookTarget;
     private int ticksSinceMoveInput;
     private int ticksWhileMoveInput;
     private int ticksSinceStaminaUsed;
-    private float facing;
     private boolean inControl;
     private boolean canMove;
     private boolean rotationalTrackingEnabled;
@@ -42,7 +36,6 @@ public class Player extends GameObject{
     private int actionState; // 0 - Idle, 1 - Roll,
     private CircularQueue actionBuffer;
 
-    private Sprite currentSprite;
     private Vector2 worldMousePosition;
 
     private AnimationStateMachine rollAnim;
@@ -119,7 +112,7 @@ public class Player extends GameObject{
 
         if (anyDirPressed){
             ticksSinceMoveInput = 0;
-            moveVector.nor();
+            moveVector.nor(); // normalise vector
             float gainFactor;
             if (ticksWhileMoveInput <=20){
                 gainFactor = (float) -((Math.E / (Math.E - 1)) * Math.exp(-ticksWhileMoveInput /20f) - (Math.E / (Math.E - 1)));
@@ -140,7 +133,7 @@ public class Player extends GameObject{
             velocity = moveVector.cpy().scl(dampingFactor*speedCoefficient);
         }
 
-        // sfx
+        // sound fx
         if (velocity.len() > 0 && actionState == 0){
             walkLoop.play();
         }else{
@@ -174,12 +167,17 @@ public class Player extends GameObject{
             setSprite(rollAnim.getCurrentFrame());
             AssetDirectory.Audio.Player.ROLL.play(0.3f);
         }
-        if (rollAnim.update()){
+        if (rollAnim.update()){ // change frame of animation
             setSprite(rollAnim.getCurrentFrame());
+        }
+        if (currentRollTick > (ROLL_LENGTH-iTicks)/2 && currentRollTick < (ROLL_LENGTH+iTicks)/2){
+            vulnerable = false;
+        }else if (currentRollTick == (ROLL_LENGTH+iTicks)/2){
+            vulnerable = true;
         }
         velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentRollTick / ROLL_LENGTH), 2))+((double) (4 * (currentRollTick / ROLL_LENGTH))))));
         currentRollTick++;
-        if (currentRollTick == ROLL_LENGTH){
+        if (currentRollTick == ROLL_LENGTH){ // end of roll
             actionState = 0;
             canMove = true;
             rotationalTrackingEnabled = true;
@@ -230,7 +228,7 @@ public class Player extends GameObject{
         currentSprite.draw(batch);
     }
 
-    private void loadTextures(){
+    protected void loadTextures(){
         Texture textureIdle = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.IDLE));
         Texture textureRoll = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.ROLL));
 
@@ -241,7 +239,7 @@ public class Player extends GameObject{
         currentSprite.setOriginCenter();
     }
 
-    private void initialiseBaseValuesAndConstants(){
+    protected void initialiseBaseValuesAndConstants(){
         rollCoefficient = 1/25f;
         sprintStaminaCost = 0.25f;
         rollStaminaCost = 30f;
@@ -263,6 +261,7 @@ public class Player extends GameObject{
         maxStamina = 500;
         stamina = maxStamina;
         souls = 0;
+        vulnerable = true;
         actionBuffer = new CircularQueue(2);
 
         walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
@@ -270,22 +269,8 @@ public class Player extends GameObject{
 
     // getters and setters
 
-    private void setSprite(Texture newTexture){
-        currentSprite = new Sprite(newTexture);
-        currentSprite.setSize(1f, 1f);
-        currentSprite.setOriginCenter();
-    }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public float getMaxHealth() {
-        return maxHealth;
-    }
-
-    public float getHealth() {
-        return health;
+    public void toggleLockOn(){
+        lockedOn = !lockedOn;
     }
 
     public float getMaxStamina() {
@@ -294,10 +279,6 @@ public class Player extends GameObject{
 
     public float getStamina() {
         return stamina;
-    }
-
-    public int getSouls() {
-        return souls;
     }
 
     public void setLookTarget(Vector2 lookTarget) {
@@ -316,13 +297,6 @@ public class Player extends GameObject{
         AssetDirectory.Audio.Player.HURT.play(0.3f);
     }
 
-    public void healHealth(float heal) {
-        this.health += heal;
-        if (health > maxHealth){
-            health = maxHealth;
-        }
-    }
-
     public void takeStamina(float amount){
         stamina -= amount;
         if (stamina < 0){
@@ -333,5 +307,9 @@ public class Player extends GameObject{
 
     public boolean isLockedOn() {
         return lockedOn;
+    }
+
+    public boolean isVulnerable() {
+        return vulnerable;
     }
 }

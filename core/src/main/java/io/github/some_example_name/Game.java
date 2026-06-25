@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -19,6 +20,8 @@ public class Game {
     private TickManager tickManager;
 
     private Level_1 level1;
+
+    private Level currentLevel;
 
     private Player player;
     private HUD hud;
@@ -36,7 +39,8 @@ public class Game {
         hud.updateMaxHealth(player.getMaxHealth());
         hud.updateMaxStamina(player.getMaxStamina());
 
-        level1 = new Level_1();
+        level1 = new Level_1(player);
+        currentLevel = level1;
     }
 
     public void gameUpdate(){
@@ -67,7 +71,7 @@ public class Game {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         // all worldly draw calls go here
-        level1.drawTiles(batch);
+        currentLevel.drawAll(batch);
         player.draw(batch);
         batch.end();
 
@@ -79,6 +83,28 @@ public class Game {
         // all screen space draw calls go here
         hud.draw(batch);
         batch.end();
+    }
+
+    private void lockOn(){
+        boolean isLockOnPressed = Gdx.input.isKeyJustPressed(ControlsDirectory.Combat.LOCK_ON);
+        if (isLockOnPressed) {
+            player.toggleLockOn();
+            if (player.isLockedOn()){ // initial lock on
+
+            }
+        }
+        if (player.isLockedOn()){
+
+        }
+    }
+
+    private int findClosestEntity(Vector2 refPos, Entity[] entities){ // returns index of closest entity
+        Vector2[] entityPositions = new Vector2[entities.length];
+        for (int i = 0; i < entities.length; i++){
+            entityPositions[i] = entities[i].getPosition();
+        }
+
+        return Utils.findClosestPosition(refPos, entityPositions);
     }
 
     private void trackCamera(){
@@ -104,7 +130,9 @@ public class Game {
             player.addSouls(numSouls);
         }
         public static void damagePlayer(float damage, Player player){
-            player.damageHealth(damage);
+            if (player.isVulnerable()) {
+                player.damageHealth(damage);
+            }
         }
         public static void healPlayer(float heal, Player player){
             player.healHealth(heal);

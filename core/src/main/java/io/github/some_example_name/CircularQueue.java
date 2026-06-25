@@ -1,8 +1,5 @@
 package io.github.some_example_name;
 
-
-import java.util.Arrays;
-
 public class CircularQueue {
     int[] queue;
     int length;
@@ -58,5 +55,6 @@ public class CircularQueue {
         queue = new int[length];
         rearPointer = 0;
         frontPointer = 0;
+        numElements = 0;
     }
 }
