@@ -51,6 +51,7 @@ public class Player extends Entity{
         setWorldMousePosition(camera);
         playerController();
         staminaRegeneration();
+        moveColliders();
     }
 
     private void playerController(){
@@ -234,6 +235,12 @@ public class Player extends Entity{
         worldMousePosition = new Vector2(mouse.x, mouse.y);
     }
 
+    private void moveColliders(){
+        for (Collider c : colliders){
+            c.setPosition(position);
+        }
+    }
+
     public void draw(Batch batch){
         currentSprite.setPosition(position.x-0.5f, position.y-0.5f);
         currentSprite.setRotation(facing);
@@ -277,6 +284,9 @@ public class Player extends Entity{
         actionBuffer = new CircularQueue(2);
 
         walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
+
+        colliders = new Collider[]{new Collider(position.x, position.y, 0, 0)};
+        colliders[0].specifyCircle(0.45f);
     }
 
     // getters and setters

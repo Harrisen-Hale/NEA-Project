@@ -14,6 +14,8 @@ public class Dummy extends Entity{
         loadTextures();
         initialiseBaseValuesAndConstants();
         position = positionArg;
+        colliders = new Collider[]{new Collider(position.x, position.y, 0, 0)};
+        colliders[0].specifyCircle(0.45f);
         healthBar = new StatusBar(0, 0, 0, 1/15f, 1);
         health = 75;
         healthBar.updateBar(health/maxHealth);

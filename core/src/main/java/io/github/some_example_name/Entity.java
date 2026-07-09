@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -18,6 +19,8 @@ public class Entity extends GameObject{
     protected boolean alive;
     protected boolean hostile;
 
+    protected Collider[] colliders;
+
     protected Sprite currentSprite;
 
     public Entity(){
@@ -27,6 +30,14 @@ public class Entity extends GameObject{
 
     public void logicTick(){
 
+    }
+
+    public void collision(Collider[] refColliders){
+        for (Collider c1 : colliders){
+            for (Collider c2 : refColliders) {
+                position.add(c1.detectCollision(c2));
+            }
+        }
     }
 
     public void drawBody(Batch batch){
@@ -56,6 +67,12 @@ public class Entity extends GameObject{
         souls = 100;
     }
 
+    public void drawDebug(ShapeRenderer sr){
+        for (Collider c : colliders){
+            c.debugRender(sr);
+        }
+    }
+
     // getters and setters
     public float getMaxHealth() {
         return maxHealth;
@@ -73,6 +90,9 @@ public class Entity extends GameObject{
         return position;
     }
 
+    public Collider[] getColliders() {
+        return colliders;
+    }
 
     protected void setSprite(Texture newTexture){
         currentSprite = new Sprite(newTexture);

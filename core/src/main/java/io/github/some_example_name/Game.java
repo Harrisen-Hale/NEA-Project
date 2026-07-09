@@ -70,6 +70,7 @@ public class Game {
         if (Gdx.input.isKeyJustPressed(Input.Keys.O)){ // Debug
             EventHandler.healPlayer(25, player);
         }
+        collision();
     }
 
     public void renderTick(){
@@ -98,6 +99,19 @@ public class Game {
         // all screen space draw calls go here
         hud.draw(batch);
         batch.end();
+
+        // debug render calls
+        sr.setProjectionMatrix(camera.combined);
+        sr.begin(ShapeRenderer.ShapeType.Line);
+        currentLevel.drawAllDebug(sr);
+        player.drawDebug(sr);
+        sr.end();
+    }
+
+    private void collision(){
+        for (Entity e : currentLevel.getEntities()){
+            player.collision(e.getColliders());
+        }
     }
 
     private void lockOn(){
@@ -154,6 +168,7 @@ public class Game {
     public void dispose(){
         batch.dispose();
         AssetDirectory.dispose();
+        sr.dispose();
     }
 
     public static class EventHandler{
