@@ -1,6 +1,8 @@
+
 package io.github.some_example_name;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -51,7 +53,7 @@ public class Player extends Entity{
         setWorldMousePosition(camera);
         playerController();
         staminaRegeneration();
-        moveColliders();
+        transformColliders();
     }
 
     private void playerController(){
@@ -215,8 +217,8 @@ public class Player extends Entity{
         }else {
             facing = theta;
         }
-        float angle = (float) (facing*(Math.PI/180));//converting to radians
-        lookVector = new Vector2(1,0).mul(new Matrix3(new float[]{(float) Math.cos(angle),(float)Math.sin(angle),0,(float)-Math.sin(angle),(float)Math.cos(angle),0,0,0,0}));
+        float angle = Utils.degreesToRadians(facing);
+        lookVector = Utils.rotate(new Vector2(1,0), angle);
     }
 
     private void staminaRegeneration(){
@@ -233,12 +235,6 @@ public class Player extends Entity{
         Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouse);
         worldMousePosition = new Vector2(mouse.x, mouse.y);
-    }
-
-    private void moveColliders(){
-        for (Collider c : colliders){
-            c.setPosition(position);
-        }
     }
 
     public void draw(Batch batch){
@@ -285,8 +281,10 @@ public class Player extends Entity{
 
         walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
 
-        colliders = new Collider[]{new Collider(position.x, position.y, 0, 0)};
-        colliders[0].specifyCircle(0.45f);
+        colliders = new Collider[]{new Collider(position.x, position.y, 0, 0, Color.BLUE, true)};
+        colliders[0].specifyCircle(0.25f);
+        hitbox = new Collider[]{new Collider(position.x, position.y, 0, 0, Color.RED, true)};
+        hitbox[0].specifyOBB(0.35f, 0.65f, 0);
     }
 
     // getters and setters

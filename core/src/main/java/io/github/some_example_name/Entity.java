@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 public class Entity extends GameObject{
     protected float maxHealth;
@@ -19,7 +18,8 @@ public class Entity extends GameObject{
     protected boolean alive;
     protected boolean hostile;
 
-    protected Collider[] colliders;
+    protected Collider[] colliders; // collision region
+    protected Collider[] hitbox; // damageable region
 
     protected Sprite currentSprite;
 
@@ -29,14 +29,30 @@ public class Entity extends GameObject{
     }
 
     public void logicTick(){
-
+        transformColliders();
     }
 
     public void collision(Collider[] refColliders){
         for (Collider c1 : colliders){
             for (Collider c2 : refColliders) {
-                position.add(c1.detectCollision(c2));
+                Vector2 mtv = c1.detectCollision(c2);
+                while (mtv.len() > 0.001){
+                    position.add(mtv);
+                    transformColliders();
+                    mtv = c1.detectCollision(c2);
+                }
             }
+        }
+    }
+
+    public void transformColliders(){
+        for (Collider c : colliders){
+            c.setAngle(Utils.degreesToRadians(facing));
+            c.setPosition(position);
+        }
+        for (Collider h : hitbox){
+            h.setAngle(Utils.degreesToRadians(facing));
+            h.setPosition(position);
         }
     }
 
@@ -45,6 +61,7 @@ public class Entity extends GameObject{
         currentSprite.setRotation(facing);
         currentSprite.draw(batch);
     }
+
     public void drawEffects(Batch batch){
 
     }
@@ -70,6 +87,9 @@ public class Entity extends GameObject{
     public void drawDebug(ShapeRenderer sr){
         for (Collider c : colliders){
             c.debugRender(sr);
+        }
+        for (Collider h : hitbox){
+            h.debugRender(sr);
         }
     }
 

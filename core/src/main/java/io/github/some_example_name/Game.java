@@ -62,6 +62,7 @@ public class Game {
 
     public void logicTick(){
         player.logicTick(camera);
+        collision();
         hud.updatePlayerHealthAndStamina(player.getMaxHealth(), player.getHealth(), player.getMaxStamina(), player.getStamina());
         lockOn();
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)){ // Debug
@@ -70,7 +71,6 @@ public class Game {
         if (Gdx.input.isKeyJustPressed(Input.Keys.O)){ // Debug
             EventHandler.healPlayer(25, player);
         }
-        collision();
     }
 
     public void renderTick(){
@@ -109,7 +109,7 @@ public class Game {
     }
 
     private void collision(){
-        for (Entity e : currentLevel.getEntities()){
+        for (Entity e : currentLevel.getEntities()){ // player-on-entity collision
             player.collision(e.getColliders());
         }
     }

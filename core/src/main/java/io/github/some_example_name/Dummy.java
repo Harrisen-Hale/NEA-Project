@@ -1,6 +1,7 @@
 package io.github.some_example_name;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -14,8 +15,10 @@ public class Dummy extends Entity{
         loadTextures();
         initialiseBaseValuesAndConstants();
         position = positionArg;
-        colliders = new Collider[]{new Collider(position.x, position.y, 0, 0)};
-        colliders[0].specifyCircle(0.45f);
+        colliders = new Collider[]{new Collider(position.x, position.y, 0, 0, Color.BLUE, true)};
+        colliders[0].specifyCircle(0.25f);
+        hitbox = new Collider[]{new Collider(position.x, position.y, 0, 0, Color.RED, true)};
+        hitbox[0].specifyCircle(0.4f);
         healthBar = new StatusBar(0, 0, 0, 1/15f, 1);
         health = 75;
         healthBar.updateBar(health/maxHealth);
