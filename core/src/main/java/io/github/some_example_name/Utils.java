@@ -43,6 +43,10 @@ public class Utils {
         return vertices;
     }
 
+    public static void axisAlignPolygon(Vector2[] vertices, Vector2 originOfRotation, float polygonAngle){
+        rotatePolygon(vertices, originOfRotation, -polygonAngle);
+    }
+
     public static float degreesToRadians(float angleDeg){
         return (float) (angleDeg*(Math.PI/180));
     }
