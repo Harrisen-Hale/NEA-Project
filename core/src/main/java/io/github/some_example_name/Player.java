@@ -281,10 +281,9 @@ public class Player extends Entity{
 
         walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
 
-        colliders = new Collider[]{new Collider(position.x, position.y, 0, 0, Color.BLUE, true)};
-        colliders[0].specifyCircle(0.25f);
         hitbox = new Collider[]{new Collider(position.x, position.y, 0, 0, Color.RED, true)};
         hitbox[0].specifyOBB(0.35f, 0.65f, 0);
+        colliders = hitbox;
     }
 
     // getters and setters

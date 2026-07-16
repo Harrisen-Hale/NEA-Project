@@ -43,8 +43,45 @@ public class Utils {
         return vertices;
     }
 
-    public static void axisAlignPolygon(Vector2[] vertices, Vector2 originOfRotation, float polygonAngle){
-        rotatePolygon(vertices, originOfRotation, -polygonAngle);
+    public static float[] project(Vector2[] points, Vector2 axis){ // project an array of points onto a unit vector axis, returns min and max value on axis
+        float min = axis.cpy().dot(points[0]);
+        float max = min;
+        for (int i = 0; i < points.length; i++){
+            float point = axis.cpy().dot(points[i]);
+            if (point < min) {
+                min = point;
+            } else if (point > max) {
+                max = point;
+            }
+        }
+        return new float[]{min, max};
+    }
+
+    public static float overlap(float[] projection1, float[] projection2){ // find the (magnitude of the) overlap distance of 2 projected shapes
+        float min1 = projection1[0];
+        float max1 = projection1[1];
+        float min2 = projection2[0];
+        float max2 = projection2[1];
+        float overlap = 0;
+
+        if (min1 == min2 && max1 == max2){
+            overlap = Math.abs(max1 - min1);
+        }else if (max1 >= min2 && max1 <= max2){
+            overlap = Math.abs(max1 - min2);
+        }else if (max2 >= min1 && max2 <= max1){
+            overlap = Math.abs(max2 - min1);
+        }
+
+        return overlap;
+    }
+
+    public static Vector2[] getNormals(Vector2[] OBBVertices){ // generates unit normal vectors for an OBB
+        Vector2[] normals = new Vector2[4];
+        normals[0] = rotate(OBBVertices[1].cpy().sub(OBBVertices[0]).nor(), (float) (-Math.PI/2f)); // down
+        normals[1] = rotate(OBBVertices[2].cpy().sub(OBBVertices[1]).nor(), (float) (-Math.PI/2f)); // right
+        normals[2] = rotate(OBBVertices[3].cpy().sub(OBBVertices[2]).nor(), (float) (-Math.PI/2f)); // up
+        normals[3] = rotate(OBBVertices[0].cpy().sub(OBBVertices[3]).nor(), (float) (-Math.PI/2f)); // left
+        return normals;
     }
 
     public static float degreesToRadians(float angleDeg){

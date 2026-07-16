@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.Arrays;
+
 public class Collider extends GameObject{ // represents both types of collider, must use corresponding specification method when created
 
     private int type; // 0 - OBB, 1 - Circle
@@ -66,14 +68,6 @@ public class Collider extends GameObject{ // represents both types of collider, 
             }
         }else if (type == 0 && refType == 0){ // OBB on OBB
 
-        }else if (type == 0 && refType == 1){ // OBB on circle
-
-        }else if (type == 1 && refType == 0){ // circle on OBB
-            Vector2 c = refCollider.getPosition().cpy().sub(position); // vector from centre of circle to centre of rectangle
-            Vector2 cUnit = c.cpy().nor();
-            Vector2 c1q = cUnit.cpy().scl(radius).sub(position); // vector from centre of circle to point on circumference closest to c2
-            Vector2 qc2 = c.cpy().sub(c1q);
-            Vector2 pc2 = new Vector2(0,0);
         }
         return mtv;
     }
@@ -108,6 +102,10 @@ public class Collider extends GameObject{ // represents both types of collider, 
         vertices[2] = new Vector2(position.x + width/2f, position.y + height/2f);
         vertices[3] = new Vector2(position.x - width/2f, position.y + height/2f);
         vertices = Utils.rotatePolygon(vertices, position, angle); // This warning is incorrect
+    }
+
+    public Vector2[] getVertices() {
+        return vertices;
     }
 
     public void debugRender(ShapeRenderer sr){
