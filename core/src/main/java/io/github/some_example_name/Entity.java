@@ -18,8 +18,9 @@ public class Entity extends GameObject{
     protected boolean alive;
     protected boolean hostile;
 
-    protected Collider[] colliders; // collision region
-    protected Collider[] hitbox; // damageable region
+    protected Collider[] body; // collision region
+    protected Collider[] hurtboxes; // damageable region
+    protected Collider[] hitboxes; // damaging region
 
     protected Sprite currentSprite;
 
@@ -32,9 +33,14 @@ public class Entity extends GameObject{
         transformColliders();
     }
 
-    public void collision(Collider[] refColliders){
-        for (Collider c1 : colliders){
-            for (Collider c2 : refColliders) {
+    public void collision(Collider[] refBody, Collider[] refHitBoxes){
+        bodyCollision(refBody);
+        hitboxOnHurtboxCollision(refHitBoxes);
+    }
+
+    private void bodyCollision(Collider[] refBody){
+        for (Collider c1 : body){
+            for (Collider c2 : refBody) {
                 Vector2 mtv = c1.detectCollision(c2);
                 position.add(mtv);
                 transformColliders();
@@ -42,12 +48,22 @@ public class Entity extends GameObject{
         }
     }
 
+    private void hitboxOnHurtboxCollision(Collider[] refHitboxes){
+        for (Collider h1 : hurtboxes){
+            for (Collider h2 : refHitboxes) {
+                if (h2.isHitbox() && h1.detectCollision(h2).len() > 0){
+                    damageHealth(h2.getDamageValue());
+                }
+            }
+        }
+    }
+
     public void transformColliders(){
-        for (Collider c : colliders){
+        for (Collider c : body){
             c.setAngle(Utils.degreesToRadians(facing));
             c.setPosition(position);
         }
-        for (Collider h : hitbox){
+        for (Collider h : hurtboxes){
             h.setAngle(Utils.degreesToRadians(facing));
             h.setPosition(position);
         }
@@ -76,16 +92,19 @@ public class Entity extends GameObject{
         velocity = new Vector2(0,0);
         moveVector = new Vector2(0,0);
         facing = 0;
-        maxHealth = 100;
-        health = maxHealth;
-        souls = 100;
+        maxHealth = 0;
+        health = 0;
+        souls = 0;
+        body = new Collider[0];
+        hurtboxes = new Collider[0];
+        hitboxes = new Collider[0];
     }
 
     public void drawDebug(ShapeRenderer sr){
-        for (Collider c : colliders){
+        for (Collider c : body){
             c.debugRender(sr);
         }
-        for (Collider h : hitbox){
+        for (Collider h : hurtboxes){
             h.debugRender(sr);
         }
     }
@@ -107,8 +126,16 @@ public class Entity extends GameObject{
         return position;
     }
 
-    public Collider[] getColliders() {
-        return colliders;
+    public Collider[] getBody() {
+        return body;
+    }
+
+    public Collider[] getHurtbox() {
+        return hurtboxes;
+    }
+
+    public Collider[] getHitboxes() {
+        return hitboxes;
     }
 
     protected void setSprite(Texture newTexture){

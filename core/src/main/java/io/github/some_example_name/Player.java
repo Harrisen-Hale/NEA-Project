@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -245,10 +244,10 @@ public class Player extends Entity{
     }
 
     public void drawDebug(ShapeRenderer sr){
-        for (Collider c : colliders){
+        for (Collider c : body){
             c.debugRender(sr);
         }
-        for (Collider h : hitbox){
+        for (Collider h : hurtboxes){
             h.debugRender(sr);
         }
     }
@@ -291,8 +290,10 @@ public class Player extends Entity{
 
         walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
 
-        hitbox = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(20, 0.35f), 0, Color.RED, true, false)};
-        colliders = hitbox;
+        hurtboxes = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(20, 0.35f), 0, Color.RED, true, false)};
+        body = hurtboxes;
+        hitboxes = hurtboxes;
+        hitboxes[0].setDamageValue(10);
     }
 
     // getters and setters

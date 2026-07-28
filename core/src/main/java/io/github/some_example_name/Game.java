@@ -61,8 +61,8 @@ public class Game {
     }
 
     public void logicTick(){
-
         player.logicTick(camera);
+        currentLevel.logicTick();
         collision();
         hud.updatePlayerHealthAndStamina(player.getMaxHealth(), player.getHealth(), player.getMaxStamina(), player.getStamina());
         lockOn();
@@ -111,7 +111,8 @@ public class Game {
 
     private void collision(){
         for (Entity e : currentLevel.getEntities()){ // player-on-entity collision
-            player.collision(e.getColliders());
+            player.collision(e.getBody(), e.getHitboxes());
+            e.collision(player.getBody(), player.getHitboxes());
         }
     }
 

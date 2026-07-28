@@ -13,6 +13,8 @@ public class Collider extends GameObject{
     private Vector2[] dVertices; // position vectors relative to centroid of shape, no rotation
     private Vector2[] normals;
 
+    private float damageValue; // if hurtbox
+
     //debug
     private boolean visible;
     private boolean normalsVisible;
@@ -29,6 +31,7 @@ public class Collider extends GameObject{
         angle = initialAngleArg;
         dVertices = dVerticesArg;
         setVertices();
+        damageValue = 0;
     }
 
     public void setPosition(Vector2 positionArg) { // positionArg should be centroid of parent object. Adjust values shift relative to that centroid.
@@ -36,9 +39,8 @@ public class Collider extends GameObject{
         setVertices();
     }
 
-    public Vector2 detectCollision(Collider refCollider){ // Returns minimum translation vector for this collider to separate with the reference collider. Returns 0 vector if not colliding
-        Vector2 mtv = new Vector2(0,0);
-        // Polygon on Polygon, uses SAT
+    public Vector2 detectCollision(Collider refCollider){ // Polygon on Polygon, uses SAT, returns minimum translation vector for this collider to separate with the reference collider. Returns 0 vector if not colliding
+        Vector2 mtv;
         normals = Utils.findNormals(vertices);
         Vector2[] refNormals = Utils.findNormals(refCollider.getVertices());
         Vector2 mtvAxis = new Vector2(0,0);
@@ -82,6 +84,10 @@ public class Collider extends GameObject{
         this.angle = angle;
     }
 
+    public void setDamageValue(float damageValue) {
+        this.damageValue = damageValue;
+    }
+
     private void setVertices(){
         vertices = Utils.translatePolygon(dVertices, position);
         vertices = Utils.rotatePolygon(vertices, position, angle);
@@ -89,6 +95,14 @@ public class Collider extends GameObject{
 
     public Vector2[] getVertices() {
         return vertices;
+    }
+
+    public float getDamageValue() {
+        return damageValue;
+    }
+
+    public boolean isHitbox(){
+        return (damageValue>0);
     }
 
     public void debugRender(ShapeRenderer sr){

@@ -9,7 +9,6 @@ public class Level_1 extends Level{
     private Dummy dummy;
 
     public Level_1(Player playerArg){
-        player = playerArg;
         for (int j = 0; j < 9; j++){
             for (int i = 0; i < 16; i++){
                 tileArr[j][i] = new Tile(i, j, AssetDirectory.Scene.MUD);

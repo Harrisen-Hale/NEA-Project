@@ -5,9 +5,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Level {
 
-    protected Player player;
     protected Entity[] entities; // stores all non-player entities in the level
 
+
+    public void logicTick(){
+        for (Entity e : entities){
+            e.logicTick();
+        }
+    }
 
     public void drawAllBodies(SpriteBatch batch) {
 

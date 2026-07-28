@@ -15,10 +15,16 @@ public class Dummy extends Entity{
         loadTextures();
         initialiseBaseValuesAndConstants();
         position = positionArg;
-        colliders = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, Color.BLUE, true, true)};
-        hitbox = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.4f), 0, Color.RED, true, true)};
+        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, Color.BLUE, true, false)};
+        hurtboxes = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.4f), 0, Color.RED, true, false)};
         healthBar = new StatusBar(0, 0, 0, 1/15f, 1);
-        health = 75;
+        maxHealth = 500;
+        health = maxHealth;
+        healthBar.updateBar(health/maxHealth);
+    }
+
+    public void logicTick(){
+        transformColliders();
         healthBar.updateBar(health/maxHealth);
     }
 
