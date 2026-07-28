@@ -61,6 +61,7 @@ public class Game {
     }
 
     public void logicTick(){
+
         player.logicTick(camera);
         collision();
         hud.updatePlayerHealthAndStamina(player.getMaxHealth(), player.getHealth(), player.getMaxStamina(), player.getStamina());

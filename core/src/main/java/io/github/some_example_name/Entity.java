@@ -36,11 +36,8 @@ public class Entity extends GameObject{
         for (Collider c1 : colliders){
             for (Collider c2 : refColliders) {
                 Vector2 mtv = c1.detectCollision(c2);
-                while (mtv.len() > 0.001){
-                    position.add(mtv);
-                    transformColliders();
-                    mtv = c1.detectCollision(c2);
-                }
+                position.add(mtv);
+                transformColliders();
             }
         }
     }

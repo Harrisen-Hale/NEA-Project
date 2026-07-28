@@ -15,10 +15,8 @@ public class Dummy extends Entity{
         loadTextures();
         initialiseBaseValuesAndConstants();
         position = positionArg;
-        colliders = new Collider[]{new Collider(position.x, position.y, 0, 0, Color.BLUE, true)};
-        colliders[0].specifyOBB(0.45f,0.45f, 0);
-        hitbox = new Collider[]{new Collider(position.x, position.y, 0, 0, Color.RED, true)};
-        hitbox[0].specifyOBB(0.8f, 0.8f, 0);
+        colliders = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, Color.BLUE, true, true)};
+        hitbox = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.4f), 0, Color.RED, true, true)};
         healthBar = new StatusBar(0, 0, 0, 1/15f, 1);
         health = 75;
         healthBar.updateBar(health/maxHealth);

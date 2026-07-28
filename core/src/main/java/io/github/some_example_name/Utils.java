@@ -26,7 +26,7 @@ public class Utils {
         return findMinimumValue(findDistances(refPos, positions), 0, 0);
     }
 
-    public static Vector2 rotate(Vector2 v, float angle){ //rotate v by angle radians about the origin
+    public static Vector2 rotate(Vector2 v, float angle){ //rotate v by angle radians anticlockwise about the origin
         float s = (float) Math.sin(angle);
         float c = (float) Math.cos(angle);
         Matrix3 rotation = new Matrix3(new float[]{c, s, 0, -s, c, 0, 0, 0, 1});
@@ -35,19 +35,28 @@ public class Utils {
 
     public static Vector2[] rotatePolygon(Vector2[] vertices, Vector2 originOfRotation, float angle){
         Vector2[] relativePoints = new Vector2[vertices.length];
+        Vector2[] rotatedPoints = new Vector2[vertices.length];
         for (int i = 0; i < vertices.length; i++){
             relativePoints[i] = vertices[i].cpy().sub(originOfRotation);
             relativePoints[i] = rotate(relativePoints[i], angle);
-            vertices[i] = originOfRotation.cpy().add(relativePoints[i]);
+            rotatedPoints[i] = originOfRotation.cpy().add(relativePoints[i]);
         }
-        return vertices;
+        return rotatedPoints;
+    }
+
+    public static Vector2[] translatePolygon(Vector2[] vertices, Vector2 translationVector){
+        Vector2[] translatedVertices = new Vector2[vertices.length];
+        for (int i = 0; i < vertices.length; i++){
+            translatedVertices[i] = vertices[i].cpy().add(translationVector);
+        }
+        return translatedVertices;
     }
 
     public static float[] project(Vector2[] points, Vector2 axis){ // project an array of points onto a unit vector axis, returns min and max value on axis
         float min = axis.cpy().dot(points[0]);
         float max = min;
-        for (int i = 0; i < points.length; i++){
-            float point = axis.cpy().dot(points[i]);
+        for (Vector2 p : points) {
+            float point = axis.cpy().dot(p);
             if (point < min) {
                 min = point;
             } else if (point > max) {
@@ -57,34 +66,76 @@ public class Utils {
         return new float[]{min, max};
     }
 
-    public static float overlap(float[] projection1, float[] projection2){ // find the (magnitude of the) overlap distance of 2 projected shapes
+    public static float findOverlap(float[] projection1, float[] projection2){ // return the (magnitude of the) overlap distance of 2 projected shapes
         float min1 = projection1[0];
         float max1 = projection1[1];
         float min2 = projection2[0];
         float max2 = projection2[1];
-        float overlap = 0;
 
-        if (min1 == min2 && max1 == max2){
-            overlap = Math.abs(max1 - min1);
-        }else if (max1 >= min2 && max1 <= max2){
-            overlap = Math.abs(max1 - min2);
-        }else if (max2 >= min1 && max2 <= max1){
-            overlap = Math.abs(max2 - min1);
-        }
-
-        return overlap;
+        float overlap = Math.min(max1, max2) - Math.max(min1, min2);
+        return Math.max(0, overlap);
     }
 
-    public static Vector2[] getNormals(Vector2[] OBBVertices){ // generates unit normal vectors for an OBB
-        Vector2[] normals = new Vector2[4];
-        normals[0] = rotate(OBBVertices[1].cpy().sub(OBBVertices[0]).nor(), (float) (-Math.PI/2f)); // down
-        normals[1] = rotate(OBBVertices[2].cpy().sub(OBBVertices[1]).nor(), (float) (-Math.PI/2f)); // right
-        normals[2] = rotate(OBBVertices[3].cpy().sub(OBBVertices[2]).nor(), (float) (-Math.PI/2f)); // up
-        normals[3] = rotate(OBBVertices[0].cpy().sub(OBBVertices[3]).nor(), (float) (-Math.PI/2f)); // left
+    public static Vector2 findUnitVector(Vector2 p1, Vector2 p2){ // returns unit vector from p1 towards p2
+        return p2.cpy().sub(p1).nor();
+    }
+
+    public static Vector2 findNormal(Vector2 p1, Vector2 p2){ // returns unit normal vector for the line specified by 2 points (follows left hand rule)
+        return rotate(findUnitVector(p1, p2), (float) ((3*Math.PI)/2f));
+    }
+
+    public static Vector2[] findNormals(Vector2[] vertices){ // returns unit normal vectors for a polygon
+        Vector2[] normals = new Vector2[vertices.length];
+        for (int i = 0; i < vertices.length; i++){
+            normals[i] = findNormal(vertices[i], vertices[(i+1)%vertices.length]);
+        }
         return normals;
     }
 
     public static float degreesToRadians(float angleDeg){
         return (float) (angleDeg*(Math.PI/180));
     }
+
+    public static float[] convertToPairwisePoints(Vector2[] points){ // converts from array of points to array of pairs of coordinates, e.g. {x1,y1,x2,y2}
+        float[] pairwisePoints = new float[2*points.length];
+        for (int i = 0; i < pairwisePoints.length; i++){
+            if (i % 2 == 0){ // even i means x coordinate
+                pairwisePoints[i] = points[i/2].x;
+            }else { // odd i means y coordinate
+                pairwisePoints[i] = points[i/2].y;
+            }
+        }
+        return pairwisePoints;
+    }
+
+    public static float arithmeticMean(float[] values){
+        float tot = 0;
+        for (float value : values) {
+            tot += value;
+        }
+        return tot/values.length;
+    }
+
+    public static Vector2 findCentroid(Vector2[] points){
+        float[] xValues = new float[points.length];
+        float[] yValues = new float[points.length];
+        for (int i = 0; i < points.length; i++){
+            xValues[i] = points[i].x;
+            yValues[i] = points[i].y;
+        }
+        return new Vector2(arithmeticMean(xValues), arithmeticMean(yValues));
+    }
+
+    public static Vector2[] generateRegularPolygon(int n, float circumradius){ // n > 2, uses roots of unity to generate a regular n-gon relative to the origin
+        Vector2[] vertices = new Vector2[n];
+        for (int p = 0; p < n; p++){
+            vertices[p] = new Vector2((float) Math.cos((2*Math.PI*p)/n), (float) Math.sin((2*Math.PI*p)/n)).scl(circumradius); // uses standard De Moivre's Theorem formula for roots of unity
+        }
+        return vertices;
+    }
+
+    public static float findGradient(Vector2 p1, Vector2 p2){ // returns the gradient of the line specified by 2 points
+        return (p1.y-p2.y)/(p1.x-p2.x);
+    }
+
 }

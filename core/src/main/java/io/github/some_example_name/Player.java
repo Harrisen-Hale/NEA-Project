@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -243,6 +244,15 @@ public class Player extends Entity{
         currentSprite.draw(batch);
     }
 
+    public void drawDebug(ShapeRenderer sr){
+        for (Collider c : colliders){
+            c.debugRender(sr);
+        }
+        for (Collider h : hitbox){
+            h.debugRender(sr);
+        }
+    }
+
     protected void loadTextures(){
         Texture textureIdle = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.IDLE));
         Texture textureRoll = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.ROLL));
@@ -281,8 +291,7 @@ public class Player extends Entity{
 
         walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
 
-        hitbox = new Collider[]{new Collider(position.x, position.y, 0, 0, Color.RED, true)};
-        hitbox[0].specifyOBB(0.35f, 0.65f, 0);
+        hitbox = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(20, 0.35f), 0, Color.RED, true, false)};
         colliders = hitbox;
     }
 

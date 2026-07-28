@@ -2,90 +2,76 @@ package io.github.some_example_name;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.Arrays;
+public class Collider extends GameObject{
 
-public class Collider extends GameObject{ // represents both types of collider, must use corresponding specification method when created
-
-    private int type; // 0 - OBB, 1 - Circle
     private float xAdjust;
     private float yAdjust;
-    // If circle
-    private float radius;
-    // If OBB
-    private float width;
-    private float height;
     private float angle; // radians
-    private Vector2[] vertices;
+    private Vector2[] vertices; // position vectors relative to world origin
+    private Vector2[] dVertices; // position vectors relative to centroid of shape, no rotation
+    private Vector2[] normals;
 
     //debug
     private boolean visible;
+    private boolean normalsVisible;
     private Color debugColour;
 
-    public Collider(float x, float y, float xAdjustArg, float yAdjustArg, Color debugColourArg, boolean visibleArg) {
-        position = new Vector2(x,y); // centroid of the shape
-        type = -1;
+    public Collider(Vector2 positionArg, float xAdjustArg, float yAdjustArg, Vector2[] dVerticesArg, float initialAngleArg, Color debugColourArg, boolean visibleArg, boolean normalsVisibleArg) {
+        position = positionArg.cpy();
         xAdjust = xAdjustArg;
         yAdjust = yAdjustArg;
         debugColour = debugColourArg;
         visible = visibleArg;
-    }
-
-    public void setPosition(Vector2 positionArg) { // positionArg is centroid of parent object. Adjust values are coordinates relative to that centroid.
-        this.position = new Vector2(positionArg.x + xAdjust, positionArg.y + yAdjust);
-        if (type == 0){
-            setVertices();
-        }
-    }
-
-    public void specifyCircle(float radiusArg){
-        radius = radiusArg;
-        type = 1;
-    }
-
-    public void specifyOBB(float widthArg, float heightArg, float angleArg){
-        width = widthArg;
-        height = heightArg;
-        angle = angleArg;
-        vertices = new Vector2[4];
+        normalsVisible = normalsVisibleArg;
+        normals = new Vector2[0];
+        angle = initialAngleArg;
+        dVertices = dVerticesArg;
         setVertices();
-        type = 0;
+    }
+
+    public void setPosition(Vector2 positionArg) { // positionArg should be centroid of parent object. Adjust values shift relative to that centroid.
+        this.position = new Vector2(positionArg.x + xAdjust, positionArg.y + yAdjust);
+        setVertices();
     }
 
     public Vector2 detectCollision(Collider refCollider){ // Returns minimum translation vector for this collider to separate with the reference collider. Returns 0 vector if not colliding
-        int refType = refCollider.getType();
         Vector2 mtv = new Vector2(0,0);
-        if (type == 1 && refType == 1){ // circle on circle
-            float sumOfRadii = radius + refCollider.getRadius();
-            Vector2 centresVector = position.cpy().sub(refCollider.getPosition());
-            Vector2 pA = position.cpy().add(centresVector.cpy().nor().scl(-radius));
-            Vector2 pB = refCollider.getPosition().cpy().add(centresVector.cpy().nor().scl(refCollider.getRadius()));
-            float mtd = pA.cpy().sub(pB).len();
-            if (centresVector.len() < sumOfRadii){
-                mtv = centresVector.cpy().scl(mtd);
+        // Polygon on Polygon, uses SAT
+        normals = Utils.findNormals(vertices);
+        Vector2[] refNormals = Utils.findNormals(refCollider.getVertices());
+        Vector2 mtvAxis = new Vector2(0,0);
+        float overlap = Float.MAX_VALUE; // so any overlap value is smaller
+
+        for (Vector2 axis : normals) {
+            float[] projection1 = Utils.project(vertices, axis);
+            float[] projection2 = Utils.project(refCollider.getVertices(), axis);
+            float thisOverlap = Utils.findOverlap(projection1, projection2);
+            if (thisOverlap <= 0) { // Early exit via SAT logic
+                return new Vector2(0, 0);
+            } else if (thisOverlap < overlap) {
+                overlap = thisOverlap;
+                mtvAxis = axis.cpy();
             }
-        }else if (type == 0 && refType == 0){ // OBB on OBB
-
         }
+        for (Vector2 axis : refNormals) {
+            float[] projection1 = Utils.project(vertices, axis);
+            float[] projection2 = Utils.project(refCollider.getVertices(), axis);
+            float thisOverlap = Utils.findOverlap(projection1, projection2);
+            if (thisOverlap <= 0) { // Early exit via SAT logic
+                return new Vector2(0, 0);
+            } else if (thisOverlap < overlap) {
+                overlap = thisOverlap;
+                mtvAxis = axis.cpy();
+            }
+        }
+        Vector2 refCentreToCentre = position.cpy().sub(refCollider.getPosition());
+        if (mtvAxis.dot(refCentreToCentre) < 0){
+            mtvAxis.scl(-1);
+        }
+        mtv = mtvAxis.cpy().scl(overlap);
         return mtv;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public float getRadius() {
-        return radius;
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
     }
 
     public float getAngle() {
@@ -97,11 +83,8 @@ public class Collider extends GameObject{ // represents both types of collider, 
     }
 
     private void setVertices(){
-        vertices[0] = new Vector2(position.x - width/2f, position.y - height/2f);
-        vertices[1] = new Vector2(position.x + width/2f, position.y - height/2f);
-        vertices[2] = new Vector2(position.x + width/2f, position.y + height/2f);
-        vertices[3] = new Vector2(position.x - width/2f, position.y + height/2f);
-        vertices = Utils.rotatePolygon(vertices, position, angle); // This warning is incorrect
+        vertices = Utils.translatePolygon(dVertices, position);
+        vertices = Utils.rotatePolygon(vertices, position, angle);
     }
 
     public Vector2[] getVertices() {
@@ -111,10 +94,11 @@ public class Collider extends GameObject{ // represents both types of collider, 
     public void debugRender(ShapeRenderer sr){
         if (visible) {
             sr.setColor(debugColour);
-            if (type == 1) {
-                sr.circle(position.x, position.y, radius, 20);
-            }else if (type == 0){
-                sr.polygon(new float[]{vertices[0].x, vertices[0].y,vertices[1].x, vertices[1].y,vertices[2].x, vertices[2].y,vertices[3].x, vertices[3].y});
+            sr.polygon(Utils.convertToPairwisePoints(vertices));
+        }
+        if (normalsVisible){
+            for (Vector2 n : normals) {
+                sr.rectLine(position, position.cpy().add(n.cpy().scl(2)), 0.035f);
             }
         }
     }
