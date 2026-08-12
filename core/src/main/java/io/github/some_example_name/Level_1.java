@@ -14,7 +14,7 @@ public class Level_1 extends Level{
                 tileArr[j][i] = new Tile(i, j, AssetDirectory.Scene.MUD);
             }
         }
-        dummy = new Dummy(new Vector2(2,2));
+        dummy = new Dummy(1, new Vector2(2,2));
         entities = new Entity[1];
         entities[0] = dummy;
     }

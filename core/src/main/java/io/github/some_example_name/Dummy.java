@@ -11,12 +11,14 @@ public class Dummy extends Entity{
 
     private StatusBar healthBar;
 
-    public Dummy(Vector2 positionArg){
+    public Dummy(int IDArg, Vector2 positionArg){
         loadTextures();
         initialiseBaseValuesAndConstants();
+        ID = IDArg;
         position = positionArg;
-        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, Color.BLUE, true, false)};
-        hurtboxes = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.4f), 0, Color.RED, true, false)};
+        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, 0, true, Color.BLUE, true, false)};
+        hurtboxes = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.4f), 0, 0, true, Color.RED, true, false)};
+        hitboxes = new Collider[0];
         healthBar = new StatusBar(0, 0, 0, 1/15f, 1);
         maxHealth = 500;
         health = maxHealth;
@@ -49,7 +51,7 @@ public class Dummy extends Entity{
 
     public void damageHealth(float damage) {
         this.health -= damage;
-        if (health < 0){
+        if (health <= 0){
             health = maxHealth;
         }
     }

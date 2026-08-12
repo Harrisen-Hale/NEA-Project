@@ -3,8 +3,10 @@ package io.github.some_example_name;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+
 public class Utils {
-    public static float[] findDistances(Vector2 refPos, Vector2[] positions){ // returns array of distances
+    public static float[] findDistances(Vector2 refPos, Vector2[] positions){ // returns array of distances from refPos to each element of positions
         float[] distances = new float[positions.length];
         for (int i = 0; i < positions.length; i++){
             distances[i] = refPos.cpy().sub(positions[i]).len();
@@ -12,14 +14,14 @@ public class Utils {
         return distances;
     }
 
-    public static int findMinimumValue(float[] values, int currentIndex, int minimumIndex){ // returns index of minimum value
+    public static int findMinimumValue(float[] values, int currentIndex, int minimumIndex){ // returns index of minimum value, when called currentIndex and minimumIndex should be defaulted to 0
         if (currentIndex == values.length){
             return minimumIndex;
         }
         if (values[currentIndex] < values[minimumIndex]){
             minimumIndex = currentIndex;
         }
-        return findMinimumValue(values, currentIndex+1, minimumIndex);
+        return findMinimumValue(values, currentIndex+1, minimumIndex); // recursive call
     }
 
     public static int findClosestPosition(Vector2 refPos, Vector2[] positions){ // returns index of closest position to refPos
@@ -33,7 +35,7 @@ public class Utils {
         return v.cpy().mul(rotation);
     }
 
-    public static Vector2[] rotatePolygon(Vector2[] vertices, Vector2 originOfRotation, float angle){
+    public static Vector2[] rotatePolygon(Vector2[] vertices, Vector2 originOfRotation, float angle){ // rotates polygon (specified by vertices) angle degrees about originOfRotation
         Vector2[] relativePoints = new Vector2[vertices.length];
         Vector2[] rotatedPoints = new Vector2[vertices.length];
         for (int i = 0; i < vertices.length; i++){
@@ -84,7 +86,7 @@ public class Utils {
         return rotate(findUnitVector(p1, p2), (float) ((3*Math.PI)/2f));
     }
 
-    public static Vector2[] findNormals(Vector2[] vertices){ // returns unit normal vectors for a polygon
+    public static Vector2[] findNormals(Vector2[] vertices){ // returns unit normal vectors for a polygon (specified anticlockwise by vertices)
         Vector2[] normals = new Vector2[vertices.length];
         for (int i = 0; i < vertices.length; i++){
             normals[i] = findNormal(vertices[i], vertices[(i+1)%vertices.length]);
@@ -96,7 +98,7 @@ public class Utils {
         return (float) (angleDeg*(Math.PI/180));
     }
 
-    public static float[] convertToPairwisePoints(Vector2[] points){ // converts from array of points to array of pairs of coordinates, e.g. {x1,y1,x2,y2}
+    public static float[] convertToPairwisePoints(Vector2[] points){ // converts from array of vectors to array of pairs of coordinates, e.g. {x1,y1,x2,y2}
         float[] pairwisePoints = new float[2*points.length];
         for (int i = 0; i < pairwisePoints.length; i++){
             if (i % 2 == 0){ // even i means x coordinate
@@ -126,7 +128,7 @@ public class Utils {
         return new Vector2(arithmeticMean(xValues), arithmeticMean(yValues));
     }
 
-    public static Vector2[] generateRegularPolygon(int n, float circumradius){ // n > 2, uses roots of unity to generate a regular n-gon relative to the origin
+    public static Vector2[] generateRegularPolygon(int n, float circumradius){ // domain {n: n > 2}, uses roots of unity to generate a regular n-gon relative to the origin
         Vector2[] vertices = new Vector2[n];
         for (int p = 0; p < n; p++){
             vertices[p] = new Vector2((float) Math.cos((2*Math.PI*p)/n), (float) Math.sin((2*Math.PI*p)/n)).scl(circumradius); // uses standard De Moivre's Theorem formula for roots of unity
@@ -138,4 +140,20 @@ public class Utils {
         return (p1.y-p2.y)/(p1.x-p2.x);
     }
 
+    public static int[] arrayListToArray(ArrayList<Integer> arrayList){
+        int[] output = new int[arrayList.size()];
+        for (int i = 0; i < arrayList.size(); i++){
+            output[i] = arrayList.get(i);
+        }
+        return output;
+    }
+
+    public static int linearSearch(int target, int[] array){ // returns index of item, or -1 if not found
+        for (int i = 0; i < array.length; i++){
+            if (array[i] == target){
+                return i;
+            }
+        }
+        return -1;
+    }
 }

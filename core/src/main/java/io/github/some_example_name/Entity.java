@@ -8,19 +8,20 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 public class Entity extends GameObject{
+    protected int ID;
     protected float maxHealth;
     protected float health;
     protected Vector2 velocity;
     protected Vector2 moveVector; // unit vector in movement direction
     protected Vector2 lookVector; // unit vector in look direction
-    protected float facing;
+    protected float facing; // degrees
     protected int souls;
     protected boolean alive;
     protected boolean hostile;
 
     protected Collider[] body; // collision region
     protected Collider[] hurtboxes; // damageable region
-    protected Collider[] hitboxes; // damaging region
+    protected Collider[] hitboxes; // damaging region, indexed by the cause of damage, generally which attack.
 
     protected Sprite currentSprite;
 
@@ -40,19 +41,26 @@ public class Entity extends GameObject{
 
     private void bodyCollision(Collider[] refBody){
         for (Collider c1 : body){
-            for (Collider c2 : refBody) {
-                Vector2 mtv = c1.detectCollision(c2);
-                position.add(mtv);
-                transformColliders();
+            if (c1.isActive()) {
+                for (Collider c2 : refBody) {
+                    if (c2.isActive()) {
+                        Vector2 mtv = c1.detectCollision(c2);
+                        position.add(mtv);
+                        transformColliders();
+                    }
+                }
             }
         }
     }
 
-    private void hitboxOnHurtboxCollision(Collider[] refHitboxes){
+    private void hitboxOnHurtboxCollision(Collider[] refHitboxes){ // this entity's hurtboxes check external hitboxes
         for (Collider h1 : hurtboxes){
-            for (Collider h2 : refHitboxes) {
-                if (h2.isHitbox() && h1.detectCollision(h2).len() > 0){
-                    damageHealth(h2.getDamageValue());
+            if (h1.isActive()) {
+                for (Collider h2 : refHitboxes) {
+                    if (h2.isActive() && h1.detectCollision(h2).len() > 0 && !h2.isFlagged(ID)){
+                        damageHealth(h2.getDamageValue());
+                        h2.flagEntity(ID);
+                    }
                 }
             }
         }
@@ -62,10 +70,12 @@ public class Entity extends GameObject{
         for (Collider c : body){
             c.setAngle(Utils.degreesToRadians(facing));
             c.setPosition(position);
+            c.setVertices();
         }
         for (Collider h : hurtboxes){
             h.setAngle(Utils.degreesToRadians(facing));
             h.setPosition(position);
+            h.setVertices();
         }
     }
 

@@ -12,31 +12,37 @@ public class Collider extends GameObject{
     private Vector2[] vertices; // position vectors relative to world origin
     private Vector2[] dVertices; // position vectors relative to centroid of shape, no rotation
     private Vector2[] normals;
+    private boolean active;
 
-    private float damageValue; // if hurtbox
+    private float damageValue; // > 0 then hitbox
+
+    private AttackFlagManager attackFlagManager;
 
     //debug
     private boolean visible;
     private boolean normalsVisible;
     private Color debugColour;
 
-    public Collider(Vector2 positionArg, float xAdjustArg, float yAdjustArg, Vector2[] dVerticesArg, float initialAngleArg, Color debugColourArg, boolean visibleArg, boolean normalsVisibleArg) {
+    public Collider(Vector2 positionArg, float xAdjustArg, float yAdjustArg, Vector2[] dVerticesArg, float initialAngleArg, float damageValueArg, boolean activeArg, Color debugColourArg, boolean visibleArg, boolean normalsVisibleArg) {
         position = positionArg.cpy();
         xAdjust = xAdjustArg;
         yAdjust = yAdjustArg;
-        debugColour = debugColourArg;
-        visible = visibleArg;
-        normalsVisible = normalsVisibleArg;
         normals = new Vector2[0];
         angle = initialAngleArg;
         dVertices = dVerticesArg;
+        damageValue = damageValueArg;
+        active = activeArg;
         setVertices();
-        damageValue = 0;
+
+        attackFlagManager = new AttackFlagManager();
+
+        debugColour = debugColourArg;
+        visible = visibleArg;
+        normalsVisible = normalsVisibleArg;
     }
 
-    public void setPosition(Vector2 positionArg) { // positionArg should be centroid of parent object. Adjust values shift relative to that centroid.
+    public void setPosition(Vector2 positionArg) {
         this.position = new Vector2(positionArg.x + xAdjust, positionArg.y + yAdjust);
-        setVertices();
     }
 
     public Vector2 detectCollision(Collider refCollider){ // Polygon on Polygon, uses SAT, returns minimum translation vector for this collider to separate with the reference collider. Returns 0 vector if not colliding
@@ -88,7 +94,7 @@ public class Collider extends GameObject{
         this.damageValue = damageValue;
     }
 
-    private void setVertices(){
+    public void setVertices(){ // Must be used after updating position or angle
         vertices = Utils.translatePolygon(dVertices, position);
         vertices = Utils.rotatePolygon(vertices, position, angle);
     }
@@ -103,6 +109,32 @@ public class Collider extends GameObject{
 
     public boolean isHitbox(){
         return (damageValue>0);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void activate(){
+        active = true;
+        visible = true;
+    }
+
+    public void deactivate(){
+        active = false;
+        visible = false;
+    }
+
+    public void flagEntity(int ID){
+        attackFlagManager.flagEntity(ID);
+    }
+
+    public boolean isFlagged(int ID){
+        return attackFlagManager.isFlagged(ID);
+    }
+
+    public void clearFlags(){
+        attackFlagManager.clear();
     }
 
     public void debugRender(ShapeRenderer sr){

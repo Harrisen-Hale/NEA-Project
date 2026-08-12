@@ -14,5 +14,7 @@ public final class ControlsDirectory {
     }
     public static final class Combat{
         public static final int LOCK_ON = Input.Keys.F;
+        public static final int ATTACK = Input.Buttons.LEFT;
+        public static final int BLOCK = Input.Buttons.RIGHT;
     }
 }

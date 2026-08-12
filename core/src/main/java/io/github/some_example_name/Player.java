@@ -17,10 +17,12 @@ public class Player extends Entity{
     private float rollCoefficient;
     private float sprintStaminaCost;
     private float rollStaminaCost;
+    private float lightAttackStaminaCost;
     private final int iTicks = 26;
-    private final int ROLL_LENGTH = 40; // ticks
-    private final float STAMINA_REGEN_DELAY = 90; // ticks
-    private final float STAMINA_REGEN_RATE = 0.5f; // per tick
+    private final int ROLL_DURATION = 40; // ticks
+    private final int LIGHT_ATTACK_DURATION = 22; // ticks, must be an even number for symmetric movement
+    private final float STAMINA_REGEN_DELAY = 10; // ticks - 90
+    private final float STAMINA_REGEN_RATE = 5f; // per tick - 0.5
 
     private float maxStamina;
     private float stamina;
@@ -34,8 +36,8 @@ public class Player extends Entity{
     private boolean canMove;
     private boolean rotationalTrackingEnabled;
     private boolean lockedOn;
-    private int currentRollTick;
-    private int actionState; // 0 - Idle, 1 - Roll,
+    private int currentActionTick;
+    private int actionState; // 0 - Idle, 1 - Roll, 2 - Light Attack, 3 - Heavy Attack
     private CircularQueue actionBuffer;
 
     private Vector2 worldMousePosition;
@@ -44,9 +46,9 @@ public class Player extends Entity{
 
     private SoundLooper walkLoop;
 
-    public Player(){
+    public Player(int IDArg){
         loadTextures();
-        initialiseBaseValuesAndConstants();
+        initialiseBaseValuesAndConstants(IDArg);
     }
 
     public void logicTick(OrthographicCamera camera){
@@ -157,12 +159,21 @@ public class Player extends Entity{
     }
 
     private void combatController(){
-        boolean isRollPressed = Gdx.input.isKeyJustPressed(ControlsDirectory.Movement.ROLL);
+        boolean rollPressed = Gdx.input.isKeyJustPressed(ControlsDirectory.Movement.ROLL);
+        boolean attackPressed = Gdx.input.isButtonJustPressed(ControlsDirectory.Combat.ATTACK);
+        boolean blockHeld = Gdx.input.isButtonPressed(ControlsDirectory.Combat.BLOCK);
 
-        // full buffer is accounted for in enqueue method
+        // full action buffer is accounted for in enqueue method
         if (stamina > 0) {
-            if (isRollPressed){
+            if (rollPressed){
                 actionBuffer.enqueue(1);
+            }
+            if(attackPressed){
+                if (blockHeld){
+                    actionBuffer.enqueue(3);
+                }else {
+                    actionBuffer.enqueue(2);
+                }
             }
         }
 
@@ -171,11 +182,15 @@ public class Player extends Entity{
         }
         if (actionState == 1){
             roll();
+        }else if (actionState == 2){
+            lightAttack();
+        }else if (actionState == 3){
+            heavyAttack();
         }
     }
 
     private void roll(){
-        if (currentRollTick == 0){ // start of roll
+        if (currentActionTick == 0){ // start of roll
             canMove = false;
             rotationalTrackingEnabled = false;
             takeStamina(rollStaminaCost);
@@ -185,21 +200,54 @@ public class Player extends Entity{
         if (rollAnim.update()){ // change frame of animation
             setSprite(rollAnim.getCurrentFrame());
         }
-        if (currentRollTick > (ROLL_LENGTH-iTicks)/2 && currentRollTick < (ROLL_LENGTH+iTicks)/2){
+        if (currentActionTick > (ROLL_DURATION -iTicks)/2 && currentActionTick < (ROLL_DURATION +iTicks)/2){
             vulnerable = false;
-        }else if (currentRollTick == (ROLL_LENGTH+iTicks)/2){
+        }else if (currentActionTick == (ROLL_DURATION +iTicks)/2){
             vulnerable = true;
         }
-        velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentRollTick / ROLL_LENGTH), 2))+((double) (4 * (currentRollTick / ROLL_LENGTH))))));
-        currentRollTick++;
-        if (currentRollTick == ROLL_LENGTH){ // end of roll
+        velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentActionTick / ROLL_DURATION), 2))+((double) (4 * (currentActionTick / ROLL_DURATION))))));
+        currentActionTick++;
+        if (currentActionTick == ROLL_DURATION){ // end of roll
             actionState = 0;
             canMove = true;
             rotationalTrackingEnabled = true;
-            currentRollTick = 0;
+            currentActionTick = 0;
             rollAnim.reset();
-
         }
+    }
+
+    private void lightAttack(){ // uses hitbox index 0
+        Collider attackHitbox = hitboxes[0];
+        if (currentActionTick == 0){ // start of attack
+            canMove = false;
+            rotationalTrackingEnabled = false;
+            takeStamina(lightAttackStaminaCost);
+            attackHitbox.activate();
+            attackHitbox.clearFlags();
+        }
+
+        float t = (2*(currentActionTick - LIGHT_ATTACK_DURATION/2f))/LIGHT_ATTACK_DURATION; // parametric independent variable
+        float P = 0.25f; // change in (relative) x
+        float Q = 0.5f; // change in (relative) y
+        Vector2 relativePosition = new Vector2(-P*t, (float) (Q*(-(Math.pow(t, 2)) + 1)));
+        float playerAngle = Utils.degreesToRadians(facing-90);
+        attackHitbox.setPosition(position.cpy().add(Utils.rotate(relativePosition, playerAngle)));
+        attackHitbox.setAngle(playerAngle);
+        attackHitbox.setVertices();
+
+        currentActionTick++;
+
+        if (currentActionTick == LIGHT_ATTACK_DURATION){ // end of attack
+            actionState = 0;
+            canMove = true;
+            rotationalTrackingEnabled = true;
+            currentActionTick = 0;
+            attackHitbox.deactivate();
+        }
+    }
+
+    private void heavyAttack(){ // uses hitbox index 1
+
     }
 
     private void rotationController(Vector2 target){
@@ -247,8 +295,11 @@ public class Player extends Entity{
         for (Collider c : body){
             c.debugRender(sr);
         }
-        for (Collider h : hurtboxes){
-            h.debugRender(sr);
+        for (Collider hu : hurtboxes){
+            hu.debugRender(sr);
+        }
+        for (Collider hi : hitboxes){
+            hi.debugRender(sr);
         }
     }
 
@@ -263,10 +314,12 @@ public class Player extends Entity{
         currentSprite.setOriginCenter();
     }
 
-    protected void initialiseBaseValuesAndConstants(){
+    protected void initialiseBaseValuesAndConstants(int IDArg){
+        ID = IDArg;
         rollCoefficient = 1/25f;
         sprintStaminaCost = 0.25f;
         rollStaminaCost = 30f;
+        lightAttackStaminaCost = 30f;
         position = new Vector2(0,0);
         velocity = new Vector2(0,0);
         moveVector = new Vector2(0,0);
@@ -278,7 +331,7 @@ public class Player extends Entity{
         canMove = true;
         rotationalTrackingEnabled = true;
         lockedOn = false;
-        currentRollTick = 0;
+        currentActionTick = 0;
         actionState = 0;
         maxHealth = 500;
         health = maxHealth;
@@ -290,10 +343,9 @@ public class Player extends Entity{
 
         walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
 
-        hurtboxes = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(20, 0.35f), 0, Color.RED, true, false)};
-        body = hurtboxes;
-        hitboxes = hurtboxes;
-        hitboxes[0].setDamageValue(10);
+        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(20, 0.35f), 0, 0, true, Color.RED, true, false)};
+        hurtboxes = new Collider[]{new Collider(position, 0, 0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, 0, true, Color.BLUE, true, false)};
+        hitboxes = new Collider[]{new Collider(position, 0, 0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, 100f, false, Color.MAGENTA, false, false)};
     }
 
     // getters and setters

@@ -40,7 +40,7 @@ public class Game {
         sr = new ShapeRenderer();
         tickManager = new TickManager();
 
-        player = new Player();
+        player = new Player(0);
         hud = new HUD();
         hud.updateMaxHealth(player.getMaxHealth());
         hud.updateMaxStamina(player.getMaxStamina());
