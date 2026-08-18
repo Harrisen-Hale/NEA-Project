@@ -16,8 +16,6 @@ public class Collider extends GameObject{
 
     private float damageValue; // > 0 then hitbox
 
-    private AttackFlagManager attackFlagManager;
-
     //debug
     private boolean visible;
     private boolean normalsVisible;
@@ -33,8 +31,6 @@ public class Collider extends GameObject{
         damageValue = damageValueArg;
         active = activeArg;
         setVertices();
-
-        attackFlagManager = new AttackFlagManager();
 
         debugColour = debugColourArg;
         visible = visibleArg;
@@ -125,18 +121,6 @@ public class Collider extends GameObject{
         visible = false;
     }
 
-    public void flagEntity(int ID){
-        attackFlagManager.flagEntity(ID);
-    }
-
-    public boolean isFlagged(int ID){
-        return attackFlagManager.isFlagged(ID);
-    }
-
-    public void clearFlags(){
-        attackFlagManager.clear();
-    }
-
     public void debugRender(ShapeRenderer sr){
         if (visible) {
             sr.setColor(debugColour);
@@ -149,4 +133,7 @@ public class Collider extends GameObject{
         }
     }
 
+    public void setDebugColour(Color debugColour) {
+        this.debugColour = debugColour;
+    }
 }

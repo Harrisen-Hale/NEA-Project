@@ -111,8 +111,8 @@ public class Game {
 
     private void collision(){
         for (Entity e : currentLevel.getEntities()){ // player-on-entity collision
-            player.collision(e.getBody(), e.getHitboxes());
-            e.collision(player.getBody(), player.getHitboxes());
+            player.collision(e.getBody(), e.getDamageSources());
+            e.collision(player.getBody(), player.getDamageSources());
         }
     }
 

@@ -20,9 +20,10 @@ public class Player extends Entity{
     private float lightAttackStaminaCost;
     private final int iTicks = 26;
     private final int ROLL_DURATION = 40; // ticks
-    private final int LIGHT_ATTACK_DURATION = 22; // ticks, must be an even number for symmetric movement
-    private final float STAMINA_REGEN_DELAY = 10; // ticks - 90
-    private final float STAMINA_REGEN_RATE = 5f; // per tick - 0.5
+    private final int LIGHT_ATTACK_DURATION = 22; // ticks, must be an even number for symmetric path
+    private final float STAMINA_REGEN_DELAY = 90; // ticks - 90
+    private final float BASE_STAMINA_REGEN_RATE = 0.5f; // per tick
+    private float staminaRegenCoefficient;
 
     private float maxStamina;
     private float stamina;
@@ -36,9 +37,15 @@ public class Player extends Entity{
     private boolean canMove;
     private boolean rotationalTrackingEnabled;
     private boolean lockedOn;
-    private int currentActionTick;
+    private int currentRollTick;
     private int actionState; // 0 - Idle, 1 - Roll, 2 - Light Attack, 3 - Heavy Attack
     private CircularQueue actionBuffer;
+
+    private Collider shield;
+
+    // attacks
+    private LightAttack lightAttack;
+    private  HeavyAttack heavyAttack;
 
     private Vector2 worldMousePosition;
 
@@ -56,6 +63,7 @@ public class Player extends Entity{
         playerController();
         staminaRegeneration();
         transformColliders();
+        transformShield();
     }
 
     private void playerController(){
@@ -180,17 +188,63 @@ public class Player extends Entity{
         if (actionState == 0  && stamina > 0 && actionBuffer.notEmpty()){
             actionState = actionBuffer.dequeue();
         }
+        block(blockHeld); // action state must be 0 to block
         if (actionState == 1){
             roll();
         }else if (actionState == 2){
-            lightAttack();
+            lightAttack.execute();
         }else if (actionState == 3){
-            heavyAttack();
+            heavyAttack.execute();
+        }
+    }
+
+    public void collision(Collider[] refBody, DamageSource[] damageSources){
+        bodyCollision(refBody);
+        hitboxOnHurtboxCollision(damageSources);
+    }
+
+    private void hitboxOnHurtboxCollision(DamageSource[] damageSources){ // this entity's hurtboxes check external hitboxes
+        if (vulnerable) {
+            for (DamageSource d : damageSources) { // shield blocking incoming attacks
+                for (Collider h : d.getHitbox()){
+                    if (h.isActive() && shield.detectCollision(h).len() > 0 && shield.isActive() && !d.isFlagged(ID)){
+                        d.flagEntity(ID);
+                    }
+                }
+            }
+
+            for (Collider hurtbox : hurtboxes){ // same as super method
+                if (hurtbox.isActive()) {
+                    for (DamageSource d : damageSources) {
+                        for (Collider h : d.getHitbox()){
+                            if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && !d.isFlagged(ID)){
+                                damageHealth(h.getDamageValue());
+                                d.flagEntity(ID);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void transformShield(){
+        shield.setPosition(position.cpy().add(lookVector.cpy().scl(1/8f)));
+        shield.setAngle(Utils.degreesToRadians(facing));
+        shield.setVertices();
+    }
+
+    public void block(boolean blockHeld){ // handles use of the shield
+        if (blockHeld && actionState == 0  && stamina > 0){
+            shield.activate();
+            staminaRegenCoefficient *= 0.25f; // stamina regen is slowed if blocking
+        }else {
+            shield.deactivate();
         }
     }
 
     private void roll(){
-        if (currentActionTick == 0){ // start of roll
+        if (currentRollTick == 0){ // start of roll
             canMove = false;
             rotationalTrackingEnabled = false;
             takeStamina(rollStaminaCost);
@@ -200,54 +254,20 @@ public class Player extends Entity{
         if (rollAnim.update()){ // change frame of animation
             setSprite(rollAnim.getCurrentFrame());
         }
-        if (currentActionTick > (ROLL_DURATION -iTicks)/2 && currentActionTick < (ROLL_DURATION +iTicks)/2){
+        if (currentRollTick > (ROLL_DURATION -iTicks)/2 && currentRollTick < (ROLL_DURATION +iTicks)/2){
             vulnerable = false;
-        }else if (currentActionTick == (ROLL_DURATION +iTicks)/2){
+        }else if (currentRollTick >= (ROLL_DURATION +iTicks)/2){
             vulnerable = true;
         }
-        velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentActionTick / ROLL_DURATION), 2))+((double) (4 * (currentActionTick / ROLL_DURATION))))));
-        currentActionTick++;
-        if (currentActionTick == ROLL_DURATION){ // end of roll
+        velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentRollTick / ROLL_DURATION), 2))+((double) (4 * (currentRollTick / ROLL_DURATION))))));
+        currentRollTick++;
+        if (currentRollTick == ROLL_DURATION){ // end of roll
             actionState = 0;
             canMove = true;
             rotationalTrackingEnabled = true;
-            currentActionTick = 0;
+            currentRollTick = 0;
             rollAnim.reset();
         }
-    }
-
-    private void lightAttack(){ // uses hitbox index 0
-        Collider attackHitbox = hitboxes[0];
-        if (currentActionTick == 0){ // start of attack
-            canMove = false;
-            rotationalTrackingEnabled = false;
-            takeStamina(lightAttackStaminaCost);
-            attackHitbox.activate();
-            attackHitbox.clearFlags();
-        }
-
-        float t = (2*(currentActionTick - LIGHT_ATTACK_DURATION/2f))/LIGHT_ATTACK_DURATION; // parametric independent variable
-        float P = 0.25f; // change in (relative) x
-        float Q = 0.5f; // change in (relative) y
-        Vector2 relativePosition = new Vector2(-P*t, (float) (Q*(-(Math.pow(t, 2)) + 1)));
-        float playerAngle = Utils.degreesToRadians(facing-90);
-        attackHitbox.setPosition(position.cpy().add(Utils.rotate(relativePosition, playerAngle)));
-        attackHitbox.setAngle(playerAngle);
-        attackHitbox.setVertices();
-
-        currentActionTick++;
-
-        if (currentActionTick == LIGHT_ATTACK_DURATION){ // end of attack
-            actionState = 0;
-            canMove = true;
-            rotationalTrackingEnabled = true;
-            currentActionTick = 0;
-            attackHitbox.deactivate();
-        }
-    }
-
-    private void heavyAttack(){ // uses hitbox index 1
-
     }
 
     private void rotationController(Vector2 target){
@@ -271,12 +291,18 @@ public class Player extends Entity{
 
     private void staminaRegeneration(){
         if (ticksSinceStaminaUsed > STAMINA_REGEN_DELAY && stamina < maxStamina){
-            stamina += STAMINA_REGEN_RATE;
+            stamina += calculateStaminaRegenRate();
             if (stamina > maxStamina){
                 stamina = maxStamina;
             }
         }
         ticksSinceStaminaUsed++;
+    }
+
+    private float calculateStaminaRegenRate(){
+        float staminaRegenRate = BASE_STAMINA_REGEN_RATE * staminaRegenCoefficient;
+        staminaRegenCoefficient = 1;
+        return staminaRegenRate;
     }
 
     private void setWorldMousePosition(OrthographicCamera camera){
@@ -296,11 +322,15 @@ public class Player extends Entity{
             c.debugRender(sr);
         }
         for (Collider hu : hurtboxes){
+            if (!vulnerable){
+                hu.setDebugColour(Color.PINK);
+            }else{
+                hu.setDebugColour(Color.RED);
+            }
             hu.debugRender(sr);
         }
-        for (Collider hi : hitboxes){
-            hi.debugRender(sr);
-        }
+        lightAttack.debugRender(sr);
+        shield.debugRender(sr);
     }
 
     protected void loadTextures(){
@@ -331,21 +361,24 @@ public class Player extends Entity{
         canMove = true;
         rotationalTrackingEnabled = true;
         lockedOn = false;
-        currentActionTick = 0;
+        currentRollTick = 0;
         actionState = 0;
         maxHealth = 500;
         health = maxHealth;
         maxStamina = 500;
         stamina = maxStamina;
+        staminaRegenCoefficient = 1;
         souls = 0;
         vulnerable = true;
         actionBuffer = new CircularQueue(2);
 
         walkLoop = new SoundLooper(90, AssetDirectory.Audio.Player.WALK, 0.3f);
 
-        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(20, 0.35f), 0, 0, true, Color.RED, true, false)};
-        hurtboxes = new Collider[]{new Collider(position, 0, 0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, 0, true, Color.BLUE, true, false)};
-        hitboxes = new Collider[]{new Collider(position, 0, 0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, 100f, false, Color.MAGENTA, false, false)};
+        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(20, 0.35f), 0, 0, true, Color.BLUE, false, false)};
+        hurtboxes = new Collider[]{new Collider(position, 0, 0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, 0, true, Color.RED, true, false)};
+        shield = new Collider(position, 0, 0, new Vector2[]{new Vector2(0, -5/16f), new Vector2(1/8f, -5/16f), new Vector2(1/8f, 5/16f), new Vector2(0, 5/16f)}, 0, 0, false, Color.GREEN, false, false);
+        lightAttack = new LightAttack();
+        heavyAttack = new HeavyAttack();
     }
 
     // getters and setters
@@ -362,6 +395,10 @@ public class Player extends Entity{
         return stamina;
     }
 
+    public DamageSource[] getDamageSources(){
+        return new DamageSource[]{lightAttack};
+    }
+
     public void setLookTarget(Vector2 lookTarget) {
         this.lookTarget = lookTarget;
     }
@@ -371,11 +408,13 @@ public class Player extends Entity{
     }
 
     public void damageHealth(float damage) {
-        this.health -= damage;
-        if (health < 0){
-            health = 0;
+        if (vulnerable) { // redundant safety check in case not checked by cause of damage
+            this.health -= damage;
+            if (health < 0){
+                health = 0;
+            }
+            AssetDirectory.Audio.Player.HURT.play(0.3f);
         }
-        AssetDirectory.Audio.Player.HURT.play(0.3f);
     }
 
     public void takeStamina(float amount){
@@ -392,5 +431,53 @@ public class Player extends Entity{
 
     public boolean isVulnerable() {
         return vulnerable;
+    }
+
+    // attacks
+
+    private class LightAttack extends DamageSource{
+        private LightAttack(){
+            hitbox = new Collider[]{new Collider(position, 0, 0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, 100f, false, Color.MAGENTA, false, false)};
+            attackFlagManager = new AttackFlagManager();
+        }
+
+        public void execute(){
+            if (currentActionTick == 0){ // start of attack
+                canMove = false;
+                rotationalTrackingEnabled = false;
+                takeStamina(lightAttackStaminaCost);
+                hitbox[0].activate();
+                clearFlags();
+            }
+
+            float t = (2*(currentActionTick - LIGHT_ATTACK_DURATION/2f))/LIGHT_ATTACK_DURATION; // parametric variable
+            float P = 0.25f; // change in (relative) x
+            float Q = 0.5f; // change in (relative) y
+            Vector2 relativePosition = new Vector2(-P*t, (float) (Q*(-(Math.pow(t, 2)) + 1)));
+            float playerAngle = Utils.degreesToRadians(facing-90);
+            hitbox[0].setPosition(position.cpy().add(Utils.rotate(relativePosition, playerAngle)));
+            hitbox[0].setAngle(playerAngle);
+            hitbox[0].setVertices();
+
+            currentActionTick++;
+
+            if (currentActionTick == LIGHT_ATTACK_DURATION){ // end of attack
+                actionState = 0;
+                canMove = true;
+                rotationalTrackingEnabled = true;
+                currentActionTick = 0;
+                hitbox[0].deactivate();
+            }
+        }
+
+        public void debugRender(ShapeRenderer sr){
+            hitbox[0].debugRender(sr);
+        }
+    }
+
+    private class HeavyAttack extends  DamageSource{
+        public void execute(){
+            actionState = 0;
+        }
     }
 }

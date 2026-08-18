@@ -21,7 +21,6 @@ public class Entity extends GameObject{
 
     protected Collider[] body; // collision region
     protected Collider[] hurtboxes; // damageable region
-    protected Collider[] hitboxes; // damaging region, indexed by the cause of damage, generally which attack.
 
     protected Sprite currentSprite;
 
@@ -34,12 +33,12 @@ public class Entity extends GameObject{
         transformColliders();
     }
 
-    public void collision(Collider[] refBody, Collider[] refHitBoxes){
+    public void collision(Collider[] refBody, DamageSource[] damageSources){
         bodyCollision(refBody);
-        hitboxOnHurtboxCollision(refHitBoxes);
+        hitboxOnHurtboxCollision(damageSources);
     }
 
-    private void bodyCollision(Collider[] refBody){
+    protected void bodyCollision(Collider[] refBody){
         for (Collider c1 : body){
             if (c1.isActive()) {
                 for (Collider c2 : refBody) {
@@ -53,13 +52,15 @@ public class Entity extends GameObject{
         }
     }
 
-    private void hitboxOnHurtboxCollision(Collider[] refHitboxes){ // this entity's hurtboxes check external hitboxes
-        for (Collider h1 : hurtboxes){
-            if (h1.isActive()) {
-                for (Collider h2 : refHitboxes) {
-                    if (h2.isActive() && h1.detectCollision(h2).len() > 0 && !h2.isFlagged(ID)){
-                        damageHealth(h2.getDamageValue());
-                        h2.flagEntity(ID);
+    private void hitboxOnHurtboxCollision(DamageSource[] damageSources){ // this entity's hurtboxes check external hitboxes
+        for (Collider hurtbox : hurtboxes){
+            if (hurtbox.isActive()) {
+                for (DamageSource d : damageSources) {
+                    for (Collider h : d.getHitbox()){
+                        if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && !d.isFlagged(ID)){
+                            damageHealth(h.getDamageValue());
+                            d.flagEntity(ID);
+                        }
                     }
                 }
             }
@@ -107,7 +108,6 @@ public class Entity extends GameObject{
         souls = 0;
         body = new Collider[0];
         hurtboxes = new Collider[0];
-        hitboxes = new Collider[0];
     }
 
     public void drawDebug(ShapeRenderer sr){
@@ -144,8 +144,8 @@ public class Entity extends GameObject{
         return hurtboxes;
     }
 
-    public Collider[] getHitboxes() {
-        return hitboxes;
+    public DamageSource[] getDamageSources(){
+        return new DamageSource[]{};
     }
 
     protected void setSprite(Texture newTexture){
