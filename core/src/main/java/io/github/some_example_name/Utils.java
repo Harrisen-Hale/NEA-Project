@@ -4,12 +4,13 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Utils {
     public static float[] findDistances(Vector2 refPos, Vector2[] positions){ // returns array of distances from refPos to each element of positions
         float[] distances = new float[positions.length];
         for (int i = 0; i < positions.length; i++){
-            distances[i] = refPos.cpy().sub(positions[i]).len();
+            distances[i] = findDistance(refPos, positions[i]);
         }
         return distances;
     }
@@ -140,8 +141,24 @@ public class Utils {
         return (p1.y-p2.y)/(p1.x-p2.x);
     }
 
-    public static int[] arrayListToArray(ArrayList<Integer> arrayList){
+    public static int[] intArrayListToArray(ArrayList<Integer> arrayList){
         int[] output = new int[arrayList.size()];
+        for (int i = 0; i < arrayList.size(); i++){
+            output[i] = arrayList.get(i);
+        }
+        return output;
+    }
+
+    public static float[] floatArrayListToArray(ArrayList<Float> arrayList){
+        float[] output = new float[arrayList.size()];
+        for (int i = 0; i < arrayList.size(); i++){
+            output[i] = arrayList.get(i);
+        }
+        return output;
+    }
+
+    public static Vector2[] vectorArrayListToArray(ArrayList<Vector2> arrayList){
+        Vector2[] output = new Vector2[arrayList.size()];
         for (int i = 0; i < arrayList.size(); i++){
             output[i] = arrayList.get(i);
         }
@@ -155,5 +172,9 @@ public class Utils {
             }
         }
         return -1;
+    }
+
+    public static float findDistance(Vector2 p1, Vector2 p2){
+        return p1.cpy().sub(p2).len();
     }
 }

@@ -17,7 +17,6 @@ public class Entity extends GameObject{
     protected float facing; // degrees
     protected int souls;
     protected boolean alive;
-    protected boolean hostile;
 
     protected Collider[] body; // collision region
     protected Collider[] hurtboxes; // damageable region
@@ -29,19 +28,33 @@ public class Entity extends GameObject{
         initialiseBaseValuesAndConstants();
     }
 
-    public void logicTick(){
+    public void logicTick(Player player){
         transformColliders();
     }
 
-    public void collision(Collider[] refBody, DamageSource[] damageSources){
-        bodyCollision(refBody);
-        hitboxOnHurtboxCollision(damageSources);
+    public void collision(Entity ref){
+        bodyCollision(ref);
+        hitboxOnHurtboxCollision(ref.getDamageSources());
     }
 
-    protected void bodyCollision(Collider[] refBody){
+    public void bodyCollision(Entity ref){
         for (Collider c1 : body){
             if (c1.isActive()) {
-                for (Collider c2 : refBody) {
+                for (Collider c2 : ref.getBody()) {
+                    if (c2.isActive()) {
+                        Vector2 mtv = c1.detectCollision(c2);
+                        move(mtv);
+                        transformColliders();
+                    }
+                }
+            }
+        }
+    }
+
+    public void bodyCollision(Obstacle ref){
+        for (Collider c1 : body){
+            if (c1.isActive()) {
+                for (Collider c2 : ref.getBody()) {
                     if (c2.isActive()) {
                         Vector2 mtv = c1.detectCollision(c2);
                         position.add(mtv);
@@ -52,7 +65,7 @@ public class Entity extends GameObject{
         }
     }
 
-    private void hitboxOnHurtboxCollision(DamageSource[] damageSources){ // this entity's hurtboxes check external hitboxes
+    public void hitboxOnHurtboxCollision(DamageSource[] damageSources){ // this entity's hurtboxes check external hitboxes
         for (Collider hurtbox : hurtboxes){
             if (hurtbox.isActive()) {
                 for (DamageSource d : damageSources) {
@@ -65,6 +78,25 @@ public class Entity extends GameObject{
                 }
             }
         }
+    }
+
+    protected void rotation(Vector2 target){
+        Vector2 vToTarget = target.cpy().sub(position);
+        float theta = vToTarget.angleDeg();
+        float phi = theta - facing;
+        while (phi > 180){
+            phi -= 360;
+        }                   // restrict phi to the interval (-180, 180]
+        while (phi <= -180){
+            phi += 360;
+        }
+        if (Math.abs(phi) >= 0.005){ // eliminate asymptotic behaviour
+            facing += phi/20f;
+        }else {
+            facing = theta;
+        }
+        float angle = Utils.degreesToRadians(facing);
+        lookVector = Utils.rotate(new Vector2(1,0), angle);
     }
 
     public void transformColliders(){
@@ -132,8 +164,16 @@ public class Entity extends GameObject{
         return souls;
     }
 
-    public Vector2 getPosition() {
-        return position;
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public void move(Vector2 v){
+        position.add(v);
+    }
+
+    public int getID() {
+        return ID;
     }
 
     public Collider[] getBody() {
@@ -146,6 +186,10 @@ public class Entity extends GameObject{
 
     public DamageSource[] getDamageSources(){
         return new DamageSource[]{};
+    }
+
+    public void setVelocity(Vector2 velocity) {
+        this.velocity = velocity;
     }
 
     protected void setSprite(Texture newTexture){

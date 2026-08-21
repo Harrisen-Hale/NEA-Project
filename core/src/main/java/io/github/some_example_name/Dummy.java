@@ -18,7 +18,7 @@ public class Dummy extends Entity{
         initialiseBaseValuesAndConstants();
         ID = IDArg;
         position = positionArg;
-        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, 0, true, Color.BLUE, true, false)};
+        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, 0, true, Color.BLUE, false, false)};
         hurtboxes = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.4f), 0, 0, true, Color.RED, true, false)};
         healthBar = new StatusBar(0, 0, 0, 1/15f, 1);
         maxHealth = 500;
@@ -27,7 +27,7 @@ public class Dummy extends Entity{
         attack = new Attack();
     }
 
-    public void logicTick(){
+    public void logicTick(Player player){
         transformColliders();
         healthBar.updateBar(health/maxHealth);
     }
@@ -38,12 +38,6 @@ public class Dummy extends Entity{
         currentSprite = new Sprite(textureIdle);
         currentSprite.setSize(1f, 1f);
         currentSprite.setOriginCenter();
-    }
-
-    public void drawBody(Batch batch){
-        currentSprite.setPosition(position.x-0.5f, position.y-0.5f);
-        currentSprite.setRotation(facing);
-        currentSprite.draw(batch);
     }
 
     public void drawEffects(Batch batch){
@@ -76,7 +70,7 @@ public class Dummy extends Entity{
     private class Attack extends DamageSource{
 
         private Attack(){
-            hitbox = new Collider[]{new Collider(position.cpy().add(0, -1f), 0, 0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, 10f, true, Color.ORANGE, true, false)};
+            hitbox = new Collider[]{new Collider(position.cpy().add(0, -1f), 0,0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, 10f, true, Color.ORANGE, true, false)};
             hitbox[0].setVertices();
             attackFlagManager = new AttackFlagManager();
         }

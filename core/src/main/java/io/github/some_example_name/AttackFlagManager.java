@@ -18,6 +18,6 @@ public class AttackFlagManager {
     }
 
     public boolean isFlagged(int ID){
-        return (Utils.linearSearch(ID, Utils.arrayListToArray(flaggedEntities)) >= 0); // the index returned by search is greater than or equal to zero if and only if the target is present
+        return (Utils.linearSearch(ID, Utils.intArrayListToArray(flaggedEntities)) >= 0); // the index returned by search is greater than or equal to zero if and only if the target is present
     }
 }

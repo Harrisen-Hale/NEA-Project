@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Tile extends GameObject{
 
-    private Texture texture;
+    protected Texture texture;
 
     public Tile(int x, int y, String textureName){
         position = new Vector2(x,y);

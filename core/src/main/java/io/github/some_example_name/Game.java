@@ -2,6 +2,7 @@ package io.github.some_example_name;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -13,6 +14,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Vector;
+
 public class Game {
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -22,6 +27,7 @@ public class Game {
     private TickManager tickManager;
 
     private Level_1 level1;
+    private DeveloperTools developerTools;
 
     private Level currentLevel;
 
@@ -47,8 +53,10 @@ public class Game {
         loadTextures();
 
 
-        level1 = new Level_1(player);
+        level1 = new Level_1(player, camera.position);
         currentLevel = level1;
+
+        developerTools = new DeveloperTools();
     }
 
     public void gameUpdate(){
@@ -57,12 +65,13 @@ public class Game {
         while (tickManager.acceptTick()){
             logicTick();
             renderTick();
+            developerTools.navNodePlacement();
         }
     }
 
     public void logicTick(){
-        player.logicTick(camera);
         currentLevel.logicTick();
+        player.logicTick(camera);
         collision();
         hud.updatePlayerHealthAndStamina(player.getMaxHealth(), player.getHealth(), player.getMaxStamina(), player.getStamina());
         lockOn();
@@ -105,14 +114,26 @@ public class Game {
         sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeRenderer.ShapeType.Line);
         currentLevel.drawAllDebug(sr);
+        currentLevel.drawNavNodes(sr);
         player.drawDebug(sr);
         sr.end();
     }
 
     private void collision(){
-        for (Entity e : currentLevel.getEntities()){ // player-on-entity collision
-            player.collision(e.getBody(), e.getDamageSources());
-            e.collision(player.getBody(), player.getDamageSources());
+        for (Entity e : currentLevel.getEntities()){
+            e.collision(player); // entity-on-player collision
+            player.hitboxOnHurtboxCollision(e.getDamageSources());
+            for (Entity p : currentLevel.getEntities()){ // entity-on-entity collision
+                if (p.getID() != e.getID()){ // no colliding with self
+                    e.bodyCollision(p);
+                }
+            }
+        }
+        for (Obstacle o : currentLevel.getObstacles()){ // obstacle collision
+            player.bodyCollision(o);
+            for (Entity e : currentLevel.getEntities()){
+                e.bodyCollision(o);
+            }
         }
     }
 
@@ -186,5 +207,58 @@ public class Game {
             player.healHealth(heal);
         }
 
+    }
+
+    private class DeveloperTools{
+        private Vector2[] currentNodeVertices = new Vector2[3];
+        private int currentIndex = 0;
+        private int numVertices = 0;
+
+        private void navNodePlacement(){ // debug developer tool
+            ArrayList<Vector2> environmentVertices = new ArrayList<>();
+            for (Obstacle o : currentLevel.getObstacles()){
+                for (Collider c : o.getBody()){
+                    for (Vector2 v : c.getVertices()){
+                        environmentVertices.add(v);
+                    }
+                }
+            }
+            for (NavNode n : currentLevel.getNavNodes()){
+                environmentVertices.add(n.getVertices()[0]);
+                environmentVertices.add(n.getVertices()[1]);
+                environmentVertices.add(n.getVertices()[2]);
+            }
+            Vector2 selectedVertex = environmentVertices.get(Utils.findClosestPosition(player.getWorldMousePosition(), Utils.vectorArrayListToArray(environmentVertices)));
+            if (Utils.findDistance(player.getWorldMousePosition(), selectedVertex) > 0.5f){
+                selectedVertex = player.getWorldMousePosition();
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.COMMA)){
+                currentNodeVertices[currentIndex] = selectedVertex;
+                currentIndex = (currentIndex + 1) % 3;
+                numVertices ++;
+                if (numVertices > 3){
+                    numVertices = 3;
+                }
+            }else if (Gdx.input.isKeyJustPressed(Input.Keys.PERIOD)){
+                System.out.println("navNodes[i] = new NavNode(new Vector2[]{new Vector2("+currentNodeVertices[0].x+"f,"+currentNodeVertices[0].y+"f)"+", new Vector2("+currentNodeVertices[1].x+"f,"+currentNodeVertices[1].y+"f)"+", new Vector2("+currentNodeVertices[2].x+"f,"+currentNodeVertices[2].y+"f)});");
+            }
+
+            sr.setProjectionMatrix(camera.combined);
+            sr.begin(ShapeRenderer.ShapeType.Filled);
+            sr.setColor(Color.CYAN);
+            sr.circle(selectedVertex.x, selectedVertex.y, 0.1f, 20);
+            if (numVertices == 1){
+                sr.circle(currentNodeVertices[0].x, currentNodeVertices[0].y, 0.1f, 20);
+            }
+            else if (numVertices == 2){
+                sr.rectLine(currentNodeVertices[(currentIndex - 1) % 3], currentNodeVertices[(currentIndex - 2) % 3], 0.1f);
+            }else if (numVertices == 3){
+                float[] floats = Utils.convertToPairwisePoints(currentNodeVertices);
+                sr.triangle(floats[0], floats[1], floats[2], floats[3], floats[4], floats[5]);
+            }
+            sr.end();
+            //System.out.println(currentNodeVertices[0] + " | " + currentNodeVertices[1] + " | " + currentNodeVertices[2]);
+        }
     }
 }

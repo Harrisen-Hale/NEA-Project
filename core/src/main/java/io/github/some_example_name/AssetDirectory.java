@@ -20,6 +20,16 @@ public final class AssetDirectory {
         }
         public static final class Entity {
             public static final String DUMMY = "textures/entity/dummy.png";
+            public static final class Forlorn {
+                public static final String IDLE = "textures/entity/forlorn/forlorn_idle.png";
+            }
+        }
+        public static final class Scene{
+            public static final String MUD1 = "textures/scene/mud_1.png";
+            public static final String MUD2 = "textures/scene/mud_2.png";
+            public static final String MUD3 = "textures/scene/mud_3.png";
+            public static final String GRASS1 = "textures/scene/grass_1.png";
+            public static final String ROCK = "textures/scene/rock_1.png";
         }
     }
     public static final class Audio{
@@ -30,12 +40,9 @@ public final class AssetDirectory {
         }
     }
 
-    public static final class Scene{
-        public static final String MUD = "textures/scene/mud_1.png";
-    }
-
     public static void dispose(){
         Audio.Player.ROLL.dispose();
         Audio.Player.HURT.dispose();
+        Audio.Player.WALK.dispose();
     }
 }

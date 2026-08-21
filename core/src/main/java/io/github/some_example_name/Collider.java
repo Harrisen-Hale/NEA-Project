@@ -5,9 +5,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 public class Collider extends GameObject{
-
-    private float xAdjust;
-    private float yAdjust;
     private float angle; // radians
     private Vector2[] vertices; // position vectors relative to world origin
     private Vector2[] dVertices; // position vectors relative to centroid of shape, no rotation
@@ -23,11 +20,9 @@ public class Collider extends GameObject{
 
     public Collider(Vector2 positionArg, float xAdjustArg, float yAdjustArg, Vector2[] dVerticesArg, float initialAngleArg, float damageValueArg, boolean activeArg, Color debugColourArg, boolean visibleArg, boolean normalsVisibleArg) {
         position = positionArg.cpy();
-        xAdjust = xAdjustArg;
-        yAdjust = yAdjustArg;
         normals = new Vector2[0];
         angle = initialAngleArg;
-        dVertices = dVerticesArg;
+        dVertices = Utils.translatePolygon(dVerticesArg, new Vector2(xAdjustArg, yAdjustArg));
         damageValue = damageValueArg;
         active = activeArg;
         setVertices();
@@ -38,7 +33,7 @@ public class Collider extends GameObject{
     }
 
     public void setPosition(Vector2 positionArg) {
-        this.position = new Vector2(positionArg.x + xAdjust, positionArg.y + yAdjust);
+        this.position = new Vector2(positionArg.x, positionArg.y);
     }
 
     public Vector2 detectCollision(Collider refCollider){ // Polygon on Polygon, uses SAT, returns minimum translation vector for this collider to separate with the reference collider. Returns 0 vector if not colliding
