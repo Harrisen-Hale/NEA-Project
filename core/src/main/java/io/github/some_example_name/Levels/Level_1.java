@@ -1,10 +1,20 @@
-package io.github.some_example_name;
+package io.github.some_example_name.Levels;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import io.github.some_example_name.Enemies.Dummy;
+import io.github.some_example_name.Enemies.Forlorn;
+import io.github.some_example_name.Framework.Entity;
+import io.github.some_example_name.Framework.AssetDirectory;
+import io.github.some_example_name.Framework.Collider;
+import io.github.some_example_name.Framework.Utils;
+import io.github.some_example_name.World.NavNode;
+import io.github.some_example_name.World.Obstacle;
+import io.github.some_example_name.Player.Player;
+import io.github.some_example_name.World.Tile;
 
-public class Level_1 extends Level{
+public class Level_1 extends Level {
 
     public Level_1(Player playerArg, Vector3 cameraPosArg){
         tiles = new Tile[2500];
@@ -61,7 +71,7 @@ public class Level_1 extends Level{
     private class Rock extends Obstacle{
         public Rock(int x, int y) {
             super(x, y, AssetDirectory.Textures.Scene.ROCK);
-            body = new Collider[]{new Collider(position, 0,0,Utils.generateRegularPolygon(6, 0.5f), 0, 0, true, Color.GREEN, true, false)};
+            body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(6, 0.5f), 0, 0, true, Color.GREEN, true, false)};
         }
     }
 

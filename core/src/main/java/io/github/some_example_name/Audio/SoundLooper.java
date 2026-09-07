@@ -1,4 +1,4 @@
-package io.github.some_example_name;
+package io.github.some_example_name.Audio;
 
 import com.badlogic.gdx.audio.Sound;
 

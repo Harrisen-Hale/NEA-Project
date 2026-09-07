@@ -1,4 +1,4 @@
-package io.github.some_example_name;
+package io.github.some_example_name.Framework;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -6,8 +6,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import io.github.some_example_name.World.Obstacle;
+import io.github.some_example_name.Player.Player;
 
-public class Entity extends GameObject{
+public class Entity extends GameObject {
     protected int ID;
     protected float maxHealth;
     protected float health;

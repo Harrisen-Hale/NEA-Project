@@ -1,10 +1,10 @@
-package io.github.some_example_name;
+package io.github.some_example_name.Framework;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
-public class Collider extends GameObject{
+public class Collider extends GameObject {
     private float angle; // radians
     private Vector2[] vertices; // position vectors relative to world origin
     private Vector2[] dVertices; // position vectors relative to centroid of shape, no rotation

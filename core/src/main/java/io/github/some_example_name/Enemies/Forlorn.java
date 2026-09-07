@@ -1,4 +1,4 @@
-package io.github.some_example_name;
+package io.github.some_example_name.Enemies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -6,8 +6,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import io.github.some_example_name.Framework.AssetDirectory;
+import io.github.some_example_name.Framework.Collider;
+import io.github.some_example_name.Framework.Entity;
+import io.github.some_example_name.Framework.Utils;
+import io.github.some_example_name.Player.Player;
+import io.github.some_example_name.UI.StatusBar;
 
-public class Forlorn extends Entity{
+public class Forlorn extends Entity {
     private StatusBar healthBar;
 
     public Forlorn(int IDArg, Vector2 positionArg){
@@ -27,7 +33,7 @@ public class Forlorn extends Entity{
         transformColliders();
         healthBar.updateBar(health/maxHealth);
         rotation(player.getPosition());
-        //track(player.getPosition());
+        track(player.getPosition());
     }
 
     private void track(Vector2 target){

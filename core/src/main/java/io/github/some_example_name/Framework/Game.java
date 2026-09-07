@@ -1,4 +1,4 @@
-package io.github.some_example_name;
+package io.github.some_example_name.Framework;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -13,10 +13,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import io.github.some_example_name.IO.ControlsDirectory;
+import io.github.some_example_name.Levels.Level;
+import io.github.some_example_name.Levels.Level_1;
+import io.github.some_example_name.Player.HUD;
+import io.github.some_example_name.Player.Player;
+import io.github.some_example_name.World.NavNode;
+import io.github.some_example_name.World.Obstacle;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Vector;
 
 public class Game {
     private SpriteBatch batch;

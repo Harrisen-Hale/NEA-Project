@@ -1,6 +1,8 @@
-package io.github.some_example_name;
+package io.github.some_example_name.Player;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.some_example_name.Framework.Constants;
+import io.github.some_example_name.UI.StatusBar;
 
 public class HUD {
     SpriteBatch hudBatch;
@@ -27,7 +29,7 @@ public class HUD {
     }
 
     public void updateMaxHealth(float value){
-        float lengthScale = value/Constants.HEALTH_CAP;
+        float lengthScale = value/ Constants.HEALTH_CAP;
         playerHealth.setBarMaxSize(lengthScale);
     }
 

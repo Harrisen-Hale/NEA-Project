@@ -1,5 +1,5 @@
 
-package io.github.some_example_name;
+package io.github.some_example_name.Player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,9 +10,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import io.github.some_example_name.Audio.SoundLooper;
+import io.github.some_example_name.Framework.*;
+import io.github.some_example_name.IO.ControlsDirectory;
 
 
-public class Player extends Entity{
+public class Player extends Entity {
 
     private float rollCoefficient;
     private float sprintStaminaCost;

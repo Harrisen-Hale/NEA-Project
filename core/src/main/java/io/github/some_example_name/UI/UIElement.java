@@ -1,7 +1,6 @@
-package io.github.some_example_name;
+package io.github.some_example_name.UI;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 public class UIElement {
     protected Vector2 position;
