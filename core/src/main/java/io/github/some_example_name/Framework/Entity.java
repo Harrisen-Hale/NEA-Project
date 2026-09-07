@@ -72,7 +72,7 @@ public class Entity extends GameObject {
             if (hurtbox.isActive()) {
                 for (DamageSource d : damageSources) {
                     for (Collider h : d.getHitbox()){
-                        if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && !d.isFlagged(ID)){
+                        if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && d.notFlagged(ID)){
                             damageHealth(h.getDamageValue());
                             d.flagEntity(ID);
                         }
@@ -144,6 +144,10 @@ public class Entity extends GameObject {
         hurtboxes = new Collider[0];
     }
 
+    public void concludeAttack(){
+
+    }
+
     public void drawDebug(ShapeRenderer sr){
         for (Collider c : body){
             c.debugRender(sr);
@@ -160,6 +164,18 @@ public class Entity extends GameObject {
 
     public float getHealth() {
         return health;
+    }
+
+    public float getFacing() {
+        return facing;
+    }
+
+    public Vector2 getLookVector() {
+        return lookVector;
+    }
+
+    public boolean isAlive() {
+        return alive;
     }
 
     public int getSouls() {

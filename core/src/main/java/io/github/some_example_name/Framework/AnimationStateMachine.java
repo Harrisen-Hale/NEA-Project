@@ -30,10 +30,6 @@ public class AnimationStateMachine {
         return animFrames[currentFrameIndex];
     }
 
-    public int getCurrentFrameIndex() {
-        return currentFrameIndex;
-    }
-
     public void reset(){
         currentFrameIndex = 0;
         currentDurationRemaining = durations[0];

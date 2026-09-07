@@ -11,7 +11,7 @@ public class Collider extends GameObject {
     private Vector2[] normals;
     private boolean active;
 
-    private float damageValue; // > 0 then hitbox
+    private float damageValue; // if > 0 then this is a hitbox
 
     //debug
     private boolean visible;

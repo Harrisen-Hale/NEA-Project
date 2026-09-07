@@ -1,12 +1,15 @@
 package io.github.some_example_name.Framework;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
 public class DamageSource {
-    protected Collider[] hitbox;
-    protected int currentActionTick;
-    protected AttackFlagManager attackFlagManager;
+    protected Collider[] hitbox = new Collider[]{};
+    protected DamageSourceFlagManager damageSourceFlagManager = new DamageSourceFlagManager();
 
     public DamageSource(){
-        attackFlagManager = new AttackFlagManager();
+    }
+
+    public void execute(){
     }
 
     public Collider[] getHitbox(){
@@ -14,14 +17,20 @@ public class DamageSource {
     }
 
     public void flagEntity(int ID){
-        attackFlagManager.flagEntity(ID);
+        damageSourceFlagManager.flagEntity(ID);
     }
 
-    public boolean isFlagged(int ID){
-        return attackFlagManager.isFlagged(ID);
+    public boolean notFlagged(int ID){
+        return !damageSourceFlagManager.isFlagged(ID);
     }
 
     public void clearFlags(){
-        attackFlagManager.clear();
+        damageSourceFlagManager.clear();
+    }
+
+    public void debugRender(ShapeRenderer sr){
+        for (Collider c : hitbox){
+            c.debugRender(sr);
+        }
     }
 }

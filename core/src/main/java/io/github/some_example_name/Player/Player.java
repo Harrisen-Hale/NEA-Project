@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import io.github.some_example_name.Attacks.Attack;
+import io.github.some_example_name.Framework.DamageSource;
+import io.github.some_example_name.Attacks.PlayerLightAttack;
 import io.github.some_example_name.Audio.SoundLooper;
 import io.github.some_example_name.Framework.*;
 import io.github.some_example_name.IO.ControlsDirectory;
@@ -17,15 +20,6 @@ import io.github.some_example_name.IO.ControlsDirectory;
 
 public class Player extends Entity {
 
-    private float rollCoefficient;
-    private float sprintStaminaCost;
-    private float rollStaminaCost;
-    private float lightAttackStaminaCost;
-    private final int iTicks = 26;
-    private final int ROLL_DURATION = 40; // ticks
-    private final int LIGHT_ATTACK_DURATION = 22; // ticks, must be an even number for symmetric path
-    private final float STAMINA_REGEN_DELAY = 90; // ticks - 90
-    private final float BASE_STAMINA_REGEN_RATE = 0.5f; // per tick
     private float staminaRegenCoefficient;
 
     private float maxStamina;
@@ -37,18 +31,15 @@ public class Player extends Entity {
     private int ticksWhileMoveInput;
     private int ticksSinceStaminaUsed;
     private boolean inControl;
-    private boolean canMove;
     private boolean rotationalTrackingEnabled;
     private boolean lockedOn;
+    private boolean rolling;
     private int currentRollTick;
-    private int actionState; // 0 - Idle, 1 - Roll, 2 - Light Attack, 3 - Heavy Attack
     private CircularQueue actionBuffer;
 
     private Collider shield;
 
-    // attacks
-    private LightAttack lightAttack;
-    private  HeavyAttack heavyAttack;
+    private Attack currentAttack;
 
     private Vector2 worldMousePosition;
 
@@ -67,19 +58,19 @@ public class Player extends Entity {
         staminaRegeneration();
         transformColliders();
         transformShield();
+        resolveRoll();
+        resolveAttack();
     }
 
     private void playerController(){
-        if (inControl) {
-            inputController();
-        }
+        inputController();
         if (rotationalTrackingEnabled) {
             rotation(lookTarget);
         }
     }
 
     private void inputController(){
-        if (canMove){
+        if (inControl){
             directionalMovement();
         }
         combatController();
@@ -87,6 +78,8 @@ public class Player extends Entity {
     }
 
     private void directionalMovement(){
+        float SPRINT_STAMINA_COST = 0.25f;
+
         boolean up = Gdx.input.isKeyPressed(ControlsDirectory.Movement.UP);
         boolean left = Gdx.input.isKeyPressed(ControlsDirectory.Movement.LEFT);
         boolean down = Gdx.input.isKeyPressed(ControlsDirectory.Movement.DOWN);
@@ -98,7 +91,7 @@ public class Player extends Entity {
         if (sprint && stamina > 0){
             speedCoefficient = 1/28f;
             if (anyDirPressed) {
-                takeStamina(sprintStaminaCost);
+                takeStamina(SPRINT_STAMINA_COST);
             }
         }else {
             speedCoefficient = 1/55f;
@@ -123,7 +116,7 @@ public class Player extends Entity {
             }
         }
         else {
-            setLookTarget(worldMousePosition);
+            lookTarget = worldMousePosition;
             if (up){
                 moveVector.add(new Vector2(0,1));
             }
@@ -162,10 +155,10 @@ public class Player extends Entity {
         }
 
         // sound fx
-        if (velocity.len() > 0 && actionState == 0){
+        if (velocity.len() > 0 && inControl){
             walkLoop.play();
         }else{
-            walkLoop.reset();
+            walkLoop.stop();
         }
     }
 
@@ -173,6 +166,7 @@ public class Player extends Entity {
         boolean rollPressed = Gdx.input.isKeyJustPressed(ControlsDirectory.Movement.ROLL);
         boolean attackPressed = Gdx.input.isButtonJustPressed(ControlsDirectory.Combat.ATTACK);
         boolean blockHeld = Gdx.input.isButtonPressed(ControlsDirectory.Combat.BLOCK);
+        int action = 0;
 
         // full action buffer is accounted for in enqueue method
         if (stamina > 0) {
@@ -188,17 +182,38 @@ public class Player extends Entity {
             }
         }
 
-        if (actionState == 0  && stamina > 0 && actionBuffer.notEmpty()){
-            actionState = actionBuffer.dequeue();
+        if (inControl && stamina > 0 && actionBuffer.notEmpty()){
+            action = actionBuffer.dequeue();
         }
-        block(blockHeld); // action state must be 0 to block
-        if (actionState == 1){
-            roll();
-        }else if (actionState == 2){
-            lightAttack.execute();
-        }else if (actionState == 3){
-            heavyAttack.execute();
+        block(blockHeld); // cannot be doing any other action to block
+        if (action == 1){
+            rolling = true;
+        }else if (action == 2){
+            beginAttack(new PlayerLightAttack(this));
         }
+    }
+
+    private void beginAttack(Attack attackArg){
+        currentAttack = attackArg;
+        inControl = false;
+        rotationalTrackingEnabled = false;
+        takeStamina(attackArg.getStaminaCost());
+    }
+
+    private void resolveAttack(){
+        currentAttack.execute();
+    }
+
+    private void resolveRoll(){
+        if (rolling){
+            rolling = roll();
+        }
+    }
+
+    public void concludeAttack(){
+        inControl = true;
+        rotationalTrackingEnabled = true;
+        currentAttack = new Attack(); // blank attack, does nothing except return false
     }
 
     public void collision(Entity ref){
@@ -210,7 +225,7 @@ public class Player extends Entity {
         if (vulnerable) {
             for (DamageSource d : damageSources) { // shield blocking incoming attacks
                 for (Collider h : d.getHitbox()){
-                    if (h.isActive() && shield.detectCollision(h).len() > 0 && shield.isActive() && !d.isFlagged(ID)){
+                    if (h.isActive() && shield.detectCollision(h).len() > 0 && shield.isActive() && d.notFlagged(ID)){
                         d.flagEntity(ID);
                         takeStamina(30);
                     }
@@ -221,7 +236,7 @@ public class Player extends Entity {
                 if (hurtbox.isActive()) {
                     for (DamageSource d : damageSources) {
                         for (Collider h : d.getHitbox()){
-                            if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && !d.isFlagged(ID)){
+                            if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && d.notFlagged(ID)){
                                 damageHealth(h.getDamageValue());
                                 d.flagEntity(ID);
                             }
@@ -239,7 +254,7 @@ public class Player extends Entity {
     }
 
     private void block(boolean blockHeld){ // handles use of the shield
-        if (blockHeld && actionState == 0  && stamina > 0){
+        if (blockHeld && inControl  && stamina > 0){
             shield.activate();
             staminaRegenCoefficient *= 0.25f; // stamina regen is slowed if blocking
         }else {
@@ -247,34 +262,44 @@ public class Player extends Entity {
         }
     }
 
-    private void roll(){
+    private boolean roll(){
+        int ROLL_DURATION = 40; // ticks
+        int INVINCIBILITY_FRAMES = 26;
+        float ROLL_STAMINA_COST = 30f;
+        float ROLL_VOLUME = 0.3f;
+
+
         if (currentRollTick == 0){ // start of roll
-            canMove = false;
+            inControl = false;
             rotationalTrackingEnabled = false;
-            takeStamina(rollStaminaCost);
+            takeStamina(ROLL_STAMINA_COST);
             setSprite(rollAnim.getCurrentFrame());
-            AssetDirectory.Audio.Player.ROLL.play(0.3f);
+            AssetDirectory.Audio.Player.ROLL.play(ROLL_VOLUME);
         }
         if (rollAnim.update()){ // change frame of animation
             setSprite(rollAnim.getCurrentFrame());
         }
-        if (currentRollTick > (ROLL_DURATION -iTicks)/2 && currentRollTick < (ROLL_DURATION +iTicks)/2){ // i-frames
+
+        if (currentRollTick > (ROLL_DURATION - INVINCIBILITY_FRAMES)/2 && currentRollTick < (ROLL_DURATION + INVINCIBILITY_FRAMES)/2){ // i-frames
             vulnerable = false;
-        }else if (currentRollTick >= (ROLL_DURATION +iTicks)/2){
+        }else if (currentRollTick >= (ROLL_DURATION + INVINCIBILITY_FRAMES)/2){
             vulnerable = true;
         }
-        velocity = lookVector.cpy().scl(-1*((float) (rollCoefficient*(-4)*(Math.pow(((double) currentRollTick / ROLL_DURATION), 2))+((double) (4 * (currentRollTick / ROLL_DURATION))))));
+        velocity = lookVector.cpy().scl(-1*((float) ((1/25f)*(-4)*(Math.pow(((double) currentRollTick / ROLL_DURATION), 2))+((double) (4 * (currentRollTick / ROLL_DURATION))))));
         currentRollTick++;
         if (currentRollTick == ROLL_DURATION){ // end of roll
-            actionState = 0;
-            canMove = true;
+            inControl = true;
             rotationalTrackingEnabled = true;
             currentRollTick = 0;
             rollAnim.reset();
+            return false;
         }
+        return true;
     }
 
     private void staminaRegeneration(){
+        float STAMINA_REGEN_DELAY = 90; // ticks
+
         if (ticksSinceStaminaUsed > STAMINA_REGEN_DELAY && stamina < maxStamina){
             stamina += calculateStaminaRegenRate();
             if (stamina > maxStamina){
@@ -285,6 +310,8 @@ public class Player extends Entity {
     }
 
     private float calculateStaminaRegenRate(){
+        float BASE_STAMINA_REGEN_RATE = 0.5f; // per tick
+
         float staminaRegenRate = BASE_STAMINA_REGEN_RATE * staminaRegenCoefficient;
         staminaRegenCoefficient = 1;
         return staminaRegenRate;
@@ -314,8 +341,8 @@ public class Player extends Entity {
             }
             hu.debugRender(sr);
         }
-        lightAttack.debugRender(sr);
         shield.debugRender(sr);
+        currentAttack.debugRender(sr);
     }
 
     protected void loadTextures(){
@@ -331,23 +358,18 @@ public class Player extends Entity {
 
     protected void initialiseBaseValuesAndConstants(int IDArg){
         ID = IDArg;
-        rollCoefficient = 1/25f;
-        sprintStaminaCost = 0.25f;
-        rollStaminaCost = 30f;
-        lightAttackStaminaCost = 30f;
         position = new Vector2(0,0);
         velocity = new Vector2(0,0);
         moveVector = new Vector2(0,0);
         facing = 0;
+        lookTarget = new Vector2(0,0);
         ticksSinceMoveInput = 0;
         ticksWhileMoveInput = 0;
         ticksSinceStaminaUsed = 0;
         inControl = true;
-        canMove = true;
         rotationalTrackingEnabled = true;
         lockedOn = false;
         currentRollTick = 0;
-        actionState = 0;
         maxHealth = 500;
         health = maxHealth;
         maxStamina = 500;
@@ -362,8 +384,7 @@ public class Player extends Entity {
         body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(20, 0.35f), 0, 0, true, Color.BLUE, true, false)};
         hurtboxes = new Collider[]{new Collider(position, 0,0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, 0, true, Color.RED, true, false)};
         shield = new Collider(position, 0,0,new Vector2[]{new Vector2(0, -5/16f), new Vector2(1/8f, -5/16f), new Vector2(1/8f, 5/16f), new Vector2(0, 5/16f)}, 0, 0, false, Color.GREEN, false, false);
-        lightAttack = new LightAttack();
-        heavyAttack = new HeavyAttack();
+        currentAttack = new Attack();
     }
 
     // getters and setters
@@ -381,7 +402,7 @@ public class Player extends Entity {
     }
 
     public DamageSource[] getDamageSources(){
-        return new DamageSource[]{lightAttack};
+        return new DamageSource[]{currentAttack};
     }
 
     public void setLookTarget(Vector2 lookTarget) {
@@ -422,51 +443,11 @@ public class Player extends Entity {
         return worldMousePosition;
     }
 
-    // attacks
-
-    private class LightAttack extends DamageSource{
-        private LightAttack(){
-            hitbox = new Collider[]{new Collider(position, 0,0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, 100f, false, Color.MAGENTA, false, false)};
-            attackFlagManager = new AttackFlagManager();
-        }
-
-        public void execute(){
-            if (currentActionTick == 0){ // start of attack
-                canMove = false;
-                rotationalTrackingEnabled = false;
-                takeStamina(lightAttackStaminaCost);
-                clearFlags();
-                hitbox[0].activate();
-            }
-
-            float t = (2*(currentActionTick - LIGHT_ATTACK_DURATION/2f))/LIGHT_ATTACK_DURATION; // parametric variable
-            float P = 0.25f; // change in (relative) x
-            float Q = 0.5f; // change in (relative) y
-            Vector2 relativePosition = new Vector2(-P*t, (float) (Q*(-(Math.pow(t, 2)) + 1)));
-            float playerAngle = Utils.degreesToRadians(facing-90);
-            hitbox[0].setPosition(position.cpy().add(Utils.rotate(relativePosition, playerAngle)));
-            hitbox[0].setAngle(playerAngle);
-            hitbox[0].setVertices();
-
-            currentActionTick++;
-
-            if (currentActionTick == LIGHT_ATTACK_DURATION){ // end of attack
-                actionState = 0;
-                canMove = true;
-                rotationalTrackingEnabled = true;
-                currentActionTick = 0;
-                hitbox[0].deactivate();
-            }
-        }
-
-        public void debugRender(ShapeRenderer sr){
-            hitbox[0].debugRender(sr);
-        }
+    public void setInControl(boolean inControl) {
+        this.inControl = inControl;
     }
 
-    private class HeavyAttack extends  DamageSource{
-        public void execute(){
-            actionState = 0;
-        }
+    public void setRotationalTrackingEnabled(boolean rotationalTrackingEnabled) {
+        this.rotationalTrackingEnabled = rotationalTrackingEnabled;
     }
 }

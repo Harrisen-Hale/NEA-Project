@@ -2,10 +2,10 @@ package io.github.some_example_name.Framework;
 
 import java.util.ArrayList;
 
-public class AttackFlagManager {
+public class DamageSourceFlagManager {
     ArrayList<Integer> flaggedEntities;
 
-    public AttackFlagManager(){
+    public DamageSourceFlagManager(){
         flaggedEntities = new ArrayList<>();
     }
 

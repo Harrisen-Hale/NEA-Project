@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import io.github.some_example_name.Framework.DamageSource;
 import io.github.some_example_name.Framework.*;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.UI.StatusBar;
@@ -75,11 +76,11 @@ public class Dummy extends Entity {
         private Attack(){
             hitbox = new Collider[]{new Collider(position.cpy().add(0, -1f), 0,0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, 10f, true, Color.ORANGE, true, false)};
             hitbox[0].setVertices();
-            attackFlagManager = new AttackFlagManager();
+            damageSourceFlagManager = new DamageSourceFlagManager();
         }
 
         public void reset(){
-            attackFlagManager.clear();
+            damageSourceFlagManager.clear();
         }
     }
 }

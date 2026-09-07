@@ -39,8 +39,7 @@ public class Game {
     private Player player;
     private HUD hud;
 
-    private int lockedEntityIndex;
-    private Vector2 lockedEntityPosition;
+    private Entity lockedOnEntity;
     private Sprite lockDot;
 
     public void initialise(){
@@ -147,12 +146,11 @@ public class Game {
         if (isLockOnPressed) {
             player.toggleLockOn();
             if (player.isLockedOn()){ // initial lock on
-                lockedEntityIndex = findClosestEntity(player.getPosition(), currentLevel.getEntities());
+                lockedOnEntity = currentLevel.getEntities()[findClosestEntity(player.getPosition(), currentLevel.getEntities())];
             }
         }
         if (player.isLockedOn()){
-            lockedEntityPosition = currentLevel.getEntities()[lockedEntityIndex].getPosition();
-            player.setLookTarget(lockedEntityPosition);
+            player.setLookTarget(lockedOnEntity.getPosition());
         }
     }
 
@@ -169,23 +167,24 @@ public class Game {
         if (!player.isLockedOn()){
             cameraTarget = new Vector3(player.getPosition().x, player.getPosition().y, 0);
         }else {
-            cameraTarget = new Vector3((player.getPosition().x+lockedEntityPosition.x)/2f, (player.getPosition().y+lockedEntityPosition.y)/2f, 0); // centres camera between player and tracked enemy
+            cameraTarget = new Vector3((player.getPosition().x+lockedOnEntity.getPosition().x)/2f, (player.getPosition().y+lockedOnEntity.getPosition().y)/2f, 0); // centres camera between player and tracked enemy
         }
         camera.position.lerp(cameraTarget, 0.25f);
     }
 
     private void drawLockDot(){ // indicate lock-on
         if (player.isLockedOn()){
-            lockDot.setPosition(lockedEntityPosition.x-0.05f, lockedEntityPosition.y-0.05f);
+            lockDot.setPosition(lockedOnEntity.getPosition().x, lockedOnEntity.getPosition().y);
             lockDot.draw(batch);
         }
     }
 
     private void loadTextures(){
+        float lockDotScale = 0.1f;
         Texture lockDotTexture = new Texture(Gdx.files.internal(AssetDirectory.Textures.Misc.LOCK_DOT));
 
         lockDot = new Sprite(lockDotTexture);
-        lockDot.setSize(0.1f, 0.1f);
+        lockDot.setSize(lockDotScale, lockDotScale);
         lockDot.setOriginCenter();
     }
 

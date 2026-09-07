@@ -12,7 +12,7 @@ public class SoundLooper {
         period = periodArg;
         sound = soundArg;
         volume = volumeArg;
-        elapsedTicks = (float) (periodArg - Math.ceil(0.15f*periodArg));
+        elapsedTicks = periodArg;
     }
 
     public void play(){
@@ -23,8 +23,8 @@ public class SoundLooper {
         elapsedTicks++;
     }
 
-    public void reset(){
+    public void stop(){
         sound.stop();
-        elapsedTicks = (float) (period - Math.ceil(0.15f*period));
+        elapsedTicks = period;
     }
 }
