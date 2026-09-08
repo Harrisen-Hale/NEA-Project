@@ -71,6 +71,18 @@ public class Utils {
         return Math.max(0, overlap); // eliminates negative overlap
     }
 
+    public static boolean pointInTriangle(Vector2 point, Vector2[] triangle){
+        Vector2 side1 = triangle[1].cpy().sub(triangle[0]);
+        Vector2 side2 = triangle[2].cpy().sub(triangle[1]);
+        Vector2 side3 = triangle[0].cpy().sub(triangle[2]);
+
+        float crossProduct1 =  side1.cpy().crs(point.cpy().sub(triangle[0]));
+        float crossProduct2 =  side2.cpy().crs(point.cpy().sub(triangle[1]));
+        float crossProduct3 =  side3.cpy().crs(point.cpy().sub(triangle[2]));
+
+        return (crossProduct1 < 0 && crossProduct2 < 0 && crossProduct3 < 0);
+    }
+
     public static Vector2 findUnitVector(Vector2 point1, Vector2 point2){ // returns unit vector from point1 towards point2
         return point2.cpy().sub(point1).nor();
     }

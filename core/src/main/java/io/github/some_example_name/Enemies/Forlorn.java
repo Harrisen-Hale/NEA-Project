@@ -17,6 +17,7 @@ public class Forlorn extends Entity {
     private StatusBar healthBar;
 
     public Forlorn(int IDArg, Vector2 positionArg){
+        super();
         loadTextures();
         initialiseBaseValuesAndConstants();
         ID = IDArg;

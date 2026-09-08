@@ -16,6 +16,7 @@ import io.github.some_example_name.Attacks.PlayerLightAttack;
 import io.github.some_example_name.Audio.SoundLooper;
 import io.github.some_example_name.Framework.*;
 import io.github.some_example_name.IO.ControlsDirectory;
+import io.github.some_example_name.Levels.Level;
 
 
 public class Player extends Entity {
@@ -50,6 +51,7 @@ public class Player extends Entity {
     public Player(int IDArg){
         loadTextures();
         initialiseBaseValuesAndConstants(IDArg);
+
     }
 
     public void logicTick(OrthographicCamera camera){
@@ -450,4 +452,6 @@ public class Player extends Entity {
     public void setRotationalTrackingEnabled(boolean rotationalTrackingEnabled) {
         this.rotationalTrackingEnabled = rotationalTrackingEnabled;
     }
+
+
 }

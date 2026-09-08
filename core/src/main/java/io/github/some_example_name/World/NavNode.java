@@ -7,9 +7,13 @@ import io.github.some_example_name.Framework.Utils;
 
 public class NavNode {
     Vector2[] vertices;
+    int index;
+    int[] neighbours; // index values of neighbour nodes
 
-    public NavNode(Vector2[] verticesArg){
+    public NavNode(Vector2[] verticesArg, int indexArg, int[] neighboursArg){
         vertices = verticesArg;
+        index = indexArg;
+        neighbours = neighboursArg;
     }
 
     public void drawDebug(ShapeRenderer sr){
@@ -20,5 +24,13 @@ public class NavNode {
 
     public Vector2[] getVertices() {
         return vertices;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public int[] getNeighbours() {
+        return neighbours;
     }
 }

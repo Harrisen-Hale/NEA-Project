@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import io.github.some_example_name.Levels.Level;
+import io.github.some_example_name.World.NavMesh;
+import io.github.some_example_name.World.NavNode;
 import io.github.some_example_name.World.Obstacle;
 import io.github.some_example_name.Player.Player;
 
@@ -23,11 +26,14 @@ public class Entity extends GameObject {
     protected Collider[] body; // collision region
     protected Collider[] hurtboxes; // damageable region
 
+    protected Level residentLevel;
+
     protected Sprite currentSprite;
 
     public Entity(){
         loadTextures();
         initialiseBaseValuesAndConstants();
+        residentLevel = new Level();
     }
 
     public void logicTick(Player player){
@@ -148,6 +154,15 @@ public class Entity extends GameObject {
 
     }
 
+    public int currentNavNode(NavNode[] nodes){ // identifies the index of the node currently inhabited by this entity, returns -1 if not found
+        for (NavNode n : nodes){
+            if (Utils.pointInTriangle(position, n.getVertices())){
+                return n.getIndex();
+            }
+        }
+        return -1;
+    }
+
     public void drawDebug(ShapeRenderer sr){
         for (Collider c : body){
             c.debugRender(sr);
@@ -228,5 +243,17 @@ public class Entity extends GameObject {
         if (health > maxHealth){
             health = maxHealth;
         }
+    }
+
+    public void setFacing(float facing) {
+        this.facing = facing;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public void setResidentLevel(Level residentLevel) {
+        this.residentLevel = residentLevel;
     }
 }

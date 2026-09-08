@@ -4,6 +4,7 @@ import io.github.some_example_name.Framework.Collider;
 import io.github.some_example_name.Framework.DamageSource;
 import io.github.some_example_name.Framework.DamageSourceFlagManager;
 import io.github.some_example_name.Framework.Entity;
+import io.github.some_example_name.Levels.Level;
 
 public class Attack extends DamageSource {
     protected int currentAttackTick = 0;

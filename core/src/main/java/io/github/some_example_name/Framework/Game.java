@@ -50,15 +50,16 @@ public class Game {
         sr = new ShapeRenderer();
         tickManager = new TickManager();
 
+        loadTextures();
         player = new Player(0);
         hud = new HUD();
         hud.updateMaxHealth(player.getMaxHealth());
         hud.updateMaxStamina(player.getMaxStamina());
-        loadTextures();
-
 
         level1 = new Level_1(player, camera.position);
         currentLevel = level1;
+
+        player.setResidentLevel(currentLevel);
 
         developerTools = new DeveloperTools();
     }
@@ -118,7 +119,6 @@ public class Game {
         sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeRenderer.ShapeType.Line);
         currentLevel.drawAllDebug(sr);
-        currentLevel.drawNavNodes(sr);
         player.drawDebug(sr);
         sr.end();
     }
@@ -227,7 +227,7 @@ public class Game {
                     }
                 }
             }
-            for (NavNode n : currentLevel.getNavNodes()){
+            for (NavNode n : currentLevel.getNavMesh().getNodes()){
                 environmentVertices.add(n.getVertices()[0]);
                 environmentVertices.add(n.getVertices()[1]);
                 environmentVertices.add(n.getVertices()[2]);

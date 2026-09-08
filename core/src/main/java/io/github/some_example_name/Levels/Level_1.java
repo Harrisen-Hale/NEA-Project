@@ -43,29 +43,30 @@ public class Level_1 extends Level {
         entities = new Entity[2];
         entities[0] = new Dummy(1, new Vector2(2,2));
         entities[1] = new Forlorn(2, new Vector2(0, -3));
-        initialiseNavNodes();
+        initialisetestNavNodes();
         player = playerArg;
         cameraPos = cameraPosArg;
     }
 
-    private void initialiseNavNodes(){
-        navNodes = new NavNode[16];
-        navNodes[0] = new NavNode(new Vector2[]{new Vector2(-4.5f,2.0f), new Vector2(-3.75f,3.5669873f), new Vector2(-1.25f,3.5669873f)});
-        navNodes[1] = new NavNode(new Vector2[]{new Vector2(-4.5f,2.0f), new Vector2(-3.75f,3.5669873f), new Vector2(-4.25f,3.5669873f)});
-        navNodes[2] = new NavNode(new Vector2[]{new Vector2(-4.75f,2.4330127f), new Vector2(-4.5f,2.0f), new Vector2(-4.25f,3.5669873f)});
-        navNodes[3] = new NavNode(new Vector2[]{new Vector2(-4.75f,2.4330127f), new Vector2(-6.25f,5.5669875f), new Vector2(-4.25f,3.5669873f)});
-        navNodes[4] = new NavNode(new Vector2[]{new Vector2(-4.25f,3.5669873f), new Vector2(-4.5f,4.0f), new Vector2(-6.25f,5.5669875f)});
-        navNodes[5] = new NavNode(new Vector2[]{new Vector2(-4.5f,4.0f), new Vector2(-5.75f,5.5669875f), new Vector2(-6.25f,5.5669875f)});
-        navNodes[6] = new NavNode(new Vector2[]{new Vector2(-4.5f,4.0f), new Vector2(-4.25f,4.4330125f), new Vector2(-5.75f,5.5669875f)});
-        navNodes[7] = new NavNode(new Vector2[]{new Vector2(-3.75f,3.5669873f), new Vector2(-1.25f,3.5669873f), new Vector2(-1.5f,4.0f)});
-        navNodes[8] = new NavNode(new Vector2[]{new Vector2(-3.75f,3.5669873f), new Vector2(-1.5f,4.0f), new Vector2(-3.5f,4.0f)});
-        navNodes[9] = new NavNode(new Vector2[]{new Vector2(-3.5f,4.0f), new Vector2(-1.5f,4.0f), new Vector2(-1.25f,4.4330125f)});
-        navNodes[10] = new NavNode(new Vector2[]{new Vector2(-3.5f,4.0f), new Vector2(-1.25f,4.4330125f), new Vector2(-3.75f,4.4330125f)});
-        navNodes[11] = new NavNode(new Vector2[]{new Vector2(-5.5f,6.0f), new Vector2(-5.75f,5.5669875f), new Vector2(-4.25f,4.4330125f)});
-        navNodes[12] = new NavNode(new Vector2[]{new Vector2(-4.25f,4.4330125f), new Vector2(-3.75f,4.4330125f), new Vector2(-5.5f,6.0f)});
-        navNodes[13] = new NavNode(new Vector2[]{new Vector2(-5.5f,6.0f), new Vector2(-3.75f,4.4330125f), new Vector2(-1.25f,4.4330125f)});
-        navNodes[14] = new NavNode(new Vector2[]{new Vector2(-5.25f,2.4330127f), new Vector2(-4.75f,2.4330127f), new Vector2(-6.25f,5.5669875f)});
-        navNodes[15] = new NavNode(new Vector2[]{new Vector2(-5.5f,2.0f), new Vector2(-5.25f,2.4330127f), new Vector2(-6.25f,5.5669875f)});
+    private void initialisetestNavNodes(){
+        NavNode[] testNavNodes = new NavNode[1];
+        testNavNodes[0] = new NavNode(new Vector2[]{new Vector2(-4.5f,2.0f), new Vector2(-3.75f,3.5669873f), new Vector2(-1.25f,3.5669873f)}, 0, new int[]{});
+//        testNavNodes[1] = new NavNode(new Vector2[]{new Vector2(-4.5f,2.0f), new Vector2(-3.75f,3.5669873f), new Vector2(-4.25f,3.5669873f)});
+//        testNavNodes[2] = new NavNode(new Vector2[]{new Vector2(-4.75f,2.4330127f), new Vector2(-4.5f,2.0f), new Vector2(-4.25f,3.5669873f)});
+//        testNavNodes[3] = new NavNode(new Vector2[]{new Vector2(-4.75f,2.4330127f), new Vector2(-6.25f,5.5669875f), new Vector2(-4.25f,3.5669873f)});
+//        testNavNodes[4] = new NavNode(new Vector2[]{new Vector2(-4.25f,3.5669873f), new Vector2(-4.5f,4.0f), new Vector2(-6.25f,5.5669875f)});
+//        testNavNodes[5] = new NavNode(new Vector2[]{new Vector2(-4.5f,4.0f), new Vector2(-5.75f,5.5669875f), new Vector2(-6.25f,5.5669875f)});
+//        testNavNodes[6] = new NavNode(new Vector2[]{new Vector2(-4.5f,4.0f), new Vector2(-4.25f,4.4330125f), new Vector2(-5.75f,5.5669875f)});
+//        testNavNodes[7] = new NavNode(new Vector2[]{new Vector2(-3.75f,3.5669873f), new Vector2(-1.25f,3.5669873f), new Vector2(-1.5f,4.0f)});
+//        testNavNodes[8] = new NavNode(new Vector2[]{new Vector2(-3.75f,3.5669873f), new Vector2(-1.5f,4.0f), new Vector2(-3.5f,4.0f)});
+//        testNavNodes[9] = new NavNode(new Vector2[]{new Vector2(-3.5f,4.0f), new Vector2(-1.5f,4.0f), new Vector2(-1.25f,4.4330125f)});
+//        testNavNodes[10] = new NavNode(new Vector2[]{new Vector2(-3.5f,4.0f), new Vector2(-1.25f,4.4330125f), new Vector2(-3.75f,4.4330125f)});
+//        testNavNodes[11] = new NavNode(new Vector2[]{new Vector2(-5.5f,6.0f), new Vector2(-5.75f,5.5669875f), new Vector2(-4.25f,4.4330125f)});
+//        testNavNodes[12] = new NavNode(new Vector2[]{new Vector2(-4.25f,4.4330125f), new Vector2(-3.75f,4.4330125f), new Vector2(-5.5f,6.0f)});
+//        testNavNodes[13] = new NavNode(new Vector2[]{new Vector2(-5.5f,6.0f), new Vector2(-3.75f,4.4330125f), new Vector2(-1.25f,4.4330125f)});
+//        testNavNodes[14] = new NavNode(new Vector2[]{new Vector2(-5.25f,2.4330127f), new Vector2(-4.75f,2.4330127f), new Vector2(-6.25f,5.5669875f)});
+//        testNavNodes[15] = new NavNode(new Vector2[]{new Vector2(-5.5f,2.0f), new Vector2(-5.25f,2.4330127f), new Vector2(-6.25f,5.5669875f)});
+        navMesh.setNodes(testNavNodes);
     }
 
     private class Rock extends Obstacle{
