@@ -90,6 +90,10 @@ public class Level {
         return entities;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
     public Obstacle[] getObstacles() {
         return obstacles;
     }

@@ -3,6 +3,7 @@ package io.github.some_example_name.Framework;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Utils {
@@ -22,6 +23,20 @@ public class Utils {
             minimumIndex = currentIndex;
         }
         return findMinimumValue(values, currentIndex+1, minimumIndex); // recursive call
+    }
+
+    public static int max(int num1, int num2){ // returns greatest of two integers
+        if (num1 >= num2){
+            return num1;
+        }
+        return num2;
+    }
+
+    public static float max(float num1, float num2){ // returns greatest of two floating point values
+        if (num1 >= num2){
+            return num1;
+        }
+        return num2;
     }
 
     public static int findClosestPosition(Vector2 refPos, Vector2[] positions){ // returns index of closest position to refPos
@@ -180,5 +195,10 @@ public class Utils {
 
     public static float findDistance(Vector2 point1, Vector2 point2){
         return point1.cpy().sub(point2).len();
+    }
+
+
+    public static boolean validIndex(int index, Object[] array){  // checks if given index is in range for given array
+        return index >= 0 && index < array.length;
     }
 }

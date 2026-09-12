@@ -10,14 +10,16 @@ import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Framework.Collider;
 import io.github.some_example_name.Framework.Entity;
 import io.github.some_example_name.Framework.Utils;
+import io.github.some_example_name.Levels.Level;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.UI.StatusBar;
+import io.github.some_example_name.World.NavMesh;
 
-public class Forlorn extends Entity {
+public class Forlorn extends Enemy {
     private StatusBar healthBar;
 
-    public Forlorn(int IDArg, Vector2 positionArg){
-        super();
+    public Forlorn(int IDArg, Vector2 positionArg, Level residentLevelArg){
+        super(residentLevelArg);
         loadTextures();
         initialiseBaseValuesAndConstants();
         ID = IDArg;
@@ -34,11 +36,7 @@ public class Forlorn extends Entity {
         transformColliders();
         healthBar.updateBar(health/maxHealth);
         rotation(player.getPosition());
-        track(player.getPosition());
-    }
-
-    private void track(Vector2 target){
-        position.add(target.cpy().sub(position).nor().scl((3/16f)*(1/60f)));
+        pathfinder.track(player.getPosition());
     }
 
     public void drawEffects(Batch batch){
@@ -53,4 +51,5 @@ public class Forlorn extends Entity {
         currentSprite.setSize(1f, 1f);
         currentSprite.setOriginCenter();
     }
+
 }

@@ -59,8 +59,6 @@ public class Game {
         level1 = new Level_1(player, camera.position);
         currentLevel = level1;
 
-        player.setResidentLevel(currentLevel);
-
         developerTools = new DeveloperTools();
     }
 

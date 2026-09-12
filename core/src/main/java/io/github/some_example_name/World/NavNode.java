@@ -9,11 +9,13 @@ public class NavNode {
     Vector2[] vertices;
     int index;
     int[] neighbours; // index values of neighbour nodes
+    float weight;
 
     public NavNode(Vector2[] verticesArg, int indexArg, int[] neighboursArg){
         vertices = verticesArg;
         index = indexArg;
         neighbours = neighboursArg;
+        weight = 0;
     }
 
     public void drawDebug(ShapeRenderer sr){
@@ -32,5 +34,13 @@ public class NavNode {
 
     public int[] getNeighbours() {
         return neighbours;
+    }
+
+    public float getWeight() {
+        return weight;
+    }
+
+    public void setWeight(float weight) {
+        this.weight = weight;
     }
 }

@@ -42,17 +42,17 @@ public class Level_1 extends Level {
         obstacles[5] = new Rock(-4, 4);
         entities = new Entity[2];
         entities[0] = new Dummy(1, new Vector2(2,2));
-        entities[1] = new Forlorn(2, new Vector2(0, -3));
-        initialisetestNavNodes();
+        entities[1] = new Forlorn(2, new Vector2(0, -3), this);
+        initialiseTestNavNodes();
         player = playerArg;
         cameraPos = cameraPosArg;
     }
 
-    private void initialisetestNavNodes(){
-        NavNode[] testNavNodes = new NavNode[1];
-        testNavNodes[0] = new NavNode(new Vector2[]{new Vector2(-4.5f,2.0f), new Vector2(-3.75f,3.5669873f), new Vector2(-1.25f,3.5669873f)}, 0, new int[]{});
-//        testNavNodes[1] = new NavNode(new Vector2[]{new Vector2(-4.5f,2.0f), new Vector2(-3.75f,3.5669873f), new Vector2(-4.25f,3.5669873f)});
-//        testNavNodes[2] = new NavNode(new Vector2[]{new Vector2(-4.75f,2.4330127f), new Vector2(-4.5f,2.0f), new Vector2(-4.25f,3.5669873f)});
+    private void initialiseTestNavNodes(){
+        NavNode[] testNavNodes = new NavNode[3];
+        testNavNodes[0] = new NavNode(new Vector2[]{new Vector2(-4.5f,2.0f), new Vector2(-3.75f,3.5669873f), new Vector2(-1.25f,3.5669873f)}, 0, new int[]{1});
+        testNavNodes[1] = new NavNode(new Vector2[]{new Vector2(-4.5f,2.0f), new Vector2(-3.75f,3.5669873f), new Vector2(-4.25f,3.5669873f)}, 1, new int[]{0,2});
+        testNavNodes[2] = new NavNode(new Vector2[]{new Vector2(-4.75f,2.4330127f), new Vector2(-4.5f,2.0f), new Vector2(-4.25f,3.5669873f)}, 2, new int[]{1});
 //        testNavNodes[3] = new NavNode(new Vector2[]{new Vector2(-4.75f,2.4330127f), new Vector2(-6.25f,5.5669875f), new Vector2(-4.25f,3.5669873f)});
 //        testNavNodes[4] = new NavNode(new Vector2[]{new Vector2(-4.25f,3.5669873f), new Vector2(-4.5f,4.0f), new Vector2(-6.25f,5.5669875f)});
 //        testNavNodes[5] = new NavNode(new Vector2[]{new Vector2(-4.5f,4.0f), new Vector2(-5.75f,5.5669875f), new Vector2(-6.25f,5.5669875f)});
@@ -67,6 +67,9 @@ public class Level_1 extends Level {
 //        testNavNodes[14] = new NavNode(new Vector2[]{new Vector2(-5.25f,2.4330127f), new Vector2(-4.75f,2.4330127f), new Vector2(-6.25f,5.5669875f)});
 //        testNavNodes[15] = new NavNode(new Vector2[]{new Vector2(-5.5f,2.0f), new Vector2(-5.25f,2.4330127f), new Vector2(-6.25f,5.5669875f)});
         navMesh.setNodes(testNavNodes);
+        navMesh.getNodes()[0].setWeight(1);
+        navMesh.getNodes()[1].setWeight(2);
+        navMesh.getNodes()[2].setWeight(3);
     }
 
     private class Rock extends Obstacle{

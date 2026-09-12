@@ -1,11 +1,40 @@
 package io.github.some_example_name.Enemies;
 
+import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.Entity;
 import io.github.some_example_name.Levels.Level;
+import io.github.some_example_name.World.NavMesh;
 
 public class Enemy extends Entity {
+
+    protected Level residentLevel;
+    protected Pathfinder pathfinder;
+
     public Enemy(Level residentLevelArg){
         residentLevel = residentLevelArg;
+        pathfinder = new Pathfinder();
+    }
+
+
+    public Level getResidentLevel() {
+        return residentLevel;
+    }
+
+    public void setResidentLevel(Level residentLevel) {
+        this.residentLevel = residentLevel;
+    }
+
+    protected class Pathfinder{
+        protected Vector2[] pathfindRoute;
+
+        protected Pathfinder(){
+            pathfindRoute = new Vector2[]{};
+        }
+
+        protected void track(Vector2 target){
+            NavMesh mesh = residentLevel.getNavMesh();
+            pathfindRoute = mesh.pathfind(mesh.currentNavNode(position), mesh.currentNavNode(residentLevel.getPlayer().getPosition()));
+        }
     }
 
 }
