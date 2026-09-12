@@ -201,4 +201,22 @@ public class Utils {
     public static boolean validIndex(int index, Object[] array){  // checks if given index is in range for given array
         return index >= 0 && index < array.length;
     }
+    public static boolean validIndex(int index, int[] array){  // checks if given index is in range for given array
+        return index >= 0 && index < array.length;
+    }
+    public static boolean validIndex(int index, float[] array){  // checks if given index is in range for given array
+        return index >= 0 && index < array.length;
+    }
+
+    public static int[] reverseArray(int[] arr){
+        Stack stack = new Stack(arr.length);
+        int[] reversedArr = new int[arr.length];
+        for (int i : arr){
+            stack.push(i);
+        }
+        for (int j = 0; j < arr.length; j++){
+            reversedArr[j] = stack.pop();
+        }
+        return reversedArr;
+    }
 }
