@@ -34,8 +34,9 @@ public class Entity extends GameObject {
         initialiseBaseValuesAndConstants();
     }
 
-    public void logicTick(Player player){
+    public void logicTick(){
         transformColliders();
+        move(velocity);
     }
 
     public void collision(Entity ref){

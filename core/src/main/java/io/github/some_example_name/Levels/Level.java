@@ -20,17 +20,18 @@ public class Level {
     protected Player player; // stores a reference to the player
     protected Vector3 cameraPos;
 
-    public Level(){
+    public Level(Player playerArg){
         entities = new Entity[0];
         tiles = new Tile[0];
         obstacles = new Obstacle[0];
         navMesh = new NavMesh();
+        player = playerArg;
     }
 
 
     public void logicTick(){
         for (Entity e : entities){
-            e.logicTick(player);
+            e.logicTick();
         }
     }
 

@@ -30,10 +30,11 @@ public class Forlorn extends Enemy {
         maxHealth = 500;
         health = maxHealth;
         healthBar.updateBar(health/maxHealth);
+        speed = 1/64f;
     }
 
-    public void logicTick(Player player){
-        transformColliders();
+    public void logicTick(){
+        super.logicTick();
         healthBar.updateBar(health/maxHealth);
         rotation(player.getPosition());
         pathfinder.track(player.getPosition());
