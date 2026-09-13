@@ -68,7 +68,7 @@ public class Game {
         while (tickManager.acceptTick()){
             logicTick();
             renderTick();
-            developerTools.navNodePlacement();
+            //developerTools.navNodePlacement(); //debug
         }
     }
 

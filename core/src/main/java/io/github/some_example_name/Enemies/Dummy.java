@@ -22,8 +22,8 @@ public class Dummy extends Entity {
         initialiseBaseValuesAndConstants();
         ID = IDArg;
         position = positionArg;
-        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, 0, true, Color.BLUE, false, false)};
-        hurtboxes = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.4f), 0, 0, true, Color.RED, true, false)};
+        body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, true, Color.BLUE, false, false)};
+        hurtboxes = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.4f), 0, true, Color.RED, true, false)};
         healthBar = new StatusBar(0, 0, 0, 1/15f, 1);
         maxHealth = 500;
         health = maxHealth;
@@ -31,7 +31,7 @@ public class Dummy extends Entity {
         attack = new Attack();
     }
 
-    public void logicTick(Player player){
+    public void logicTick(){
         transformColliders();
         healthBar.updateBar(health/maxHealth);
     }
@@ -74,7 +74,7 @@ public class Dummy extends Entity {
     private class Attack extends DamageSource{
 
         private Attack(){
-            hitbox = new Collider[]{new Collider(position.cpy().add(0, -1f), 0,0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, 10f, true, Color.ORANGE, true, false)};
+            hitbox = new Collider[]{new Collider(position.cpy().add(0, -1f), 0,0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, true, Color.ORANGE, true, false)};
             hitbox[0].setVertices();
             damageSourceFlagManager = new DamageSourceFlagManager();
         }

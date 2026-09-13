@@ -1,12 +1,12 @@
 package io.github.some_example_name.Enemies;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import io.github.some_example_name.Framework.Entity;
-import io.github.some_example_name.Framework.Timer;
-import io.github.some_example_name.Framework.Utils;
+import io.github.some_example_name.Framework.*;
 import io.github.some_example_name.Levels.Level;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.World.NavMesh;
+import io.github.some_example_name.World.Obstacle;
 
 import java.util.Arrays;
 
@@ -22,6 +22,22 @@ public class Enemy extends Entity {
         player = residentLevelArg.getPlayer();
         pathfinder = new Pathfinder();
         speed = 0;
+    }
+
+    public void hitboxOnHurtboxCollision(DamageSource[] damageSources){ // this entity's hurtboxes check external hitboxes
+        for (Collider hurtbox : hurtboxes){
+            if (hurtbox.isActive()) {
+                for (DamageSource d : damageSources) {
+                    for (Collider h : d.getHitbox()){
+                        if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && d.notFlagged(ID)){
+                            damageHealth(d.getDamage());
+                            position.add(Utils.findUnitVector(h.getPosition(), position).scl(d.getKnockback())); // knockback
+                            d.flagEntity(ID);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public Level getResidentLevel() {
@@ -48,20 +64,40 @@ public class Enemy extends Entity {
         protected void track(Vector2 target){
             NavMesh mesh = residentLevel.getNavMesh();
             Vector2 nextPosition = position;
-
-            if (routeCalculationTimer.tick() || pathfindRouteStage >= pathfindRoute.length-1) {
-                pathfindRoute = mesh.pathfind(mesh.inhabitedNavNode(position), mesh.inhabitedNavNode(target));
-                pathfindRouteStage = 0;
-            }
-            if (pathfindRoute.length > 0) {
-                if(mesh.inhabitedNavNode(position) == pathfindRoute[pathfindRouteStage] && pathfindRouteStage < pathfindRoute.length-1){
-                    pathfindRouteStage++;
+            if (pathClear(target)) {
+                velocity.add(Utils.findUnitVector(position, target).scl(speed));
+            }else {
+                if (routeCalculationTimer.tick() || pathfindRouteStage >= pathfindRoute.length-1) {
+                    pathfindRoute = mesh.pathfind(mesh.inhabitedNavNode(position), mesh.inhabitedNavNode(target));
+                    pathfindRouteStage = 0;
                 }
-                nextPosition = mesh.getNodes()[pathfindRoute[pathfindRouteStage]].getCentre();
-            }
+                if (pathfindRoute.length > 1) { // no need to repeatedly walk to the centre of the node it's already in
+                    if(mesh.inhabitedNavNode(position) == pathfindRoute[pathfindRouteStage] && pathfindRouteStage < pathfindRoute.length-1){
+                        pathfindRouteStage++;
+                    }
+                    nextPosition = mesh.getNodes()[pathfindRoute[pathfindRouteStage]].getCentre();
+                }
 
-            velocity  = Utils.findUnitVector(position, nextPosition).scl(speed);
+                velocity.add(Utils.findUnitVector(position, nextPosition).scl(speed));
+            }
         }
+
+        protected boolean pathClear(Vector2 target){
+            for (Obstacle o : residentLevel.getObstacles()){
+                for (Collider c : o.getBody()){
+                    if (Utils.detectIntersectionOfLineSegmentWithPolygon(position, target, c.getVertices())){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+    }
+
+    public void drawDebug(ShapeRenderer sr){
+        super.drawDebug(sr);
+        sr.line(position, residentLevel.getPlayer().getPosition());
     }
 
 }

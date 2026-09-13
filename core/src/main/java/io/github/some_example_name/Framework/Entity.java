@@ -36,7 +36,7 @@ public class Entity extends GameObject {
 
     public void logicTick(){
         transformColliders();
-        move(velocity);
+        move();
     }
 
     public void collision(Entity ref){
@@ -50,7 +50,7 @@ public class Entity extends GameObject {
                 for (Collider c2 : ref.getBody()) {
                     if (c2.isActive()) {
                         Vector2 mtv = c1.detectCollision(c2);
-                        move(mtv);
+                        position.add(mtv);
                         transformColliders();
                     }
                 }
@@ -78,7 +78,7 @@ public class Entity extends GameObject {
                 for (DamageSource d : damageSources) {
                     for (Collider h : d.getHitbox()){
                         if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && d.notFlagged(ID)){
-                            damageHealth(h.getDamageValue());
+                            damageHealth(d.getDamage());
                             d.flagEntity(ID);
                         }
                     }
@@ -191,8 +191,8 @@ public class Entity extends GameObject {
         return velocity;
     }
 
-    public void move(Vector2 v){
-        position.add(v);
+    public void move(){
+        position.add(velocity);
     }
 
     public int getID() {

@@ -73,7 +73,7 @@ public class Level_1 extends Level {
     private class Rock extends Obstacle{
         public Rock(int x, int y) {
             super(x, y, AssetDirectory.Textures.Scene.ROCK);
-            body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(6, 0.5f), 0, 0, true, Color.GREEN, true, false)};
+            body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(6, 0.5f), 0,  true, Color.GREEN, true, false)};
         }
     }
 

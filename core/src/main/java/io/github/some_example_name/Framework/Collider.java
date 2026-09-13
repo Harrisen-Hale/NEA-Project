@@ -11,19 +11,16 @@ public class Collider extends GameObject {
     private Vector2[] normals;
     private boolean active;
 
-    private float damageValue; // if > 0 then this is a hitbox
-
     //debug
     private boolean visible;
     private boolean normalsVisible;
     private Color debugColour;
 
-    public Collider(Vector2 positionArg, float xAdjustArg, float yAdjustArg, Vector2[] dVerticesArg, float initialAngleArg, float damageValueArg, boolean activeArg, Color debugColourArg, boolean visibleArg, boolean normalsVisibleArg) {
+    public Collider(Vector2 positionArg, float xAdjustArg, float yAdjustArg, Vector2[] dVerticesArg, float initialAngleArg, boolean activeArg, Color debugColourArg, boolean visibleArg, boolean normalsVisibleArg) {
         position = positionArg.cpy();
         normals = new Vector2[0];
         angle = initialAngleArg;
         dVertices = Utils.translatePolygon(dVerticesArg, new Vector2(xAdjustArg, yAdjustArg));
-        damageValue = damageValueArg;
         active = activeArg;
         setVertices();
 
@@ -81,10 +78,6 @@ public class Collider extends GameObject {
         this.angle = angle;
     }
 
-    public void setDamageValue(float damageValue) {
-        this.damageValue = damageValue;
-    }
-
     public void setVertices(){ // Must be used after updating position or angle
         vertices = Utils.translatePolygon(dVertices, position);
         vertices = Utils.rotatePolygon(vertices, position, angle);
@@ -92,14 +85,6 @@ public class Collider extends GameObject {
 
     public Vector2[] getVertices() {
         return vertices;
-    }
-
-    public float getDamageValue() {
-        return damageValue;
-    }
-
-    public boolean isHitbox(){
-        return (damageValue>0);
     }
 
     public boolean isActive() {
@@ -119,7 +104,11 @@ public class Collider extends GameObject {
     public void debugRender(ShapeRenderer sr){
         if (visible) {
             sr.setColor(debugColour);
-            sr.polygon(Utils.convertToPairwisePoints(vertices));
+            if (vertices.length > 2) {
+                sr.polygon(Utils.convertToPairwisePoints(vertices));
+            }else if (vertices.length == 2){
+                sr.line(vertices[0], vertices[1]);
+            }
         }
         if (normalsVisible){
             for (Vector2 n : normals) {

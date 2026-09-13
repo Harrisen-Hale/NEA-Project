@@ -3,7 +3,6 @@ package io.github.some_example_name.Framework;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Utils {
@@ -114,6 +113,14 @@ public class Utils {
         return normals;
     }
 
+    public static Vector2[][] findEdges(Vector2[] vertices){ // returns array of edges (line segments) that form a polygon specified anticlockwise
+        Vector2[][] edges = new Vector2[vertices.length][2];
+        for (int i = 0; i < vertices.length; i++){
+            edges[i] = new Vector2[]{vertices[i], vertices[(i+1)%vertices.length]};
+        }
+        return edges;
+    }
+
     public static float degreesToRadians(float angleDeg){
         return (float) (angleDeg*(Math.PI/180));
     }
@@ -218,5 +225,46 @@ public class Utils {
             reversedArr[j] = stack.pop();
         }
         return reversedArr;
+    }
+
+    public static boolean detectIntersectionOfLineSegments(Vector2 line1PointA, Vector2 line1PointB, Vector2 line2PointC, Vector2 line2PointD){
+        Vector2 AB = line1PointB.cpy().sub(line1PointA);
+        Vector2 CD = line2PointD.cpy().sub(line2PointC);
+        Vector2 AC = line2PointC.cpy().sub(line1PointA);
+
+        if (findDeterminant(new float[]{AB.x, AB.y, -CD.x, -CD.y}) != 0) {
+            float[] parameters = solveSimultaneousEquations(new float[]{AB.x, AB.y}, new float[]{-CD.x, -CD.y}, new float[]{AC.x, AC.y});
+            return (parameters[0] >= 0 && parameters[0] <= 1 && parameters[1] >= 0 && parameters[1] <= 1);
+        }else {
+            return false;
+        }
+    }
+
+    public static boolean detectIntersectionOfLineSegmentWithPolygon(Vector2 linePointA, Vector2 linePointB, Vector2[] vertices){
+        Vector2[][] edges = findEdges(vertices);
+        for (Vector2[] edge : edges) {
+            if (detectIntersectionOfLineSegments(linePointA, linePointB, edge[0], edge[1])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static float[] solveSimultaneousEquations(float[] xCoefficients, float[] yCoefficients, float[] constantVector){ // 2x2 system
+        float a = xCoefficients[0];
+        float b = yCoefficients[0];
+        float c = xCoefficients[1];
+        float d = yCoefficients[1];
+        float p = constantVector[0];
+        float q = constantVector[1];
+
+        float y = (a*q - c*p) / (a*d - c*b);
+        float x = (p / a) - ((b / a) * y);
+
+        return new float[]{x,y};
+    }
+
+    public static float findDeterminant(float[] matrix){ // 2x2 column major
+        return (matrix[0]*matrix[3])-(matrix[1]*matrix[2]);
     }
 }

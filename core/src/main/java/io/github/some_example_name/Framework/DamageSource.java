@@ -3,10 +3,16 @@ package io.github.some_example_name.Framework;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class DamageSource {
-    protected Collider[] hitbox = new Collider[]{};
-    protected DamageSourceFlagManager damageSourceFlagManager = new DamageSourceFlagManager();
+    protected Collider[] hitbox;
+    protected DamageSourceFlagManager damageSourceFlagManager;
+    protected float knockback;
+    protected float damage;
 
     public DamageSource(){
+        hitbox = new Collider[]{};
+        damageSourceFlagManager = new DamageSourceFlagManager();
+        knockback = 0;
+        damage = 0;
     }
 
     public void execute(){
@@ -14,6 +20,22 @@ public class DamageSource {
 
     public Collider[] getHitbox(){
         return hitbox;
+    }
+
+    public float getKnockback() {
+        return knockback;
+    }
+
+    public void setKnockback(float knockback) {
+        this.knockback = knockback;
+    }
+
+    public float getDamage() {
+        return damage;
+    }
+
+    public void setDamage(float damage) {
+        this.damage = damage;
     }
 
     public void flagEntity(int ID){
