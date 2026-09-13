@@ -36,7 +36,6 @@ public class Forlorn extends Enemy {
     public void logicTick(){
         super.logicTick();
         healthBar.updateBar(health/maxHealth);
-        rotation(player.getPosition());
         movement();
     }
 

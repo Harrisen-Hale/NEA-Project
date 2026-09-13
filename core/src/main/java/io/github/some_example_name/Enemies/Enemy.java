@@ -65,7 +65,7 @@ public class Enemy extends Entity {
             NavMesh mesh = residentLevel.getNavMesh();
             Vector2 nextPosition = position;
             if (pathClear(target)) {
-                velocity.add(Utils.findUnitVector(position, target).scl(speed));
+                nextPosition = target;
             }else {
                 if (routeCalculationTimer.tick() || pathfindRouteStage >= pathfindRoute.length-1) {
                     pathfindRoute = mesh.pathfind(mesh.inhabitedNavNode(position), mesh.inhabitedNavNode(target));
@@ -76,10 +76,18 @@ public class Enemy extends Entity {
                         pathfindRouteStage++;
                     }
                     nextPosition = mesh.getNodes()[pathfindRoute[pathfindRouteStage]].getCentre();
-                }
 
-                velocity.add(Utils.findUnitVector(position, nextPosition).scl(speed));
+                    for (int i = pathfindRoute.length-1; i > pathfindRouteStage; i--){ // skips unneeded intermediate nodes
+                        Vector2 futurePosition = mesh.getNodes()[pathfindRoute[i]].getCentre();
+                        if (pathClear(futurePosition)){
+                            nextPosition = futurePosition;
+                            i = -1;
+                        }
+                    }
+                }
             }
+            velocity.add(Utils.findUnitVector(position, nextPosition).scl(speed));
+            rotation(nextPosition);
         }
 
         protected boolean pathClear(Vector2 target){
@@ -97,7 +105,7 @@ public class Enemy extends Entity {
 
     public void drawDebug(ShapeRenderer sr){
         super.drawDebug(sr);
-        sr.line(position, residentLevel.getPlayer().getPosition());
+        //sr.line(position, residentLevel.getPlayer().getPosition());
     }
 
 }
