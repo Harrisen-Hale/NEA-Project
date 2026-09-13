@@ -46,7 +46,7 @@ public class PathfindingPriorityQueue extends Queue{
         }
 
         while (l < midpoint + 1 - left && r < right - midpoint){
-            if (compareNodeWeights(nodeIndices[l], nodeIndices[r]) == l){
+            if (compareNodeWeights(leftArray[l], rightArray[r]) == 0){
                 nodeIndices[i] = leftArray[l];
                 l++;
             }else {
@@ -67,13 +67,16 @@ public class PathfindingPriorityQueue extends Queue{
         }
     }
 
-    private int compareNodeWeights(int index1, int index2){
+    private int compareNodeWeights(int index1, int index2){ // returns 0 if left, 1 if right
         if (Utils.validIndex(index1, nodes) && Utils.validIndex(index2, nodes)) {
             if (nodes[index1].getWeight() <= nodes[index2].getWeight()){
-                return index1;
+                return 0;
             }
-            return index2;
+            return 1;
         }
-        return index1;
+        return 0;
+    }
+    public boolean empty(){
+        return !notEmpty();
     }
 }

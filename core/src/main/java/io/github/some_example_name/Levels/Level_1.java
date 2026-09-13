@@ -68,9 +68,6 @@ public class Level_1 extends Level {
 //        testNavNodes[14] = new NavNode(new Vector2[]{new Vector2(-5.25f,2.4330127f), new Vector2(-4.75f,2.4330127f), new Vector2(-6.25f,5.5669875f)});
 //        testNavNodes[15] = new NavNode(new Vector2[]{new Vector2(-5.5f,2.0f), new Vector2(-5.25f,2.4330127f), new Vector2(-6.25f,5.5669875f)});
         navMesh.setNodes(testNavNodes);
-        navMesh.getNodes()[0].setWeight(1);
-        navMesh.getNodes()[1].setWeight(2);
-        navMesh.getNodes()[2].setWeight(3);
     }
 
     private class Rock extends Obstacle{

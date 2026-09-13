@@ -13,6 +13,7 @@ public class NavNode {
     protected float weight;
     protected float distance;
     protected int priorNodeIndex;
+    protected boolean explored;
 
     public NavNode(Vector2[] verticesArg, int indexArg, int[] neighboursArg){
         vertices = verticesArg;
@@ -22,6 +23,7 @@ public class NavNode {
         weight = 0;
         priorNodeIndex = index;
         distance = 0;
+        explored = false;
     }
 
     public void drawDebug(ShapeRenderer sr){
@@ -76,5 +78,17 @@ public class NavNode {
 
     public Vector2 getCentre() {
         return centre;
+    }
+
+    public boolean isExplored() {
+        return explored;
+    }
+
+    public void setExplored(boolean explored) {
+        this.explored = explored;
+    }
+
+    public void clearNodeData(){ // clears temporary node data used in pathfinding
+        explored = false;
     }
 }

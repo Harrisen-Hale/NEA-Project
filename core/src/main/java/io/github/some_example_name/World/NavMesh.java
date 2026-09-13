@@ -6,23 +6,25 @@ import io.github.some_example_name.Framework.PathfindingPriorityQueue;
 import io.github.some_example_name.Framework.Stack;
 import io.github.some_example_name.Framework.Utils;
 
+import java.util.Arrays;
+
 public class NavMesh {
     NavNode[] nodes;
 
     public NavMesh(){
-
+        nodes = new NavNode[]{};
     }
 
-    public int[] pathfind(int startNodeIndex, int targetNodeIndex){ // returns array of target coordinates
+    public int[] pathfind(int startNodeIndex, int targetNodeIndex){ // returns array of target node indices, uses A*
         if (startNodeIndex >= 0 && startNodeIndex < nodes.length && targetNodeIndex >= 0 && targetNodeIndex < nodes.length) { // check that both root and target are valid node indices
             PathfindingPriorityQueue frontier = new PathfindingPriorityQueue(nodes.length, nodes);
             for (int i = 0; i < nodes.length; i++){
                 nodes[i].setWeight(Integer.MAX_VALUE);
-                frontier.setElement(i,i);
+                frontier.enqueue(i);
             }
             nodes[startNodeIndex].setWeight(0);
 
-            int currentNodeIndex = 0;
+            int currentNodeIndex = startNodeIndex;
             while (currentNodeIndex != targetNodeIndex){
                 if (frontier.empty()){
                     return new int[]{}; // safety exit in case target cannot be found
@@ -31,12 +33,15 @@ public class NavMesh {
                 currentNodeIndex = frontier.dequeue();
                 for (int i = 0; i < nodes[currentNodeIndex].getNeighbours().length; i++){
                     NavNode neighbourNode = nodes[nodes[currentNodeIndex].getNeighbours()[i]];
-                    float newWeight = calculateWeight(neighbourNode, nodes[currentNodeIndex], nodes[targetNodeIndex]);
-                    if (newWeight < neighbourNode.getWeight()){
-                        neighbourNode.setWeight(newWeight);
-                        neighbourNode.setPriorNodeIndex(currentNodeIndex);
+                    if (!neighbourNode.isExplored()) {
+                        float newWeight = calculateWeight(neighbourNode, nodes[currentNodeIndex], nodes[targetNodeIndex]);
+                        if (newWeight < neighbourNode.getWeight()){
+                            neighbourNode.setWeight(newWeight);
+                            neighbourNode.setPriorNodeIndex(currentNodeIndex);
+                        }
                     }
                 }
+                nodes[currentNodeIndex].setExplored(true);
             }
 
             // backtracking to form pathStack
@@ -56,7 +61,8 @@ public class NavMesh {
             for (int i = 0; i < pathIndices.length; i++){
                 pathIndices[i] = pathStack.pop();
             }
-            return Utils.reverseArray(pathIndices);
+            clearNodeData();
+            return pathIndices;
         }
         return new int[]{};
     }
@@ -93,6 +99,12 @@ public class NavMesh {
     public void drawNavNodes(ShapeRenderer sr){
         for (NavNode n : nodes){
             n.drawDebug(sr);
+        }
+    }
+
+    private void clearNodeData(){ // clears temporary node data used in pathfinding
+        for (NavNode n : nodes){
+            n.clearNodeData();
         }
     }
 }

@@ -4,8 +4,7 @@ public class Queue {
     int[] queue;
     int length;
     int frontPointer = 0;
-    int rearPointer = 0;
-    int numElements = 0;
+    int rearPointer = -1;
 
     public Queue(int lengthArg){
         length = lengthArg;
@@ -14,46 +13,43 @@ public class Queue {
 
     public void enqueue(int element){
         if (!isFull()) {
-            queue[rearPointer] = element;
             rearPointer++;
-            numElements++;
+            queue[rearPointer] = element;
         }
     }
 
     public int peek(){
-        if (!empty()) {
+        if (notEmpty()) {
             return queue[frontPointer];
         }
-        else return -1;
+        else throw new RuntimeException("Queue is empty");
     }
 
     public int dequeue(){
-        if (!empty()){
+        if (notEmpty()){
             int foreElement = queue[frontPointer];
             frontPointer++;
-            numElements--;
             return foreElement;
         }
-        return -1;
+        else throw new RuntimeException("Queue is empty");
     }
 
     public int getNumElements(){
-        return numElements;
+        return rearPointer-frontPointer+1;
     }
 
     public boolean isFull(){
-        return (getNumElements() == length);
+        return (rearPointer == length-1);
     }
 
-    public boolean empty(){
-        return (getNumElements() == 0);
+    public boolean notEmpty(){
+        return (getNumElements() >= 0);
     }
 
     public void wipe(){
         queue = new int[length];
-        rearPointer = 0;
+        rearPointer = -1;
         frontPointer = 0;
-        numElements = 0;
     }
 
     public int[] getQueue() {
@@ -64,17 +60,19 @@ public class Queue {
         this.queue = queue;
     }
 
-    public void setElement(int index, int element) {
-        if (Utils.validIndex(index, queue)){
-            queue[index] = element;
-        }
-    }
-
     public int getRearPointer() {
         return rearPointer;
     }
 
     public int getFrontPointer() {
         return frontPointer;
+    }
+
+    public void setFrontPointer(int frontPointer) {
+        this.frontPointer = frontPointer;
+    }
+
+    public void setRearPointer(int rearPointer) {
+        this.rearPointer = rearPointer;
     }
 }

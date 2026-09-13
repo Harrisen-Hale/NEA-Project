@@ -95,7 +95,7 @@ public class Utils {
         float crossProduct2 =  side2.cpy().crs(point.cpy().sub(triangle[1]));
         float crossProduct3 =  side3.cpy().crs(point.cpy().sub(triangle[2]));
 
-        return (crossProduct1 < 0 && crossProduct2 < 0 && crossProduct3 < 0);
+        return (crossProduct1 < 0 && crossProduct2 < 0 && crossProduct3 < 0 || crossProduct1 > 0 && crossProduct2 > 0 && crossProduct3 > 0);
     }
 
     public static Vector2 findUnitVector(Vector2 point1, Vector2 point2){ // returns unit vector from point1 towards point2
