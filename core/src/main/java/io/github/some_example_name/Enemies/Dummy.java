@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.DamageSource;
 import io.github.some_example_name.Framework.*;
-import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.UI.StatusBar;
 
 public class Dummy extends Entity {
@@ -51,12 +50,12 @@ public class Dummy extends Entity {
 
     public void drawDebug(ShapeRenderer sr){
         for (Collider c : body){
-            c.debugRender(sr);
+            c.drawDebug(sr);
         }
         for (Collider h : hurtboxes){
-            h.debugRender(sr);
+            h.drawDebug(sr);
         }
-        attack.getHitbox()[0].debugRender(sr);
+        attack.getHitbox()[0].drawDebug(sr);
     }
 
     public void damageHealth(float damage) {

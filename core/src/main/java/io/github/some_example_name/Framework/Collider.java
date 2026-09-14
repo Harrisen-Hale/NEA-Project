@@ -101,7 +101,7 @@ public class Collider extends GameObject {
         visible = false;
     }
 
-    public void debugRender(ShapeRenderer sr){
+    public void drawDebug(ShapeRenderer sr){
         if (visible) {
             sr.setColor(debugColour);
             if (vertices.length > 2) {

@@ -15,9 +15,6 @@ public class DamageSource {
         damage = 0;
     }
 
-    public void execute(){
-    }
-
     public Collider[] getHitbox(){
         return hitbox;
     }
@@ -52,7 +49,7 @@ public class DamageSource {
 
     public void debugRender(ShapeRenderer sr){
         for (Collider c : hitbox){
-            c.debugRender(sr);
+            c.drawDebug(sr);
         }
     }
 }

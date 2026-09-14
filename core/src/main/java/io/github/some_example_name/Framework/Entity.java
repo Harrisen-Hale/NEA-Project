@@ -6,11 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import io.github.some_example_name.Levels.Level;
-import io.github.some_example_name.World.NavMesh;
-import io.github.some_example_name.World.NavNode;
 import io.github.some_example_name.World.Obstacle;
-import io.github.some_example_name.Player.Player;
 
 public class Entity extends GameObject {
     protected int ID;
@@ -79,6 +75,7 @@ public class Entity extends GameObject {
                     for (Collider h : d.getHitbox()){
                         if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && d.notFlagged(ID)){
                             damageHealth(d.getDamage());
+                            position.add(Utils.findUnitVector(h.getPosition(), position).scl(d.getKnockback())); // knockback
                             d.flagEntity(ID);
                         }
                     }
@@ -155,10 +152,10 @@ public class Entity extends GameObject {
 
     public void drawDebug(ShapeRenderer sr){
         for (Collider c : body){
-            c.debugRender(sr);
+            c.drawDebug(sr);
         }
         for (Collider h : hurtboxes){
-            h.debugRender(sr);
+            h.drawDebug(sr);
         }
     }
 

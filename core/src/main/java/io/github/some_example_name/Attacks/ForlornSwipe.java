@@ -2,16 +2,18 @@ package io.github.some_example_name.Attacks;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import io.github.some_example_name.Framework.*;
+import io.github.some_example_name.Framework.Collider;
+import io.github.some_example_name.Framework.DamageSourceFlagManager;
+import io.github.some_example_name.Framework.Entity;
+import io.github.some_example_name.Framework.Utils;
 
-public class PlayerLightAttack extends Attack{
-
-    public PlayerLightAttack(Entity ownerArg){
+public class ForlornSwipe extends Attack{
+    public ForlornSwipe(Entity ownerArg){
         super(ownerArg);
-        duration = 22;
+        duration = 65;
         staminaCost = 30f;
         damage = 20f;
-        knockback = 1/4f;
+        knockback = 1/8f;
         hitbox = new Collider[]{new Collider(owner.getPosition(), 0,0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, false, Color.MAGENTA, false, false)};
     }
 
@@ -37,4 +39,5 @@ public class PlayerLightAttack extends Attack{
             owner.concludeAttack();
         }
     }
+
 }

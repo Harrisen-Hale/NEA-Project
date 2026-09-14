@@ -24,22 +24,6 @@ public class Enemy extends Entity {
         speed = 0;
     }
 
-    public void hitboxOnHurtboxCollision(DamageSource[] damageSources){ // this entity's hurtboxes check external hitboxes
-        for (Collider hurtbox : hurtboxes){
-            if (hurtbox.isActive()) {
-                for (DamageSource d : damageSources) {
-                    for (Collider h : d.getHitbox()){
-                        if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && d.notFlagged(ID)){
-                            damageHealth(d.getDamage());
-                            position.add(Utils.findUnitVector(h.getPosition(), position).scl(d.getKnockback())); // knockback
-                            d.flagEntity(ID);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     public Level getResidentLevel() {
         return residentLevel;
     }
@@ -53,7 +37,6 @@ public class Enemy extends Entity {
         protected int[] pathfindRoute;
         protected  int pathfindRouteStage;
         protected Timer routeCalculationTimer;
-
 
         protected Pathfinder(){
             pathfindRoute = new int[]{};
@@ -90,7 +73,7 @@ public class Enemy extends Entity {
             rotation(nextPosition);
         }
 
-        protected boolean pathClear(Vector2 target){
+        public boolean pathClear(Vector2 target){
             for (Obstacle o : residentLevel.getObstacles()){
                 for (Collider c : o.getBody()){
                     if (Utils.detectIntersectionOfLineSegmentWithPolygon(position, target, c.getVertices())){

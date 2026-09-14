@@ -14,7 +14,7 @@ public class Obstacle extends Tile {
 
     public void drawDebug(ShapeRenderer sr){
         for (Collider c : body){
-            c.debugRender(sr);
+            c.drawDebug(sr);
         }
     }
 

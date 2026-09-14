@@ -8,13 +8,17 @@ import io.github.some_example_name.Levels.Level;
 
 public class Attack extends DamageSource {
     protected int currentAttackTick = 0;
-    protected Entity owner = new Entity();
+    protected Entity owner;
     protected float staminaCost = 0f;
     protected float duration = 0f; // ticks
 
-    public Attack(){
+    public Attack(Entity ownerArg){
+        owner = ownerArg;
         damageSourceFlagManager = new DamageSourceFlagManager();
         hitbox = new Collider[]{};
+    }
+
+    public void execute(){
     }
 
     public float getStaminaCost() {

@@ -16,7 +16,6 @@ import io.github.some_example_name.Attacks.PlayerLightAttack;
 import io.github.some_example_name.Audio.SoundLooper;
 import io.github.some_example_name.Framework.*;
 import io.github.some_example_name.IO.ControlsDirectory;
-import io.github.some_example_name.Levels.Level;
 
 
 public class Player extends Entity {
@@ -215,7 +214,7 @@ public class Player extends Entity {
     public void concludeAttack(){
         inControl = true;
         rotationalTrackingEnabled = true;
-        currentAttack = new Attack(); // blank attack, does nothing except return false
+        currentAttack = new Attack(this); // blank attack, does nothing
     }
 
     public void collision(Entity ref){
@@ -234,18 +233,7 @@ public class Player extends Entity {
                 }
             }
 
-            for (Collider hurtbox : hurtboxes){ // same as super method
-                if (hurtbox.isActive()) {
-                    for (DamageSource d : damageSources) {
-                        for (Collider h : d.getHitbox()){
-                            if (h.isActive() && hurtbox.detectCollision(h).len() > 0 && d.notFlagged(ID)){
-                                damageHealth(d.getDamage());
-                                d.flagEntity(ID);
-                            }
-                        }
-                    }
-                }
-            }
+            super.hitboxOnHurtboxCollision(damageSources);
         }
     }
 
@@ -333,7 +321,7 @@ public class Player extends Entity {
 
     public void drawDebug(ShapeRenderer sr){
         for (Collider c : body){
-            c.debugRender(sr);
+            c.drawDebug(sr);
         }
         for (Collider hu : hurtboxes){
             if (!vulnerable){
@@ -341,9 +329,9 @@ public class Player extends Entity {
             }else{
                 hu.setDebugColour(Color.RED);
             }
-            hu.debugRender(sr);
+            hu.drawDebug(sr);
         }
-        shield.debugRender(sr);
+        shield.drawDebug(sr);
         currentAttack.debugRender(sr);
     }
 
@@ -386,7 +374,7 @@ public class Player extends Entity {
         body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(20, 0.35f), 0, true, Color.BLUE, true, false)};
         hurtboxes = new Collider[]{new Collider(position, 0,0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, true, Color.RED, true, false)};
         shield = new Collider(position, 0,0,new Vector2[]{new Vector2(0, -5/16f), new Vector2(1/8f, -5/16f), new Vector2(1/8f, 5/16f), new Vector2(0, 5/16f)}, 0, false, Color.GREEN, false, false);
-        currentAttack = new Attack();
+        currentAttack = new Attack(this);
     }
 
     // getters and setters
