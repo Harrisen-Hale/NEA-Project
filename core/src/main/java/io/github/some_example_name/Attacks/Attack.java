@@ -4,13 +4,13 @@ import io.github.some_example_name.Framework.Collider;
 import io.github.some_example_name.Framework.DamageSource;
 import io.github.some_example_name.Framework.DamageSourceFlagManager;
 import io.github.some_example_name.Framework.Entity;
-import io.github.some_example_name.Levels.Level;
 
 public class Attack extends DamageSource {
     protected int currentAttackTick = 0;
     protected Entity owner;
     protected float staminaCost = 0f;
     protected float duration = 0f; // ticks
+    protected boolean active = false;
 
     public Attack(Entity ownerArg){
         owner = ownerArg;
@@ -19,6 +19,10 @@ public class Attack extends DamageSource {
     }
 
     public void execute(){
+    }
+
+    public void reset(){
+
     }
 
     public float getStaminaCost() {
@@ -31,5 +35,9 @@ public class Attack extends DamageSource {
 
     public Entity getOwner() {
         return owner;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

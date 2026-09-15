@@ -73,8 +73,8 @@ public class Forlorn extends Enemy {
         public ForlornSwipe f = new ForlornSwipe(Forlorn.this);
 
         protected AI(){
-            state = 0;
-            engagementRadius = 2.5f;
+            state = 1;
+            engagementRadius = 1.25f;
             quarry = new Entity();
             targetPosition = quarry.getPosition();
         }
@@ -118,7 +118,8 @@ public class Forlorn extends Enemy {
             float sightRange = 7.5f;
             boolean seenTarget = state == 0 && pathfinder.pathClear(targetPosition) && Utils.findDistance(position, targetPosition) <= sightRange;
             boolean leftCombat = state == 2 && Utils.findDistance(position, targetPosition) > engagementRadius;
-            return seenTarget || leftCombat;
+            boolean attacking = f.isActive();
+            return (seenTarget || leftCombat) && !attacking;
         }
 
         private boolean canEngage(){

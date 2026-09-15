@@ -21,6 +21,7 @@ public class ForlornSwipe extends Attack{
         if (currentAttackTick == 0){ // start of attack
             clearFlags();
             hitbox[0].activate();
+            active = true;
         }
 
         float t = (2*(currentAttackTick - duration /2f))/ duration; // parametric variable
@@ -34,10 +35,15 @@ public class ForlornSwipe extends Attack{
 
         currentAttackTick++;
         if (currentAttackTick >= duration){ // end of attack
-            currentAttackTick = 0;
-            hitbox[0].deactivate();
+            reset();
             owner.concludeAttack();
         }
+    }
+
+    public void reset(){
+        currentAttackTick = 0;
+        hitbox[0].deactivate();
+        active = false;
     }
 
 }
