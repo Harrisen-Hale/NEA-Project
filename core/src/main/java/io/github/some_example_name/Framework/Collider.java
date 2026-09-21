@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Collider extends GameObject {
     private float angle; // radians
-    private Vector2[] vertices; // position vectors relative to world origin
-    private Vector2[] dVertices; // position vectors relative to centroid of shape, no rotation
+    private Vector2[] vertices; // screenSpacePosition vectors relative to world origin
+    private Vector2[] dVertices; // screenSpacePosition vectors relative to centroid of shape, no rotation
     private Vector2[] normals;
     private boolean active;
 
@@ -78,7 +78,7 @@ public class Collider extends GameObject {
         this.angle = angle;
     }
 
-    public void setVertices(){ // Must be used after updating position or angle
+    public void setVertices(){ // Must be used after updating screenSpacePosition or angle
         vertices = Utils.translatePolygon(dVertices, position);
         vertices = Utils.rotatePolygon(vertices, position, angle);
     }

@@ -1,15 +1,28 @@
 package io.github.some_example_name.UI;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class UIElement {
-    protected Vector2 position;
+    protected Vector2 screenSpacePosition;
+    protected Sprite currentSprite;
+
+    protected float height;
+    protected float width;
 
     public UIElement(){
-
+        currentSprite = new Sprite();
+        screenSpacePosition = new Vector2(0,0);
     }
 
-    public void setPosition(Vector2 position) {
-        this.position = new Vector2(position.x, position.y);
+    public void setScreenSpacePosition(Vector2 screenSpacePosition) {
+        this.screenSpacePosition = new Vector2(screenSpacePosition.x, screenSpacePosition.y);
+    }
+
+    public void draw(SpriteBatch batch, Vector2 screenCentre){
+        Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre);
+        currentSprite.setPosition(adjustedPosition.x, adjustedPosition.y);
+        currentSprite.draw(batch);
     }
 }

@@ -43,11 +43,6 @@ public class Dummy extends Entity {
         currentSprite.setOriginCenter();
     }
 
-    public void drawEffects(Batch batch){
-        healthBar.setPosition(new Vector2(position.x-(healthBar.getBarWidth()/2f), position.y+0.45f));
-        healthBar.draw(batch);
-    }
-
     public void drawDebug(ShapeRenderer sr){
         for (Collider c : body){
             c.drawDebug(sr);

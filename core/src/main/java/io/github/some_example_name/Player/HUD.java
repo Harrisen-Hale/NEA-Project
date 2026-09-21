@@ -6,7 +6,6 @@ import io.github.some_example_name.Framework.Constants;
 import io.github.some_example_name.UI.StatusBar;
 
 public class HUD {
-    SpriteBatch hudBatch;
 
     private StatusBar playerHealth;
     private StatusBar playerStamina;
@@ -15,10 +14,9 @@ public class HUD {
     private boolean isInBossFight;
 
     public HUD(){
-        hudBatch = new SpriteBatch();
         isInBossFight = false;
-        playerHealth = new StatusBar(0, new Vector2(-0.975f, 0.935f), 1/27.5f, 1);
-        playerStamina = new StatusBar(1, new Vector2(-0.975f, 0.885f), 1/27.5f, 1);
+        playerHealth = new StatusBar(0, new Vector2(-7.9f, 4.25f), 1/6f, 8);
+        playerStamina = new StatusBar(1, new Vector2(-7.9f, 4f), 1/6f, 8);
     }
 
     public void updatePlayerHealthAndStamina(float maxHealth, float health, float maxStamina, float stamina){
@@ -30,17 +28,17 @@ public class HUD {
 
     public void updateMaxHealth(float value){
         float lengthScale = value/ Constants.HEALTH_CAP;
-        playerHealth.setBarMaxSize(lengthScale);
+        playerHealth.setFullBarWidth(lengthScale);
     }
 
     public void updateMaxStamina(float value){
         float lengthScale = value/Constants.STAMINA_CAP;
-        playerStamina.setBarMaxSize(lengthScale);
+        playerStamina.setFullBarWidth(lengthScale);
     }
 
-    public void draw(SpriteBatch batch){
-        playerHealth.draw(batch);
-        playerStamina.draw(batch);
+    public void draw(SpriteBatch batch, Vector2 screenCentre){
+        playerHealth.draw(batch, screenCentre);
+        playerStamina.draw(batch, screenCentre);
     }
 
 }

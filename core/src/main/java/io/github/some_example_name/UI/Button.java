@@ -3,7 +3,6 @@ package io.github.some_example_name.UI;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.Utils;
 
@@ -19,18 +18,21 @@ public class Button extends UIElement{
     private Vector2[] vertices;
 
 
-    public Button(Vector2 position, Vector2[] dVertices, String text, String buttonSpriteOnPath, String buttonSpriteOffPath, float spriteWidth, float spriteHeight){
-        vertices = Utils.translatePolygon(dVertices, position);
+    public Button(Vector2 screenSpacePositionArg, Vector2[] dVertices, String text, float fontScale, String buttonSpriteOnPath, String buttonSpriteOffPath, float widthArg, float heightArg){
+        vertices = Utils.translatePolygon(dVertices, screenSpacePositionArg);
         on = false;
+
+        width = widthArg;
+        height = heightArg;
+
+        screenSpacePosition = screenSpacePositionArg;
 
         buttonSpriteOn = new Sprite(new Texture(Gdx.files.internal(buttonSpriteOnPath)));
         buttonSpriteOff = new Sprite(new Texture(Gdx.files.internal(buttonSpriteOffPath)));
-        buttonSpriteOn.setSize(spriteWidth, spriteHeight);
-        buttonSpriteOff.setSize(spriteWidth, spriteHeight);
+        buttonSpriteOn.setSize(widthArg, heightArg);
+        buttonSpriteOff.setSize(widthArg, heightArg);
         buttonSpriteOn.setOriginCenter();
         buttonSpriteOff.setOriginCenter();
-        buttonSpriteOn.setPosition(position.x, position.y);
-        buttonSpriteOff.setPosition(position.x, position.y);
         currentSprite = buttonSpriteOff;
     }
 
@@ -56,10 +58,6 @@ public class Button extends UIElement{
             return true;
         }
         return false;
-    }
-
-    public void draw(SpriteBatch batch){
-        currentSprite.draw(batch);
     }
 
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
 public final class AssetDirectory {
+
     public static final class Textures{
         public static final class Player {
             public static final String IDLE = "textures/player/player_idle.png";

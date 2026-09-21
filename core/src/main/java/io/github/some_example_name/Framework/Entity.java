@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.World.Obstacle;
@@ -122,7 +123,7 @@ public class Entity extends GameObject {
         currentSprite.draw(batch);
     }
 
-    public void drawEffects(Batch batch){
+    public void drawEffects(SpriteBatch batch){
 
     }
 

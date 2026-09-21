@@ -19,6 +19,7 @@ import io.github.some_example_name.Levels.Level_1;
 import io.github.some_example_name.Player.HUD;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.UI.Button;
+import io.github.some_example_name.UI.TextBox;
 import io.github.some_example_name.World.NavNode;
 import io.github.some_example_name.World.Obstacle;
 
@@ -34,7 +35,7 @@ public class Game {
 
     private Level_1 level1;
     private DeveloperTools developerTools;
-    private Button buttonTest;
+    TextBox t;
 
     private Level currentLevel;
 
@@ -61,8 +62,9 @@ public class Game {
         level1 = new Level_1(player, camera.position);
         currentLevel = level1;
 
+        t = new TextBox(new Vector2(0,0), 1, 1, "100", 1/16f);
+
         developerTools = new DeveloperTools();
-        buttonTest = new Button(new Vector2(0f,0), new Vector2[]{new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)}, "", AssetDirectory.Textures.Player.IDLE, AssetDirectory.Textures.Player.ROLL, 1, 1);
     }
 
     public void gameUpdate(){
@@ -86,19 +88,13 @@ public class Game {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.O)){ // Debug
             EventHandler.healPlayer(25, player);
-        }if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
-
         }
-        buttonTest.click(player.getWorldMousePosition());
-        System.out.println(player.getWorldMousePosition());
-        System.out.println(buttonTest.readValue());
     }
 
     public void renderTick(){
         ScreenUtils.clear(0f, 0f, 0f, 1f);
         viewport.apply();
         camera.update();
-        trackCamera();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
@@ -110,15 +106,11 @@ public class Game {
             // second render layer (effects)
         drawLockDot();
         currentLevel.drawAllEffects(batch);
-        batch.end();
-        batch.setProjectionMatrix(new Matrix4(new float[]{1,0,0,0, // revert projection to identity, effectively switching to screen space coordinates
-                                                          0,1,0,0,
-                                                          0,0,1,0,
-                                                          0,0,0,1}));
-        batch.begin();
-        // all screen space draw calls go here
-        hud.draw(batch);
-        buttonTest.draw(batch);
+
+            // third render layer (UI)
+        hud.draw(batch, new Vector2(camera.position.x, camera.position.y));
+        t.draw(batch, new Vector2(camera.position.x, camera.position.y));
+
         batch.end();
 
         // debug render calls
@@ -127,6 +119,8 @@ public class Game {
         currentLevel.drawAllDebug(sr);
         player.drawDebug(sr);
         sr.end();
+
+        trackCamera();
     }
 
     private void collision(){

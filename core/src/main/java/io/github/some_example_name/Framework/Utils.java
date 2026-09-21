@@ -38,7 +38,7 @@ public class Utils {
         return num2;
     }
 
-    public static int findClosestPosition(Vector2 refPos, Vector2[] positions){ // returns index of closest position to refPos
+    public static int findClosestPosition(Vector2 refPos, Vector2[] positions){ // returns index of closest screenSpacePosition to refPos
         return findMinimumValue(findDistances(refPos, positions), 0, 0);
     }
 

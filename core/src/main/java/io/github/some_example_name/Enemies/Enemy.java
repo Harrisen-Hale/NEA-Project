@@ -88,7 +88,7 @@ public class Enemy extends Entity {
 
     public void drawDebug(ShapeRenderer sr){
         super.drawDebug(sr);
-        //sr.line(position, residentLevel.getPlayer().getPosition());
+        //sr.line(screenSpacePosition, residentLevel.getPlayer().getPosition());
     }
 
 }
