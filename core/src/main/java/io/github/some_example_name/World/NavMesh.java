@@ -81,7 +81,7 @@ public class NavMesh {
 
     public int inhabitedNavNode(Vector2 position){ // identifies the index of the node currently inhabited by this entity, returns -1 if not found
         for (NavNode n : nodes){
-            if (Utils.pointInTriangle(position, n.getVertices())){
+            if (Utils.pointInPolygon(position, n.getVertices())){
                 return n.getIndex();
             }
         }

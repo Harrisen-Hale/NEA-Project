@@ -18,6 +18,7 @@ import io.github.some_example_name.Levels.Level;
 import io.github.some_example_name.Levels.Level_1;
 import io.github.some_example_name.Player.HUD;
 import io.github.some_example_name.Player.Player;
+import io.github.some_example_name.UI.Button;
 import io.github.some_example_name.World.NavNode;
 import io.github.some_example_name.World.Obstacle;
 
@@ -33,6 +34,7 @@ public class Game {
 
     private Level_1 level1;
     private DeveloperTools developerTools;
+    private Button buttonTest;
 
     private Level currentLevel;
 
@@ -60,6 +62,7 @@ public class Game {
         currentLevel = level1;
 
         developerTools = new DeveloperTools();
+        buttonTest = new Button(new Vector2(0f,0), new Vector2[]{new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)}, "", AssetDirectory.Textures.Player.IDLE, AssetDirectory.Textures.Player.ROLL, 1, 1);
     }
 
     public void gameUpdate(){
@@ -83,7 +86,12 @@ public class Game {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.O)){ // Debug
             EventHandler.healPlayer(25, player);
+        }if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+
         }
+        buttonTest.click(player.getWorldMousePosition());
+        System.out.println(player.getWorldMousePosition());
+        System.out.println(buttonTest.readValue());
     }
 
     public void renderTick(){
@@ -103,7 +111,6 @@ public class Game {
         drawLockDot();
         currentLevel.drawAllEffects(batch);
         batch.end();
-
         batch.setProjectionMatrix(new Matrix4(new float[]{1,0,0,0, // revert projection to identity, effectively switching to screen space coordinates
                                                           0,1,0,0,
                                                           0,0,1,0,
@@ -111,6 +118,7 @@ public class Game {
         batch.begin();
         // all screen space draw calls go here
         hud.draw(batch);
+        buttonTest.draw(batch);
         batch.end();
 
         // debug render calls

@@ -97,6 +97,18 @@ public class Utils {
         return (crossProduct1 < 0 && crossProduct2 < 0 && crossProduct3 < 0 || crossProduct1 > 0 && crossProduct2 > 0 && crossProduct3 > 0);
     }
 
+    public static boolean pointInPolygon(Vector2 point, Vector2[] polygon){ // returns true if point in (convex) polygon specified anticlockwise, false otherwise
+        boolean[] crossProductSign = new boolean[polygon.length];
+        for (int i = 0; i < polygon.length; i++){
+            Vector2 side = polygon[(i+1)%polygon.length].cpy().sub(polygon[i]);
+            crossProductSign[i] = side.cpy().crs(point.cpy().sub(polygon[i])) > 0;
+            if (i > 0 && crossProductSign[i] != crossProductSign[i-1]){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static Vector2 findUnitVector(Vector2 point1, Vector2 point2){ // returns unit vector from point1 towards point2
         return point2.cpy().sub(point1).nor();
     }
@@ -113,7 +125,7 @@ public class Utils {
         return normals;
     }
 
-    public static Vector2[][] findEdges(Vector2[] vertices){ // returns array of edges (line segments) that form a polygon specified anticlockwise
+    public static Vector2[][] findEdges(Vector2[] vertices){ // returns array of edges (line segments specified by endpoints) that form a polygon specified anticlockwise
         Vector2[][] edges = new Vector2[vertices.length][2];
         for (int i = 0; i < vertices.length; i++){
             edges[i] = new Vector2[]{vertices[i], vertices[(i+1)%vertices.length]};

@@ -23,7 +23,7 @@ public class Dummy extends Entity {
         position = positionArg;
         body = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.15f), 0, true, Color.BLUE, false, false)};
         hurtboxes = new Collider[]{new Collider(position, 0, 0, Utils.generateRegularPolygon(8, 0.4f), 0, true, Color.RED, true, false)};
-        healthBar = new StatusBar(0, 0, 0, 1/15f, 1);
+        healthBar = new StatusBar(0, new Vector2(0,0), 1/15f, 1);
         maxHealth = 500;
         health = maxHealth;
         healthBar.updateBar(health/maxHealth);

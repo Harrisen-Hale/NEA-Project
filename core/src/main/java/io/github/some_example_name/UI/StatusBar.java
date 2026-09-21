@@ -12,16 +12,16 @@ public class StatusBar extends UIElement {
     private Sprite barSprite;
     private Sprite backGroundSprite;
 
-    private final float barHeight;
+    private float barHeight;
     private float barWidth;
 
-    public StatusBar(int barType, float xPos, float yPos, float barHeightArg, float barWidthArg){ // Bar types: 0 - Player Health, 1 - Player Stamina, 2 - Boss Health
+    public StatusBar(int barType, Vector2 position, float barHeightArg, float barWidthArg){ // Bar types: 0 - Player Health, 1 - Player Stamina, 2 - Boss Health
         barHeight = barHeightArg;
         barWidth = barWidthArg;
 
         loadTextures(barType);
-        barSprite.setPosition(xPos, yPos);
-        backGroundSprite.setPosition(xPos,yPos);
+        barSprite.setPosition(position.x,position.y);
+        backGroundSprite.setPosition(position.x,position.y);
     }
 
     public void draw(Batch batch){

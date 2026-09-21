@@ -1,6 +1,7 @@
 package io.github.some_example_name.Player;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.Constants;
 import io.github.some_example_name.UI.StatusBar;
 
@@ -16,8 +17,8 @@ public class HUD {
     public HUD(){
         hudBatch = new SpriteBatch();
         isInBossFight = false;
-        playerHealth = new StatusBar(0, -0.975f, 0.935f, 1/27.5f, 1);
-        playerStamina = new StatusBar(1, -0.975f, 0.885f, 1/27.5f, 1);
+        playerHealth = new StatusBar(0, new Vector2(-0.975f, 0.935f), 1/27.5f, 1);
+        playerStamina = new StatusBar(1, new Vector2(-0.975f, 0.885f), 1/27.5f, 1);
     }
 
     public void updatePlayerHealthAndStamina(float maxHealth, float health, float maxStamina, float stamina){
