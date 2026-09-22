@@ -30,8 +30,13 @@ public class UIElement {
     }
 
     public void draw(SpriteBatch batch, Vector2 screenCentre){
-        Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre);
+        Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre).sub(0.5f*width, 0.5f*height);
         currentSprite.setPosition(adjustedPosition.x, adjustedPosition.y);
+        currentSprite.draw(batch);
+    }
+
+    public void draw(SpriteBatch batch){
+        currentSprite.setPosition(screenSpacePosition.x-0.5f*width, screenSpacePosition.y-0.5f*height);
         currentSprite.draw(batch);
     }
 }

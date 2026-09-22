@@ -10,8 +10,6 @@ public class Button extends UIElement{
 
     private boolean on;
 
-    private Sprite currentSprite;
-
     private Sprite buttonSpriteOn;
     private Sprite buttonSpriteOff;
 
@@ -25,8 +23,6 @@ public class Button extends UIElement{
         width = widthArg;
         height = heightArg;
 
-        screenSpacePosition = screenSpacePositionArg;
-
         buttonSpriteOn = new Sprite(new Texture(Gdx.files.internal(buttonSpriteOnPath)));
         buttonSpriteOff = new Sprite(new Texture(Gdx.files.internal(buttonSpriteOffPath)));
         buttonSpriteOn.setSize(widthArg, heightArg);
@@ -34,9 +30,11 @@ public class Button extends UIElement{
         buttonSpriteOn.setOriginCenter();
         buttonSpriteOff.setOriginCenter();
         currentSprite = buttonSpriteOff;
+
+        screenSpacePosition = screenSpacePositionArg;
     }
 
-    public void click(Vector2 clickPosition){ // clicks must be polled for after tick is called
+    public void click(Vector2 clickPosition){
         if (Utils.pointInPolygon(clickPosition, vertices)){
             turnOn();
         }

@@ -27,11 +27,44 @@ public class UIObject {
     }
 
     public void draw(SpriteBatch batch, Vector2 screenCentre){
-        for (TextBox t : textBoxes){
-            t.draw(batch, screenCentre);
-        }
         for (UIElement u : UIElements){
             u.draw(batch, screenCentre);
         }
+        for (TextBox t : textBoxes){
+            t.draw(batch, screenCentre);
+        }
+    }
+
+    public void draw(SpriteBatch batch){
+        for (UIElement u : UIElements){
+            u.draw(batch);
+        }
+        for (TextBox t : textBoxes){
+            t.draw(batch);
+        }
+    }
+
+    public ArrayList<TextBox> getTextBoxes() {
+        return textBoxes;
+    }
+
+    public void setTextBoxes(ArrayList<TextBox> textBoxes) {
+        this.textBoxes = textBoxes;
+    }
+
+    public Vector2 getScreenSpacePosition() {
+        return screenSpacePosition;
+    }
+
+    public void setScreenSpacePosition(Vector2 screenSpacePosition) {
+        this.screenSpacePosition = screenSpacePosition;
+    }
+
+    public ArrayList<UIElement> getUIElements() {
+        return UIElements;
+    }
+
+    public void setUIElements(ArrayList<UIElement> UIElements) {
+        this.UIElements = UIElements;
     }
 }

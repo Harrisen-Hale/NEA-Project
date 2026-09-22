@@ -2,13 +2,11 @@ package io.github.some_example_name.Framework;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -16,14 +14,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.github.some_example_name.IO.ControlsDirectory;
 import io.github.some_example_name.Levels.Level;
 import io.github.some_example_name.Levels.Level_1;
+import io.github.some_example_name.Menus.MainMenu;
+import io.github.some_example_name.Menus.Menu;
 import io.github.some_example_name.Player.HUD;
 import io.github.some_example_name.Player.Player;
-import io.github.some_example_name.UI.Button;
-import io.github.some_example_name.UI.TextBox;
-import io.github.some_example_name.World.NavNode;
 import io.github.some_example_name.World.Obstacle;
-
-import java.util.ArrayList;
 
 public class Game {
     private SpriteBatch batch;
@@ -34,9 +29,10 @@ public class Game {
     private TickManager tickManager;
 
     private Level_1 level1;
-    private DeveloperTools developerTools;
+    //private DeveloperTools developerTools;
 
-    private Level currentLevel;
+    private LevelManager levelManager;
+    private MenuManager menuManager;
 
     private Player player;
     private HUD hud;
@@ -58,10 +54,13 @@ public class Game {
         hud.updateMaxHealth(player.getMaxHealth());
         hud.updateMaxStamina(player.getMaxStamina());
 
-        level1 = new Level_1(player, camera.position);
-        currentLevel = level1;
+        levelManager = new LevelManager();
+        menuManager = new MenuManager();
 
-        developerTools = new DeveloperTools();
+        level1 = new Level_1(player, camera.position);
+        levelManager.setCurrentLevel(level1);
+
+        //developerTools = new DeveloperTools();
     }
 
     public void gameUpdate(){
@@ -75,16 +74,25 @@ public class Game {
     }
 
     public void logicTick(){
-        currentLevel.logicTick();
+        if (menuManager.getCurrentMenu().isActive() && menuManager.getCurrentMenu().getPausesGame()){
+            menuManager.menuLogicTick();
+        }else {
+            inGameLogicTick();
+        }
+    }
+
+    private void inGameLogicTick(){
+        levelManager.getCurrentLevel().logicTick();
         player.logicTick(camera);
-        collision();
+        levelManager.collision();
         hud.updatePlayerData(player);
         lockOn();
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)){ // Debug
-            EventHandler.damagePlayer(25, player);
+            player.damageHealth(25);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.O)){ // Debug
-            EventHandler.healPlayer(25, player);
+            player.healHealth(25);
+            player.addSouls(10);
         }
     }
 
@@ -93,47 +101,37 @@ public class Game {
         viewport.apply();
         camera.update();
         batch.setProjectionMatrix(camera.combined);
+        if (menuManager.getCurrentMenu().isActive() && menuManager.getCurrentMenu().getPausesGame()){
+            menuManager.menuRenderTick();
+        }else {
+            inGameRenderTick();
+        }
+    }
+
+    private void inGameRenderTick(){
         batch.begin();
 
         // all worldly draw calls go here
-            // first render layer (background, entity bodies etc.)
-        currentLevel.drawAllBodies(batch);
+        // first render layer (background, entity bodies etc.)
+        levelManager.getCurrentLevel().drawAllBodies(batch);
         player.draw(batch);
 
-            // second render layer (effects)
+        // second render layer (effects)
         drawLockDot();
-        currentLevel.drawAllEffects(batch);
+        levelManager.getCurrentLevel().drawAllEffects(batch);
 
-            // third render layer (UI)
+        // third render layer (UI)
         hud.draw(batch, new Vector2(camera.position.x, camera.position.y));
         batch.end();
 
         // debug render calls
         sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeRenderer.ShapeType.Line);
-        currentLevel.drawAllDebug(sr);
+        levelManager.getCurrentLevel().drawAllDebug(sr);
         player.drawDebug(sr);
         sr.end();
 
         trackCamera();
-    }
-
-    private void collision(){
-        for (Entity e : currentLevel.getEntities()){
-            e.collision(player); // entity-on-player collision
-            player.hitboxOnHurtboxCollision(e.getDamageSources());
-            for (Entity p : currentLevel.getEntities()){ // entity-on-entity collision
-                if (p.getID() != e.getID()){ // no colliding with self
-                    e.bodyCollision(p);
-                }
-            }
-        }
-        for (Obstacle o : currentLevel.getObstacles()){ // obstacle collision
-            player.bodyCollision(o);
-            for (Entity e : currentLevel.getEntities()){
-                e.bodyCollision(o);
-            }
-        }
     }
 
     private void lockOn(){
@@ -141,7 +139,7 @@ public class Game {
         if (isLockOnPressed) {
             player.toggleLockOn();
             if (player.isLockedOn()){ // initial lock on
-                lockedOnEntity = currentLevel.getEntities()[findClosestEntity(player.getPosition(), currentLevel.getEntities())];
+                lockedOnEntity = levelManager.getCurrentLevel().getEntities()[findClosestEntity(player.getPosition(), levelManager.getCurrentLevel().getEntities())];
             }
         }
         if (player.isLockedOn()){
@@ -193,71 +191,123 @@ public class Game {
         sr.dispose();
     }
 
-    public static class EventHandler{
-        public static void grantSouls(int numSouls, Player player){
-            player.addSouls(numSouls);
-        }
-        public static void damagePlayer(float damage, Player player){
-            if (player.isVulnerable()) {
-                player.damageHealth(damage);
-            }
-        }
-        public static void healPlayer(float heal, Player player){
-            player.healHealth(heal);
+    private class LevelManager{
+        protected Level[] levels;
+        protected Level currentLevel;
+
+        public LevelManager(){
+            currentLevel = new Level(player);
+            levels = new Level[]{};
         }
 
-    }
-
-    private class DeveloperTools{
-        private Vector2[] currentNodeVertices = new Vector2[3];
-        private int currentIndex = 0;
-        private int numVertices = 0;
-
-        private void navNodePlacement(){ // debug developer tool
-            ArrayList<Vector2> environmentVertices = new ArrayList<>();
-            for (Obstacle o : currentLevel.getObstacles()){
-                for (Collider c : o.getBody()){
-                    for (Vector2 v : c.getVertices()){
-                        environmentVertices.add(v);
+        public void collision(){
+            for (Entity e : currentLevel.getEntities()){
+                e.collision(player); // entity-on-player collision
+                player.hitboxOnHurtboxCollision(e.getDamageSources());
+                for (Entity p : currentLevel.getEntities()){ // entity-on-entity collision
+                    if (p.getID() != e.getID()){ // no colliding with self
+                        e.bodyCollision(p);
                     }
                 }
             }
-            for (NavNode n : currentLevel.getNavMesh().getNodes()){
-                environmentVertices.add(n.getVertices()[0]);
-                environmentVertices.add(n.getVertices()[1]);
-                environmentVertices.add(n.getVertices()[2]);
-            }
-            Vector2 selectedVertex = environmentVertices.get(Utils.findClosestPosition(player.getWorldMousePosition(), Utils.vectorArrayListToArray(environmentVertices)));
-            if (Utils.findDistance(player.getWorldMousePosition(), selectedVertex) > 0.5f){
-                selectedVertex = player.getWorldMousePosition();
-            }
-
-            if (Gdx.input.isKeyJustPressed(Input.Keys.COMMA)){
-                currentNodeVertices[currentIndex] = selectedVertex;
-                currentIndex = (currentIndex + 1) % 3;
-                numVertices ++;
-                if (numVertices > 3){
-                    numVertices = 3;
+            for (Obstacle o : currentLevel.getObstacles()){ // obstacle collision
+                player.bodyCollision(o);
+                for (Entity e : currentLevel.getEntities()){
+                    e.bodyCollision(o);
                 }
-            }else if (Gdx.input.isKeyJustPressed(Input.Keys.PERIOD)){
-                System.out.println("navNodes[i] = new NavNode(new Vector2[]{new Vector2("+currentNodeVertices[0].x+"f,"+currentNodeVertices[0].y+"f)"+", new Vector2("+currentNodeVertices[1].x+"f,"+currentNodeVertices[1].y+"f)"+", new Vector2("+currentNodeVertices[2].x+"f,"+currentNodeVertices[2].y+"f)});");
             }
+        }
 
-            sr.setProjectionMatrix(camera.combined);
-            sr.begin(ShapeRenderer.ShapeType.Filled);
-            sr.setColor(Color.CYAN);
-            sr.circle(selectedVertex.x, selectedVertex.y, 0.1f, 20);
-            if (numVertices == 1){
-                sr.circle(currentNodeVertices[0].x, currentNodeVertices[0].y, 0.1f, 20);
-            }
-            else if (numVertices == 2){
-                sr.rectLine(currentNodeVertices[(currentIndex - 1) % 3], currentNodeVertices[(currentIndex - 2) % 3], 0.1f);
-            }else if (numVertices == 3){
-                float[] floats = Utils.convertToPairwisePoints(currentNodeVertices);
-                sr.triangle(floats[0], floats[1], floats[2], floats[3], floats[4], floats[5]);
-            }
-            sr.end();
-            //System.out.println(currentNodeVertices[0] + " | " + currentNodeVertices[1] + " | " + currentNodeVertices[2]);
+        public Level getCurrentLevel() {
+            return currentLevel;
+        }
+
+        public void setCurrentLevel(Level currentLevel) {
+            this.currentLevel = currentLevel;
         }
     }
+
+    private class MenuManager{
+        protected Menu currentMenu;
+
+        protected MainMenu mainMenu;
+
+        public MenuManager(){
+            mainMenu = new MainMenu();
+            currentMenu = mainMenu;
+        }
+
+        public void menuLogicTick(){
+
+        }
+
+        public void menuRenderTick(){
+
+        }
+
+        public MainMenu getMainMenu() {
+            return mainMenu;
+        }
+
+        public Menu getCurrentMenu() {
+            return currentMenu;
+        }
+
+        public void setCurrentMenu(Menu currentMenu) {
+            this.currentMenu = currentMenu;
+        }
+    }
+
+//    private class DeveloperTools{
+//        private Vector2[] currentNodeVertices = new Vector2[3];
+//        private int currentIndex = 0;
+//        private int numVertices = 0;
+//
+//        private void navNodePlacement(){ // debug developer tool
+//            ArrayList<Vector2> environmentVertices = new ArrayList<>();
+//            for (Obstacle o : currentLevel.getObstacles()){
+//                for (Collider c : o.getBody()){
+//                    for (Vector2 v : c.getVertices()){
+//                        environmentVertices.add(v);
+//                    }
+//                }
+//            }
+//            for (NavNode n : currentLevel.getNavMesh().getNodes()){
+//                environmentVertices.add(n.getVertices()[0]);
+//                environmentVertices.add(n.getVertices()[1]);
+//                environmentVertices.add(n.getVertices()[2]);
+//            }
+//            Vector2 selectedVertex = environmentVertices.get(Utils.findClosestPosition(player.getWorldMousePosition(), Utils.vectorArrayListToArray(environmentVertices)));
+//            if (Utils.findDistance(player.getWorldMousePosition(), selectedVertex) > 0.5f){
+//                selectedVertex = player.getWorldMousePosition();
+//            }
+//
+//            if (Gdx.input.isKeyJustPressed(Input.Keys.COMMA)){
+//                currentNodeVertices[currentIndex] = selectedVertex;
+//                currentIndex = (currentIndex + 1) % 3;
+//                numVertices ++;
+//                if (numVertices > 3){
+//                    numVertices = 3;
+//                }
+//            }else if (Gdx.input.isKeyJustPressed(Input.Keys.PERIOD)){
+//                System.out.println("navNodes[i] = new NavNode(new Vector2[]{new Vector2("+currentNodeVertices[0].x+"f,"+currentNodeVertices[0].y+"f)"+", new Vector2("+currentNodeVertices[1].x+"f,"+currentNodeVertices[1].y+"f)"+", new Vector2("+currentNodeVertices[2].x+"f,"+currentNodeVertices[2].y+"f)});");
+//            }
+//
+//            sr.setProjectionMatrix(camera.combined);
+//            sr.begin(ShapeRenderer.ShapeType.Filled);
+//            sr.setColor(Color.CYAN);
+//            sr.circle(selectedVertex.x, selectedVertex.y, 0.1f, 20);
+//            if (numVertices == 1){
+//                sr.circle(currentNodeVertices[0].x, currentNodeVertices[0].y, 0.1f, 20);
+//            }
+//            else if (numVertices == 2){
+//                sr.rectLine(currentNodeVertices[(currentIndex - 1) % 3], currentNodeVertices[(currentIndex - 2) % 3], 0.1f);
+//            }else if (numVertices == 3){
+//                float[] floats = Utils.convertToPairwisePoints(currentNodeVertices);
+//                sr.triangle(floats[0], floats[1], floats[2], floats[3], floats[4], floats[5]);
+//            }
+//            sr.end();
+//            //System.out.println(currentNodeVertices[0] + " | " + currentNodeVertices[1] + " | " + currentNodeVertices[2]);
+//        }
+//    }
 }

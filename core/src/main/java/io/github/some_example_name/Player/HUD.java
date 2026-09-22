@@ -14,7 +14,7 @@ public class HUD {
     private StatusBar playerHealth;
     private StatusBar playerStamina;
     private StatusBar bossHealth;
-    private UIObject soulCounter;
+    private UIObject soulCounter; // currently 6 digit max, otherwise spills off of screen
 
     private boolean isInBossFight;
 
@@ -27,9 +27,9 @@ public class HUD {
 
     private void initialiseSoulCounter(){
         soulCounter = new UIObject();
-        UIElement background = new UIElement(new Vector2(5.25f,-4.25f), AssetDirectory.Textures.UI.BACKGROUND1, 1.8f, 0.6f);
+        UIElement background = new UIElement(new Vector2(5.8f,-4.25f), AssetDirectory.Textures.UI.BACKGROUND1, 1.8f, 0.6f);
         soulCounter.addUIElements(new UIElement[]{background});
-        TextBox soulCount = new TextBox(new Vector2(1,1), 0.5f, 2, "0", 0.075f);
+        TextBox soulCount = new TextBox(new Vector2(5.9f,-3.78f), 0.5f, 2, "", 0.03f);
         soulCounter.addTextBoxes(new TextBox[]{soulCount});
     }
 
@@ -38,6 +38,7 @@ public class HUD {
         float staminaCoefficient = player.getStamina()/player.getMaxStamina();
         playerHealth.updateBar(healthCoefficient);
         playerStamina.updateBar(staminaCoefficient);
+        soulCounter.getTextBoxes().get(0).setText(Integer.toString(player.getSouls()));
     }
 
     public void updateMaxHealth(float value){
