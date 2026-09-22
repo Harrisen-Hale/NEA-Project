@@ -35,7 +35,6 @@ public class Game {
 
     private Level_1 level1;
     private DeveloperTools developerTools;
-    TextBox t;
 
     private Level currentLevel;
 
@@ -62,8 +61,6 @@ public class Game {
         level1 = new Level_1(player, camera.position);
         currentLevel = level1;
 
-        t = new TextBox(new Vector2(0,0), 1, 1, "100", 1/16f);
-
         developerTools = new DeveloperTools();
     }
 
@@ -81,7 +78,7 @@ public class Game {
         currentLevel.logicTick();
         player.logicTick(camera);
         collision();
-        hud.updatePlayerHealthAndStamina(player.getMaxHealth(), player.getHealth(), player.getMaxStamina(), player.getStamina());
+        hud.updatePlayerData(player);
         lockOn();
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)){ // Debug
             EventHandler.damagePlayer(25, player);
@@ -109,8 +106,6 @@ public class Game {
 
             // third render layer (UI)
         hud.draw(batch, new Vector2(camera.position.x, camera.position.y));
-        t.draw(batch, new Vector2(camera.position.x, camera.position.y));
-
         batch.end();
 
         // debug render calls
