@@ -57,10 +57,10 @@ public class Button extends UIElement{
     }
 
     public void draw(SpriteBatch batch, Vector2 screenCentre){
-        Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre).add(0.5f*width, 0.5f*height);
+        Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre).sub(0.5f*width, 0.5f*height);
         currentSprite.setPosition(adjustedPosition.x, adjustedPosition.y);
         currentSprite.draw(batch);
-        textBox.draw(batch);
+        textBox.draw(batch, screenCentre);
     }
 
     public void draw(SpriteBatch batch){

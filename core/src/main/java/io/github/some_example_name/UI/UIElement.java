@@ -16,9 +16,13 @@ public class UIElement {
     public UIElement(){
         currentSprite = new Sprite();
         screenSpacePosition = new Vector2(0,0);
+        width = 0;
+        height = 0;
     }
 
-    public UIElement(Vector2 startPosition, String spritePath, float width, float height){
+    public UIElement(Vector2 startPosition, String spritePath, float widthArg, float heightArg){
+        width = widthArg;
+        height = heightArg;
         currentSprite = new Sprite(new Texture(Gdx.files.internal(spritePath)));
         currentSprite.setSize(width, height);
         currentSprite.setOriginCenter();

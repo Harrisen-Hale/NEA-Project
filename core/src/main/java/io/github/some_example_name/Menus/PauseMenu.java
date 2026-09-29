@@ -1,35 +1,20 @@
 package io.github.some_example_name.Menus;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.UI.Button;
 import io.github.some_example_name.UI.UIElement;
 
-public class MainMenu extends Menu{
+public class PauseMenu extends Menu{
 
-    public MainMenu(OrthographicCamera cameraArg){
+    public PauseMenu(OrthographicCamera cameraArg){
         super();
+        camera = cameraArg;
         initialiseButtons();
         initialiseVisuals();
-        active = true;
-        pausesGame = true;
-        camera = cameraArg;
-    }
-
-    public void logicTick(){
-        super.logicTick();
-        buttonFunctionality();
-    }
-
-    private void buttonFunctionality(){
-        if (buttons[0].readValue()){
-            active = false;
-        }
-        if (buttons[1].readValue()){
-            Gdx.app.exit();
-        }
+        active = false;
+        pausesGame = false; // ironically, the pause menu does not pause the game
     }
 
     private void initialiseButtons(){

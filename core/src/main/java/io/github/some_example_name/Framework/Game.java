@@ -16,6 +16,7 @@ import io.github.some_example_name.Levels.Level;
 import io.github.some_example_name.Levels.Level_1;
 import io.github.some_example_name.Menus.MainMenu;
 import io.github.some_example_name.Menus.Menu;
+import io.github.some_example_name.Menus.PauseMenu;
 import io.github.some_example_name.Player.HUD;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.World.Obstacle;
@@ -50,6 +51,7 @@ public class Game {
 
         loadTextures();
         player = new Player(0);
+        camera.position.set(player.getPosition(), 0);
         hud = new HUD();
         hud.updateMaxHealth(player.getMaxHealth());
         hud.updateMaxStamina(player.getMaxStamina());
@@ -74,10 +76,17 @@ public class Game {
     }
 
     public void logicTick(){
+        menuManager.inputs();
         if (menuManager.getCurrentMenu().isActive() && menuManager.getCurrentMenu().getPausesGame()){
             menuManager.menuLogicTick();
+        }else if (menuManager.getCurrentMenu().isActive()){
+            inGameLogicTick();
+            menuManager.menuLogicTick();
+            trackCamera();
         }else {
             inGameLogicTick();
+            trackCamera();
+
         }
     }
 
@@ -102,6 +111,10 @@ public class Game {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         if (menuManager.getCurrentMenu().isActive() && menuManager.getCurrentMenu().getPausesGame()){
+            menuManager.menuRenderTick();
+        }
+        else if (menuManager.getCurrentMenu().isActive()){
+            inGameRenderTick();
             menuManager.menuRenderTick();
         }else {
             inGameRenderTick();
@@ -130,8 +143,6 @@ public class Game {
         levelManager.getCurrentLevel().drawAllDebug(sr);
         player.drawDebug(sr);
         sr.end();
-
-        trackCamera();
     }
 
     private void lockOn(){
@@ -231,9 +242,12 @@ public class Game {
         protected Menu currentMenu;
 
         protected MainMenu mainMenu;
+        protected PauseMenu pauseMenu;
 
         public MenuManager(){
             mainMenu = new MainMenu(camera);
+            pauseMenu = new PauseMenu(camera);
+
             currentMenu = mainMenu;
         }
 
@@ -247,8 +261,13 @@ public class Game {
             batch.end();
         }
 
-        public MainMenu getMainMenu() {
-            return mainMenu;
+        public void inputs(){
+            if (!(currentMenu.getPausesGame() && currentMenu.isActive())) {
+                if (Gdx.input.isKeyJustPressed(ControlsDirectory.Menu.PAUSE)){
+                    currentMenu = pauseMenu;
+                    pauseMenu.setActive(!pauseMenu.isActive());
+                }
+            }
         }
 
         public Menu getCurrentMenu() {
