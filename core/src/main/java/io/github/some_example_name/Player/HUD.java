@@ -29,7 +29,7 @@ public class HUD {
         soulCounter = new UIObject();
         UIElement background = new UIElement(new Vector2(5.8f,-4.25f), AssetDirectory.Textures.UI.BACKGROUND1, 1.8f, 0.6f);
         soulCounter.addUIElements(new UIElement[]{background});
-        TextBox soulCount = new TextBox(new Vector2(5.9f,-3.78f), 0.5f, 2, "", 0.03f);
+        TextBox soulCount = new TextBox(new Vector2(5.9f,-3.78f), 0.5f, 2, "", 0.03f, 0, 0);
         soulCounter.addTextBoxes(new TextBox[]{soulCount});
     }
 

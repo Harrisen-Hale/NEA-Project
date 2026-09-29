@@ -4,6 +4,10 @@ package io.github.some_example_name.IO;
 import com.badlogic.gdx.Input;
 
 public final class ControlsDirectory {
+    public static final class Menu{
+        public static final int CLICK = Input.Buttons.LEFT;
+    }
+
     public static final class Movement{
         public static final int UP = Input.Keys.W;
         public static final int DOWN = Input.Keys.S;

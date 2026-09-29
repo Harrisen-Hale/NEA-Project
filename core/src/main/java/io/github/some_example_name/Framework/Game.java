@@ -233,12 +233,12 @@ public class Game {
         protected MainMenu mainMenu;
 
         public MenuManager(){
-            mainMenu = new MainMenu();
+            mainMenu = new MainMenu(camera);
             currentMenu = mainMenu;
         }
 
         public void menuLogicTick(){
-
+            currentMenu.logicTick();
         }
 
         public void menuRenderTick(){

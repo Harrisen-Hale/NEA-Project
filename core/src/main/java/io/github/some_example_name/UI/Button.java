@@ -16,18 +16,20 @@ public class Button extends UIElement{
     private TextBox textBox;
 
 
-    public Button(Vector2 screenSpacePositionArg, Vector2[] dVertices, String text, float fontScale, String spritePath, float widthArg, float heightArg){
+    public Button(Vector2 screenSpacePositionArg, Vector2[] dVertices, String text, float fontScale, String spritePath, float widthArg, float heightArg, float topMarginArg, float leftMarginArg){
         vertices = Utils.translatePolygon(dVertices, screenSpacePositionArg);
         on = false;
 
         width = widthArg;
         height = heightArg;
 
+
+
         currentSprite = new Sprite(new Texture(Gdx.files.internal(spritePath)));
         currentSprite.setSize(widthArg, heightArg);
         currentSprite.setOriginCenter();
 
-        textBox = new TextBox(screenSpacePositionArg.cpy().add(-widthArg/2f, heightArg/2f), heightArg, widthArg, text, fontScale);
+        textBox = new TextBox(screenSpacePositionArg.cpy().add(-widthArg/2f, heightArg/2f), heightArg, widthArg, text, fontScale, topMarginArg, leftMarginArg);
 
         screenSpacePosition = screenSpacePositionArg;
     }
@@ -55,14 +57,14 @@ public class Button extends UIElement{
     }
 
     public void draw(SpriteBatch batch, Vector2 screenCentre){
-        Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre).sub(0.5f*width, 0.5f*height);
+        Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre).add(0.5f*width, 0.5f*height);
         currentSprite.setPosition(adjustedPosition.x, adjustedPosition.y);
         currentSprite.draw(batch);
         textBox.draw(batch);
     }
 
     public void draw(SpriteBatch batch){
-        currentSprite.setPosition(screenSpacePosition.x-0.5f*width, screenSpacePosition.y-0.5f*height);
+        currentSprite.setPosition(screenSpacePosition.x-(0.5f*width), screenSpacePosition.y-(0.5f*height)); // top left if no margins
         currentSprite.draw(batch);
         textBox.draw(batch);
     }
