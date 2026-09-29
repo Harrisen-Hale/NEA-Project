@@ -11,17 +11,17 @@ public class MainMenu extends Menu{
         super();
         initialiseButtons();
         initialiseVisuals();
-        active = false;
+        active = true;
         pausesGame = true;
     }
 
     private void initialiseButtons(){
         Vector2[] buttonShape = new Vector2[]{};
-        float buttonFontScale = 0.05f;
+        float buttonFontScale = 0.03f;
 
         buttons = new Button[2];
-        buttons[0] = new Button(new Vector2(0,1), buttonShape, "Play Game", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND1, AssetDirectory.Textures.UI.BACKGROUND1, 3, 1);
-        buttons[1] = new Button(new Vector2(0,-1), buttonShape, "Quit Game", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND1, AssetDirectory.Textures.UI.BACKGROUND1, 3, 1);
+        buttons[0] = new Button(new Vector2(0,1), buttonShape, "Play Game", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND1,3, 1);
+        buttons[1] = new Button(new Vector2(0,-1), buttonShape, "Quit Game", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND1,3, 1);
 
     }
 

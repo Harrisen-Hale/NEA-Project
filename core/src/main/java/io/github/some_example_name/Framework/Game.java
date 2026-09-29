@@ -242,7 +242,9 @@ public class Game {
         }
 
         public void menuRenderTick(){
-
+            batch.begin();
+            currentMenu.draw(batch);
+            batch.end();
         }
 
         public MainMenu getMainMenu() {

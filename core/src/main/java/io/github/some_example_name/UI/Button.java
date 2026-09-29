@@ -3,6 +3,7 @@ package io.github.some_example_name.UI;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.Utils;
 
@@ -10,26 +11,23 @@ public class Button extends UIElement{
 
     private boolean on;
 
-    private Sprite buttonSpriteOn;
-    private Sprite buttonSpriteOff;
-
     private Vector2[] vertices;
 
+    private TextBox textBox;
 
-    public Button(Vector2 screenSpacePositionArg, Vector2[] dVertices, String text, float fontScale, String buttonSpriteOnPath, String buttonSpriteOffPath, float widthArg, float heightArg){
+
+    public Button(Vector2 screenSpacePositionArg, Vector2[] dVertices, String text, float fontScale, String spritePath, float widthArg, float heightArg){
         vertices = Utils.translatePolygon(dVertices, screenSpacePositionArg);
         on = false;
 
         width = widthArg;
         height = heightArg;
 
-        buttonSpriteOn = new Sprite(new Texture(Gdx.files.internal(buttonSpriteOnPath)));
-        buttonSpriteOff = new Sprite(new Texture(Gdx.files.internal(buttonSpriteOffPath)));
-        buttonSpriteOn.setSize(widthArg, heightArg);
-        buttonSpriteOff.setSize(widthArg, heightArg);
-        buttonSpriteOn.setOriginCenter();
-        buttonSpriteOff.setOriginCenter();
-        currentSprite = buttonSpriteOff;
+        currentSprite = new Sprite(new Texture(Gdx.files.internal(spritePath)));
+        currentSprite.setSize(widthArg, heightArg);
+        currentSprite.setOriginCenter();
+
+        textBox = new TextBox(screenSpacePositionArg.cpy().add(-widthArg/2f, heightArg/2f), heightArg, widthArg, text, fontScale);
 
         screenSpacePosition = screenSpacePositionArg;
     }
@@ -42,12 +40,10 @@ public class Button extends UIElement{
 
     private void turnOn(){
         on = true;
-        currentSprite = buttonSpriteOn;
     }
 
     private void turnOff(){
         on = false;
-        currentSprite = buttonSpriteOff;
     }
 
     public boolean readValue(){
@@ -56,6 +52,19 @@ public class Button extends UIElement{
             return true;
         }
         return false;
+    }
+
+    public void draw(SpriteBatch batch, Vector2 screenCentre){
+        Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre).sub(0.5f*width, 0.5f*height);
+        currentSprite.setPosition(adjustedPosition.x, adjustedPosition.y);
+        currentSprite.draw(batch);
+        textBox.draw(batch);
+    }
+
+    public void draw(SpriteBatch batch){
+        currentSprite.setPosition(screenSpacePosition.x-0.5f*width, screenSpacePosition.y-0.5f*height);
+        currentSprite.draw(batch);
+        textBox.draw(batch);
     }
 
 }
