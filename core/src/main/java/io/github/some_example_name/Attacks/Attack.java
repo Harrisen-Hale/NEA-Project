@@ -12,13 +12,14 @@ public class Attack extends DamageSource {
     protected float duration = 0f; // ticks
     protected boolean active = false;
 
-    public Attack(Entity ownerArg){
-        owner = ownerArg;
+    public Attack(){
+        owner = new Entity();
         damageSourceFlagManager = new DamageSourceFlagManager();
         hitbox = new Collider[]{};
     }
 
     public void execute(){
+
     }
 
     public void reset(){
@@ -39,5 +40,21 @@ public class Attack extends DamageSource {
 
     public boolean isActive() {
         return active;
+    }
+
+    public void setOwner(Entity owner) {
+        this.owner = owner;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setDuration(float duration) {
+        this.duration = duration;
+    }
+
+    public void setStaminaCost(float staminaCost) {
+        this.staminaCost = staminaCost;
     }
 }

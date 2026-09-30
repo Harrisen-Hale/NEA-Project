@@ -7,7 +7,8 @@ import io.github.some_example_name.Framework.*;
 public class PlayerLightAttack extends Attack{
 
     public PlayerLightAttack(Entity ownerArg){
-        super(ownerArg);
+        super();
+        owner = ownerArg;
         duration = 22;
         staminaCost = 30f;
         damage = 20f;

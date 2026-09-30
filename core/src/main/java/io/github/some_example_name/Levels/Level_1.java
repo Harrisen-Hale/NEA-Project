@@ -3,7 +3,6 @@ package io.github.some_example_name.Levels;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import io.github.some_example_name.Enemies.Dummy;
 import io.github.some_example_name.Enemies.Forlorn;
 import io.github.some_example_name.Framework.Entity;
 import io.github.some_example_name.Framework.AssetDirectory;

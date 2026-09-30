@@ -9,7 +9,8 @@ import io.github.some_example_name.Framework.Utils;
 
 public class ForlornSwipe extends Attack{
     public ForlornSwipe(Entity ownerArg){
-        super(ownerArg);
+        super();
+        owner = ownerArg;
         duration = 65;
         staminaCost = 30f;
         damage = 20f;

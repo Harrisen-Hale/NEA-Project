@@ -215,7 +215,7 @@ public class Player extends Entity {
     public void concludeAttack(){
         inControl = true;
         rotationalTrackingEnabled = true;
-        currentAttack = new Attack(this); // blank attack, does nothing
+        currentAttack = new Attack(); // blank attack, does nothing
     }
 
     public void collision(Entity ref){
@@ -375,7 +375,7 @@ public class Player extends Entity {
         body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(20, 0.35f), 0, true, Color.BLUE, true, false)};
         hurtboxes = new Collider[]{new Collider(position, 0,0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, true, Color.RED, true, false)};
         shield = new Collider(position, 0,0,new Vector2[]{new Vector2(0, -5/16f), new Vector2(1/8f, -5/16f), new Vector2(1/8f, 5/16f), new Vector2(0, 5/16f)}, 0, false, Color.GREEN, false, false);
-        currentAttack = new Attack(this);
+        currentAttack = new Attack();
     }
 
     // getters and setters
