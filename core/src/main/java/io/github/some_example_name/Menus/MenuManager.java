@@ -9,11 +9,11 @@ public class MenuManager{
     protected SpriteBatch batch;
     protected OrthographicCamera camera;
 
-
     protected Menu currentMenu;
 
     protected MainMenu mainMenu;
     protected PauseMenu pauseMenu;
+    protected InventoryMenu inventoryMenu;
 
     public MenuManager(OrthographicCamera cameraArg, SpriteBatch batchArg){
         camera = cameraArg;
@@ -21,6 +21,7 @@ public class MenuManager{
 
         mainMenu = new MainMenu(camera, this);
         pauseMenu = new PauseMenu(camera, this);
+        inventoryMenu = new InventoryMenu(camera, this);
 
         currentMenu = mainMenu;
     }
@@ -37,7 +38,11 @@ public class MenuManager{
 
     public void inputs(){
         if (!(currentMenu.getPausesGame() && currentMenu.isActive())) {
-            pauseMenu.toggle();
+            if (Gdx.input.isKeyJustPressed(ControlsDirectory.Menu.PAUSE)){
+                pauseMenu.toggle();
+            }else if(Gdx.input.isKeyJustPressed(ControlsDirectory.Menu.INVENTORY)){
+                inventoryMenu.toggle();
+            }
         }
     }
 
@@ -45,7 +50,25 @@ public class MenuManager{
         return currentMenu;
     }
 
+    public InventoryMenu getInventoryMenu() {
+        return inventoryMenu;
+    }
+
+    public PauseMenu getPauseMenu() {
+        return pauseMenu;
+    }
+
+    public MainMenu getMainMenu() {
+        return mainMenu;
+    }
+
     public void setCurrentMenu(Menu currentMenu) {
         this.currentMenu = currentMenu;
+    }
+
+    public void deactivateAll(){
+        mainMenu.setActive(false);
+        pauseMenu.setActive(false);
+        inventoryMenu.setActive(false);
     }
 }

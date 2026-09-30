@@ -10,7 +10,7 @@ public class Weapon extends Item{
         super();
         damageModifier = 1f;
         attack = new Attack();
-        attack.setDamage(attack.getDamage()*damageModifier);
+        modifyAttackDamage(1);
     }
 
     public void attack(){
@@ -27,5 +27,9 @@ public class Weapon extends Item{
 
     public float getDamageModifier() {
         return damageModifier;
+    }
+
+    public void modifyAttackDamage(float coefficient){
+        attack.setDamage(attack.getBaseDamage()*damageModifier*coefficient);
     }
 }

@@ -28,6 +28,7 @@ public class PauseMenu extends Menu{
     private void buttonFunctionality(){
         if (buttons[0].readValue()){
             active = false;
+            menuManager.getInventoryMenu().toggle();
         }
         if (buttons[1].readValue()){
             quitToTitle();
@@ -35,14 +36,16 @@ public class PauseMenu extends Menu{
     }
 
     private void quitToTitle(){
-        menuManager.setCurrentMenu(menuManager.mainMenu);
+        menuManager.setCurrentMenu(menuManager.getMainMenu());
         menuManager.getCurrentMenu().setActive(true);
     }
 
     public void toggle(){
-        if (Gdx.input.isKeyJustPressed(ControlsDirectory.Menu.PAUSE)){
-            active = !active;
+        active = !active;
+        if (active) {
             menuManager.setCurrentMenu(this);
+            menuManager.deactivateAll();
+            active = true;
         }
     }
 

@@ -26,7 +26,7 @@ public class Forlorn extends Enemy {
         body = new Collider[]{new Collider(position, -1/32f, 0, Utils.generateRegularPolygon(8, 0.15f), 0, true, Color.BLUE, true, false)};
         hurtboxes = new Collider[]{new Collider(position, 0,0,new Vector2[]{new Vector2(-3/16f, -5/16f), new Vector2(1/8f, -5/16f), new Vector2(1/8f, 5/16f), new Vector2(-3/16f, 5/16f)}, 0, true, Color.RED, true, false)};
         healthBar = new StatusBar(0, new Vector2(0,0), 1/16f, 1);
-        maxHealth = 500;
+        maxHealth = 200;
         health = maxHealth;
         healthBar.updateBar(health/maxHealth);
         speed = 1/128f;

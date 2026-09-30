@@ -11,7 +11,8 @@ public class PlayerLightAttack extends Attack{
         owner = ownerArg;
         duration = 22;
         staminaCost = 30f;
-        damage = 20f;
+        damage = 25f;
+        baseDamage = damage;
         knockback = 1/4f;
         hitbox = new Collider[]{new Collider(owner.getPosition(), 0,0, new Vector2[]{new Vector2(-0.1f, -0.15f), new Vector2(0.1f, -0.15f), new Vector2(0.1f, 0.6f), new Vector2(-0.1f, 0.6f)}, 0, false, Color.MAGENTA, false, false)};
     }

@@ -15,6 +15,8 @@ public final class AssetDirectory {
             public static final String STAMINA_BAR = "textures/ui/stamina_bar.png";
             public static final String BACKGROUND_BAR = "textures/ui/background_bar.png";
             public static final String BACKGROUND1 = "textures/ui/background_1.png";
+            public static final String BACKGROUND2 = "textures/ui/background_2.png";
+            public static final String BACKGROUND3 = "textures/ui/background_3.png";
             public static final String MAIN_TITLE = "textures/ui/main_title.png";
         }
         public static final class Misc {

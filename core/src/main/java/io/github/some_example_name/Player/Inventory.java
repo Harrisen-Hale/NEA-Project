@@ -6,7 +6,6 @@ import io.github.some_example_name.Menus.InventoryMenu;
 import java.util.ArrayList;
 
 public class Inventory {
-    protected InventoryMenu inventoryMenu;
 
     protected ArrayList<Item> inventory;
 
@@ -18,7 +17,6 @@ public class Inventory {
     protected int hotbarIndex;
 
     public Inventory(){
-        inventoryMenu = new InventoryMenu();
         inventory = new ArrayList<>();
         weapon = new Weapon();
         shield = new Shield();

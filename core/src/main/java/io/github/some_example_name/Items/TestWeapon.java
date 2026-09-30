@@ -8,7 +8,7 @@ public class TestWeapon extends Weapon{
 
     public TestWeapon(Entity ownerArg){
         super();
-        damageModifier = 1.2f;
+        damageModifier = 1.25f;
         attack = new PlayerLightAttack(ownerArg);
         attack.setDamage(attack.getDamage()*damageModifier);
     }

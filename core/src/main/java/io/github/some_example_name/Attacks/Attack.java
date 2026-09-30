@@ -11,11 +11,14 @@ public class Attack extends DamageSource {
     protected float staminaCost = 0f;
     protected float duration = 0f; // ticks
     protected boolean active = false;
+    protected float baseDamage;
 
     public Attack(){
+        super();
         owner = new Entity();
         damageSourceFlagManager = new DamageSourceFlagManager();
         hitbox = new Collider[]{};
+        baseDamage = damage;
     }
 
     public void execute(){
@@ -56,5 +59,9 @@ public class Attack extends DamageSource {
 
     public void setStaminaCost(float staminaCost) {
         this.staminaCost = staminaCost;
+    }
+
+    public float getBaseDamage() {
+        return baseDamage;
     }
 }

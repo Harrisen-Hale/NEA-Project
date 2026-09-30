@@ -7,6 +7,7 @@ public final class ControlsDirectory {
     public static final class Menu{
         public static final int CLICK = Input.Buttons.LEFT;
         public static final int PAUSE = Input.Keys.ESCAPE;
+        public static final int INVENTORY = Input.Keys.TAB;
     }
 
     public static final class Movement{
