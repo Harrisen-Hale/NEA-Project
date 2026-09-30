@@ -31,6 +31,7 @@ public class PauseMenu extends Menu{
             menuManager.getInventoryMenu().toggle();
         }
         if (buttons[1].readValue()){
+            active = false;
             quitToTitle();
         }
     }
