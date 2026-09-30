@@ -10,5 +10,22 @@ public class Weapon extends Item{
         super();
         damageModifier = 1f;
         attack = new Attack();
+        attack.setDamage(attack.getDamage()*damageModifier);
+    }
+
+    public void attack(){
+        attack.execute();
+    }
+
+    public void activateAttack() {
+        this.attack.setActive(true);
+    }
+
+    public Attack getAttack() {
+        return attack;
+    }
+
+    public float getDamageModifier() {
+        return damageModifier;
     }
 }

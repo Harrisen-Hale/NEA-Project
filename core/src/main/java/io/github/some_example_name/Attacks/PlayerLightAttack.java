@@ -17,25 +17,28 @@ public class PlayerLightAttack extends Attack{
     }
 
     public void execute(){
-        if (currentAttackTick == 0){ // start of attack
-            clearFlags();
-            hitbox[0].activate();
-        }
+        if (active) {
+            if (currentAttackTick == 0){ // start of attack
+                clearFlags();
+                hitbox[0].activate();
+            }
 
-        float t = (2*(currentAttackTick - duration /2f))/ duration; // parametric variable
-        float P = 0.25f; // change in (relative) x
-        float Q = 0.5f; // change in (relative) y
-        Vector2 relativePosition = new Vector2(-P*t, (float) (Q*(-(Math.pow(t, 2)) + 1)));
-        float executionAngle = Utils.degreesToRadians(owner.getFacing()-90); // facing takes positive x direction as 0 degrees
-        hitbox[0].setPosition(owner.getPosition().cpy().add(Utils.rotate(relativePosition, executionAngle)));
-        hitbox[0].setAngle(executionAngle);
-        hitbox[0].setVertices();
-
-        currentAttackTick++;
-        if (currentAttackTick >= duration){ // end of attack
-            currentAttackTick = 0;
-            hitbox[0].deactivate();
-            owner.concludeAttack();
+            float t = (2*(currentAttackTick - duration /2f))/ duration; // parametric variable
+            float P = 0.25f; // change in (relative) x
+            float Q = 0.5f; // change in (relative) y
+            Vector2 relativePosition = new Vector2(-P*t, (float) (Q*(-(Math.pow(t, 2)) + 1)));
+            float executionAngle = Utils.degreesToRadians(owner.getFacing()-90); // facing takes positive x direction as 0 degrees
+            hitbox[0].setPosition(owner.getPosition().cpy().add(Utils.rotate(relativePosition, executionAngle)));
+            hitbox[0].setAngle(executionAngle);
+            hitbox[0].setVertices();
+            owner.setVelocity(new Vector2(0,0));
+            currentAttackTick++;
+            if (currentAttackTick >= duration){ // end of attack
+                currentAttackTick = 0;
+                hitbox[0].deactivate();
+                owner.concludeAttack();
+                active = false;
+            }
         }
     }
 }

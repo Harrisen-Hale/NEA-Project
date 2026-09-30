@@ -14,7 +14,6 @@ public class Entity extends GameObject {
     protected float maxHealth;
     protected float health;
     protected Vector2 velocity;
-    protected Vector2 moveVector; // unit vector in movement direction
     protected Vector2 lookVector; // unit vector in look direction
     protected float facing; // degrees
     protected int souls;
@@ -85,7 +84,7 @@ public class Entity extends GameObject {
         }
     }
 
-    protected void rotation(Vector2 target){
+    public void rotation(Vector2 target){
         Vector2 vToTarget = target.cpy().sub(position);
         float theta = vToTarget.angleDeg();
         float phi = theta - facing;
@@ -138,7 +137,6 @@ public class Entity extends GameObject {
     protected void initialiseBaseValuesAndConstants(){
         position = new Vector2(0,0);
         velocity = new Vector2(0,0);
-        moveVector = new Vector2(0,0);
         facing = 0;
         maxHealth = 0;
         health = 0;
@@ -213,7 +211,7 @@ public class Entity extends GameObject {
         this.velocity = velocity;
     }
 
-    protected void setSprite(Texture newTexture){
+    public void setSprite(Texture newTexture){
         currentSprite = new Sprite(newTexture);
         currentSprite.setSize(1f, 1f);
         currentSprite.setOriginCenter();
@@ -241,4 +239,20 @@ public class Entity extends GameObject {
         this.alive = alive;
     }
 
+
+    public void setLookVector(Vector2 lookVector) {
+        this.lookVector = lookVector;
+    }
+
+    public void setSouls(int souls) {
+        this.souls = souls;
+    }
+
+    public void setHealth(float health) {
+        this.health = health;
+    }
+
+    public void setMaxHealth(float maxHealth) {
+        this.maxHealth = maxHealth;
+    }
 }
