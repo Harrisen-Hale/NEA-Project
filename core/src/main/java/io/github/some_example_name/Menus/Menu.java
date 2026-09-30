@@ -1,7 +1,6 @@
 package io.github.some_example_name.Menus;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -18,8 +17,9 @@ public class Menu {
     protected boolean active;
     protected boolean pausesGame; // whether this menu stops the ordinary game logic running
     protected OrthographicCamera camera;
+    protected MenuManager menuManager;
 
-    public Menu(){
+    public Menu(){ // this class exists purely to be inherited from, it will not work if used on its own
         buttons = new Button[]{};
         UIObjects = new UIObject[]{};
         UIElements = new UIElement[]{};
@@ -29,15 +29,15 @@ public class Menu {
     }
 
     public void logicTick(){
-        checkButtonClicks(camera);
+        checkButtonClicks();
     }
 
-    protected void checkButtonClicks(OrthographicCamera camera){
+    protected void checkButtonClicks(){
         Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouse);
         for (Button b : buttons){
             if (Gdx.input.isButtonJustPressed(ControlsDirectory.Menu.CLICK)) {
-                b.click(new Vector2(mouse.x, mouse.y));
+                b.click(new Vector2(mouse.x, mouse.y).sub(camera.position.x, camera.position.y));
             }
         }
     }

@@ -14,9 +14,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.github.some_example_name.IO.ControlsDirectory;
 import io.github.some_example_name.Levels.Level;
 import io.github.some_example_name.Levels.Level_1;
-import io.github.some_example_name.Menus.MainMenu;
-import io.github.some_example_name.Menus.Menu;
-import io.github.some_example_name.Menus.PauseMenu;
+import io.github.some_example_name.Menus.MenuManager;
 import io.github.some_example_name.Player.HUD;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.World.Obstacle;
@@ -57,7 +55,7 @@ public class Game {
         hud.updateMaxStamina(player.getMaxStamina());
 
         levelManager = new LevelManager();
-        menuManager = new MenuManager();
+        menuManager = new MenuManager(camera, batch);
 
         level1 = new Level_1(player, camera.position);
         levelManager.setCurrentLevel(level1);
@@ -76,7 +74,6 @@ public class Game {
     }
 
     public void logicTick(){
-        menuManager.inputs();
         if (menuManager.getCurrentMenu().isActive() && menuManager.getCurrentMenu().getPausesGame()){
             menuManager.menuLogicTick();
         }else if (menuManager.getCurrentMenu().isActive()){
@@ -88,6 +85,7 @@ public class Game {
             trackCamera();
 
         }
+        menuManager.inputs();
     }
 
     private void inGameLogicTick(){
@@ -202,7 +200,7 @@ public class Game {
         sr.dispose();
     }
 
-    private class LevelManager{
+    public class LevelManager{
         protected Level[] levels;
         protected Level currentLevel;
 
@@ -238,46 +236,7 @@ public class Game {
         }
     }
 
-    private class MenuManager{
-        protected Menu currentMenu;
 
-        protected MainMenu mainMenu;
-        protected PauseMenu pauseMenu;
-
-        public MenuManager(){
-            mainMenu = new MainMenu(camera);
-            pauseMenu = new PauseMenu(camera);
-
-            currentMenu = mainMenu;
-        }
-
-        public void menuLogicTick(){
-            currentMenu.logicTick();
-        }
-
-        public void menuRenderTick(){
-            batch.begin();
-            currentMenu.draw(batch);
-            batch.end();
-        }
-
-        public void inputs(){
-            if (!(currentMenu.getPausesGame() && currentMenu.isActive())) {
-                if (Gdx.input.isKeyJustPressed(ControlsDirectory.Menu.PAUSE)){
-                    currentMenu = pauseMenu;
-                    pauseMenu.setActive(!pauseMenu.isActive());
-                }
-            }
-        }
-
-        public Menu getCurrentMenu() {
-            return currentMenu;
-        }
-
-        public void setCurrentMenu(Menu currentMenu) {
-            this.currentMenu = currentMenu;
-        }
-    }
 
 //    private class DeveloperTools{
 //        private Vector2[] currentNodeVertices = new Vector2[3];

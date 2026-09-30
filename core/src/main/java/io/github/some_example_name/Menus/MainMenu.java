@@ -9,8 +9,11 @@ import io.github.some_example_name.UI.UIElement;
 
 public class MainMenu extends Menu{
 
-    public MainMenu(OrthographicCamera cameraArg){
+    public MainMenu(OrthographicCamera cameraArg, MenuManager menuManagerArg){
         super();
+
+        menuManager = menuManagerArg;
+
         initialiseButtons();
         initialiseVisuals();
         active = true;
