@@ -13,6 +13,7 @@ public class Inventory {
     protected Weapon weapon;
     protected Shield shield;
     protected Armour[] armour; // Head, Torso, Legs, Boots
+    protected Ring[] rings;
     protected Equipment[] hotbar;
     protected int hotbarIndex;
 
@@ -20,9 +21,10 @@ public class Inventory {
         inventory = new ArrayList<>();
         weapon = new Weapon();
         shield = new Shield();
-        armour = new Armour[]{};
-        hotbar = new Equipment[]{};
+        armour = new Armour[4];
+        hotbar = new Equipment[4];
         hotbarIndex = 0;
+        rings = new Ring[2];
     }
 
     public ArrayList<Item> getInventory() {

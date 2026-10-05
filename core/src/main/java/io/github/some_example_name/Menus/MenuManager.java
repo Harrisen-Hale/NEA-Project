@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.some_example_name.IO.ControlsDirectory;
+import io.github.some_example_name.Player.Player;
 
 public class MenuManager{
     protected SpriteBatch batch;
@@ -15,13 +16,13 @@ public class MenuManager{
     protected PauseMenu pauseMenu;
     protected InventoryMenu inventoryMenu;
 
-    public MenuManager(OrthographicCamera cameraArg, SpriteBatch batchArg){
+    public MenuManager(OrthographicCamera cameraArg, SpriteBatch batchArg, Player playerArg){
         camera = cameraArg;
         batch = batchArg;
 
         mainMenu = new MainMenu(camera, this);
         pauseMenu = new PauseMenu(camera, this);
-        inventoryMenu = new InventoryMenu(camera, this);
+        inventoryMenu = new InventoryMenu(camera, this, playerArg);
 
         currentMenu = mainMenu;
     }

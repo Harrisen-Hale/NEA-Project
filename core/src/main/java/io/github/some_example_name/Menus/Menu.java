@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.github.some_example_name.IO.ControlsDirectory;
 import io.github.some_example_name.UI.Button;
+import io.github.some_example_name.UI.TextBox;
 import io.github.some_example_name.UI.UIElement;
 import io.github.some_example_name.UI.UIObject;
 
@@ -14,6 +15,7 @@ public class Menu {
     protected Button[] buttons;
     protected UIObject[] UIObjects;
     protected UIElement[] UIElements;
+    protected TextBox[] textBoxes;
     protected boolean active;
     protected boolean pausesGame; // whether this menu stops the ordinary game logic running
     protected OrthographicCamera camera;
@@ -23,6 +25,7 @@ public class Menu {
         buttons = new Button[]{};
         UIObjects = new UIObject[]{};
         UIElements = new UIElement[]{};
+        textBoxes = new TextBox[]{};
         active = false;
         pausesGame = false;
         camera = new OrthographicCamera();
@@ -48,6 +51,9 @@ public class Menu {
         }
         for (UIElement v : UIElements){
             v.draw(batch, new Vector2(camera.position.x, camera.position.y));
+        }
+        for (TextBox t : textBoxes){
+            t.draw(batch, new Vector2(camera.position.x, camera.position.y));
         }
         for (Button b : buttons){
             b.draw(batch, new Vector2(camera.position.x, camera.position.y));

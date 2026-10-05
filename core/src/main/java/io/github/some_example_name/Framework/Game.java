@@ -55,7 +55,7 @@ public class Game {
         hud.updateMaxStamina(player.getMaxStamina());
 
         levelManager = new LevelManager();
-        menuManager = new MenuManager(camera, batch);
+        menuManager = new MenuManager(camera, batch, player);
 
         level1 = new Level_1(player, camera.position);
         levelManager.setCurrentLevel(level1);

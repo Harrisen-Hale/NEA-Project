@@ -19,6 +19,8 @@ import io.github.some_example_name.IO.ControlsDirectory;
 import io.github.some_example_name.Items.Shield;
 import io.github.some_example_name.Items.TestWeapon;
 
+import java.util.PrimitiveIterator;
+
 
 public class Player extends Entity {
 
@@ -40,6 +42,9 @@ public class Player extends Entity {
 
     private PlayerController playerController;
     private Inventory inventory;
+
+    private int[] playerStats; // Vitality, Endurance, Strength, Dexterity, Knowledge
+    private int level;
 
     public Player(int IDArg){
         loadTextures();
@@ -166,6 +171,8 @@ public class Player extends Entity {
         vulnerable = true;
         ticksSinceStaminaUsed = 0;
         lockedOn = false;
+        playerStats = new int[]{0,0,0,0,0};
+        level = 1;
 
         body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(20, 0.35f), 0, true, Color.BLUE, true, false)};
         hurtboxes = new Collider[]{new Collider(position, 0,0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, true, Color.RED, true, false)};
@@ -249,6 +256,38 @@ public class Player extends Entity {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public int[] getPlayerStats(){
+        return playerStats;
+    }
+
+    public int getVitality(){
+        return playerStats[0];
+    }
+
+    public int getEndurance(){
+        return playerStats[1];
+    }
+
+    public int getStrength(){
+        return playerStats[2];
+    }
+
+    public int getDexterity(){
+        return playerStats[3];
+    }
+
+    public int getKnowledge(){
+        return playerStats[4];
+    }
+
+    public int getLevel() { // stat level, not world level
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public PlayerController getPlayerController() {
