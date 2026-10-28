@@ -1,8 +1,9 @@
-package io.github.some_example_name.Items;
+package io.github.some_example_name.Items.Weapons;
 
 import io.github.some_example_name.Attacks.Attack;
+import io.github.some_example_name.Items.Item;
 
-public class Weapon extends Item{
+public class Weapon extends Item {
     protected float damageModifier;
     protected Attack attack;
 

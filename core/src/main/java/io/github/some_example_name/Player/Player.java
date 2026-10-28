@@ -10,17 +10,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import io.github.some_example_name.Attacks.Attack;
 import io.github.some_example_name.Framework.DamageSource;
-import io.github.some_example_name.Attacks.PlayerLightAttack;
-import io.github.some_example_name.Audio.SoundLooper;
 import io.github.some_example_name.Framework.*;
-import io.github.some_example_name.IO.ControlsDirectory;
-import io.github.some_example_name.Items.Shield;
-import io.github.some_example_name.Items.TestWeapon;
+import io.github.some_example_name.Items.Weapons.TestWeapon;
 import io.github.some_example_name.Levels.Level;
-
-import java.util.PrimitiveIterator;
 
 
 public class Player extends Entity {
@@ -161,6 +154,8 @@ public class Player extends Entity {
 
         playerController = new PlayerController(this);
         inventory = new Inventory();
+
+        // debug
         inventory.setWeapon(new TestWeapon(this));
 
         maxHealth = 250;
@@ -172,8 +167,8 @@ public class Player extends Entity {
         vulnerable = true;
         ticksSinceStaminaUsed = 0;
         lockedOn = false;
-        playerStats = new int[]{0,0,0,0,0};
-        level = 1;
+        playerStats = new int[]{11,8,12,4,7};
+        level = 42;
 
         body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(20, 0.35f), 0, true, Color.BLUE, false, false)};
         hurtboxes = new Collider[]{new Collider(position, 0,0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, true, Color.RED, false, false)};

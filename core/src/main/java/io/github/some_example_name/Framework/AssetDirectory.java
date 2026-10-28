@@ -23,6 +23,23 @@ public final class AssetDirectory {
             public static final class Equipment {
                 public static final String IGNIS_VIAL = "textures/items/equipment/ignis_vial.png";
             }
+            public static final class Armour {
+                public static final String SALLET_HELM = "textures/items/armour/sallet_helm.png";
+                public static final String STEEL_BREASTPLATE = "textures/items/armour/breastplate.png";
+                public static final String STEEL_GREAVES = "textures/items/armour/steel_greaves.png";
+                public static final String LEATHER_BOOTS = "textures/items/armour/leather_boots.png";
+            }
+            public static final class Shields {
+                public static final String CROSS_HEATER = "textures/items/shields/cross_heater.png";
+            }
+            public static final class Weapons {
+                public static final String ARMING_SWORD = "textures/items/weapons/arming_sword.png";
+            }
+            public static final class Rings {
+                public static final String MERCHANTS_RING = "textures/items/rings/merchants_ring.png";
+                public static final String STAMINA_RING = "textures/items/rings/stamina_ring.png";
+
+            }
         }
         public static final class Misc {
             public static final String NOT_FOUND = "textures/misc/texture_not_found.png";
