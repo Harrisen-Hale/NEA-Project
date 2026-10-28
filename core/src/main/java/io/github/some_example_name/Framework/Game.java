@@ -90,7 +90,7 @@ public class Game {
 
     private void inGameLogicTick(){
         levelManager.getCurrentLevel().logicTick();
-        player.logicTick(camera);
+        player.logicTick(camera, levelManager.getCurrentLevel());
         levelManager.collision();
         hud.updatePlayerData(player);
         lockOn();

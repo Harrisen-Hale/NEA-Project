@@ -19,13 +19,17 @@ public final class AssetDirectory {
             public static final String BACKGROUND3 = "textures/ui/background_3.png";
             public static final String MAIN_TITLE = "textures/ui/main_title.png";
         }
+        public static final class Items {
+            public static final class Equipment {
+                public static final String IGNIS_VIAL = "textures/items/equipment/ignis_vial.png";
+            }
+        }
         public static final class Misc {
             public static final String NOT_FOUND = "textures/misc/texture_not_found.png";
             public static final String LOCK_DOT = "textures/misc/lock_dot.png";
             public static final String EMPTY = "textures/misc/empty.png";
         }
         public static final class Entity {
-            public static final String DUMMY = "textures/entity/dummy.png";
             public static final class Forlorn {
                 public static final String IDLE = "textures/entity/forlorn/forlorn_idle.png";
             }

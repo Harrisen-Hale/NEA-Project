@@ -1,18 +1,17 @@
 package io.github.some_example_name.Menus;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Player.Inventory;
 import io.github.some_example_name.Player.Player;
-import io.github.some_example_name.UI.Button;
-import io.github.some_example_name.UI.ItemSlot;
-import io.github.some_example_name.UI.TextBox;
-import io.github.some_example_name.UI.UIElement;
+import io.github.some_example_name.UI.*;
 
 public class InventoryMenu extends Menu{
     protected Player player;
     protected Inventory playerInventory;
+    protected ItemSlot[] itemSlots;
 
     public InventoryMenu(OrthographicCamera cameraArg, MenuManager menuManagerArg, Player playerArg){
         super();
@@ -41,28 +40,28 @@ public class InventoryMenu extends Menu{
     private void initialiseButtons(){ // includes item slots, which inherit from Button class
         float buttonFontScale = 0.03f;
 
-        buttons = new Button[12];
+        itemSlots = new ItemSlot[12];
         // armour
-        buttons[0] = new ItemSlot(new Vector2(-3.5f,1.75f),  "", buttonFontScale   ,   0.3f, 0.45f);
-        buttons[1] = new ItemSlot(new Vector2(-3.5f,0.5f),  "", buttonFontScale   ,  0.3f, 0.45f);
-        buttons[2] = new ItemSlot(new Vector2(-3.5f,-0.75f),   "", buttonFontScale   ,  0.3f, 0.45f);
-        buttons[3] = new ItemSlot(new Vector2(-3.5f,-2f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[0] = new ItemSlot(new Vector2(-3.5f,1.75f),  "", buttonFontScale   ,   0.3f, 0.45f);
+        itemSlots[1] = new ItemSlot(new Vector2(-3.5f,0.5f),  "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[2] = new ItemSlot(new Vector2(-3.5f,-0.75f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[3] = new ItemSlot(new Vector2(-3.5f,-2f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
         //weapon
-        buttons[4] = new ItemSlot(new Vector2(-2.25f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[4] = new ItemSlot(new Vector2(-2.25f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
         //shield
-        buttons[5] = new ItemSlot(new Vector2(-4.75f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[5] = new ItemSlot(new Vector2(-4.75f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
         // equipment
-        buttons[6] = new ItemSlot(new Vector2(-0.5f,1.75f),   "", buttonFontScale   ,  0.3f, 0.45f);
-        buttons[7] = new ItemSlot(new Vector2(0.75f,1.75f),   "", buttonFontScale   ,  0.3f, 0.45f);
-        buttons[8] = new ItemSlot(new Vector2(-0.5f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
-        buttons[9] = new ItemSlot(new Vector2(0.75f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[6] = new ItemSlot(new Vector2(-0.5f,1.75f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[7] = new ItemSlot(new Vector2(0.75f,1.75f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[8] = new ItemSlot(new Vector2(-0.5f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[9] = new ItemSlot(new Vector2(0.75f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
         //rings
-        buttons[10] = new ItemSlot(new Vector2(-0.5f,-2f),   "", buttonFontScale   ,  0.3f, 0.45f);
-        buttons[11] = new ItemSlot(new Vector2(0.75f,-2f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[10] = new ItemSlot(new Vector2(-0.5f,-2f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        itemSlots[11] = new ItemSlot(new Vector2(0.75f,-2f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
     }
 
@@ -111,6 +110,30 @@ public class InventoryMenu extends Menu{
 
     }
 
+    private void updatePlayerItems(){
+        // armour
+        itemSlots[0].setItem(playerInventory.getArmour()[0]);
+        itemSlots[1].setItem(playerInventory.getArmour()[1]);
+        itemSlots[2].setItem(playerInventory.getArmour()[2]);
+        itemSlots[3].setItem(playerInventory.getArmour()[3]);
+
+        //weapon
+        itemSlots[4].setItem(playerInventory.getWeapon());
+
+        //shield
+        itemSlots[5].setItem(playerInventory.getShield());
+
+        // equipment
+        itemSlots[6].setItem(playerInventory.getHotbar()[0]);
+        itemSlots[7].setItem(playerInventory.getHotbar()[1]);
+        itemSlots[8].setItem(playerInventory.getHotbar()[2]);
+        itemSlots[9].setItem(playerInventory.getHotbar()[3]);
+
+        //rings
+        itemSlots[10].setItem(playerInventory.getRings()[0]);
+        itemSlots[11].setItem(playerInventory.getRings()[1]);
+    }
+
     public void toggle(){
         active = !active;
         if (active) {
@@ -118,6 +141,25 @@ public class InventoryMenu extends Menu{
             menuManager.deactivateAll();
             active = true;
             updatePlayerStats();
+            updatePlayerItems();
+        }
+    }
+
+    public void draw(SpriteBatch batch){
+        for (UIObject u : UIObjects){
+            u.draw(batch, new Vector2(camera.position.x, camera.position.y));
+        }
+        for (UIElement v : UIElements){
+            v.draw(batch, new Vector2(camera.position.x, camera.position.y));
+        }
+        for (TextBox t : textBoxes){
+            t.draw(batch, new Vector2(camera.position.x, camera.position.y));
+        }
+        for (Button b : buttons){
+            b.draw(batch, new Vector2(camera.position.x, camera.position.y));
+        }
+        for (ItemSlot i : itemSlots){
+            i.draw(batch, new Vector2(camera.position.x, camera.position.y));
         }
     }
 

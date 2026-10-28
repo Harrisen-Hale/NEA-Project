@@ -18,6 +18,7 @@ import io.github.some_example_name.Framework.*;
 import io.github.some_example_name.IO.ControlsDirectory;
 import io.github.some_example_name.Items.Shield;
 import io.github.some_example_name.Items.TestWeapon;
+import io.github.some_example_name.Levels.Level;
 
 import java.util.PrimitiveIterator;
 
@@ -51,11 +52,12 @@ public class Player extends Entity {
         initialiseBaseValuesAndConstants(IDArg);
     }
 
-    public void logicTick(OrthographicCamera camera){
+    public void logicTick(OrthographicCamera camera, Level currentLevel){
         setWorldMousePosition(camera);
         playerControllerTick();
         staminaRegeneration();
         transformColliders();
+        inventory.logicTick(currentLevel);
     }
 
     private void playerControllerTick(){
@@ -84,7 +86,7 @@ public class Player extends Entity {
     }
 
     private void staminaRegeneration(){
-        int STAMINA_REGEN_DELAY = 0; // ticks
+        int STAMINA_REGEN_DELAY = 90; // ticks
 
         if (ticksSinceStaminaUsed > STAMINA_REGEN_DELAY && stamina < maxStamina){
             stamina += calculateStaminaRegenRate();
@@ -99,7 +101,7 @@ public class Player extends Entity {
     }
 
     private float calculateStaminaRegenRate(){
-        float BASE_STAMINA_REGEN_RATE = 100f; // per tick
+        float BASE_STAMINA_REGEN_RATE = 0.5f; // per tick
 
         float staminaRegenRate = BASE_STAMINA_REGEN_RATE * staminaRegenCoefficient;
         staminaRegenCoefficient = 1;
@@ -161,9 +163,9 @@ public class Player extends Entity {
         inventory = new Inventory();
         inventory.setWeapon(new TestWeapon(this));
 
-        maxHealth = 500;
+        maxHealth = 250;
         health = maxHealth;
-        maxStamina = 500;
+        maxStamina = 210;
         stamina = maxStamina;
         staminaRegenCoefficient = 1;
         souls = 0;
@@ -173,8 +175,8 @@ public class Player extends Entity {
         playerStats = new int[]{0,0,0,0,0};
         level = 1;
 
-        body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(20, 0.35f), 0, true, Color.BLUE, true, false)};
-        hurtboxes = new Collider[]{new Collider(position, 0,0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, true, Color.RED, true, false)};
+        body = new Collider[]{new Collider(position, 0,0, Utils.generateRegularPolygon(20, 0.35f), 0, true, Color.BLUE, false, false)};
+        hurtboxes = new Collider[]{new Collider(position, 0,0, new Vector2[]{new Vector2(-0.2f, -0.3f), new Vector2(0.2f, -0.3f), new Vector2(0.2f, 0.3f), new Vector2(-0.2f, 0.3f)}, 0, true, Color.RED, false, false)};
     }
 
     // getters and setters

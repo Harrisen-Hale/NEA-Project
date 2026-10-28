@@ -1,7 +1,7 @@
 package io.github.some_example_name.Player;
 
 import io.github.some_example_name.Items.*;
-import io.github.some_example_name.Menus.InventoryMenu;
+import io.github.some_example_name.Levels.Level;
 
 import java.util.ArrayList;
 
@@ -28,9 +28,14 @@ public class Inventory {
             armour[i] = new Armour();
             hotbar[i] = new Equipment();
         }
+        hotbar[0] = new IgnisVial(); // debug
         rings = new Ring[2];
         rings[0] = new Ring();
         rings[1] = new Ring();
+    }
+
+    public void logicTick(Level currentLevel){
+        hotbar[hotbarIndex].logicTick(currentLevel);
     }
 
     public ArrayList<Item> getInventory() {
