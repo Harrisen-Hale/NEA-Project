@@ -24,7 +24,13 @@ public class Inventory {
         armour = new Armour[4];
         hotbar = new Equipment[4];
         hotbarIndex = 0;
+        for (int i = 0; i < 4; i++){
+            armour[i] = new Armour();
+            hotbar[i] = new Equipment();
+        }
         rings = new Ring[2];
+        rings[0] = new Ring();
+        rings[1] = new Ring();
     }
 
     public ArrayList<Item> getInventory() {
@@ -69,5 +75,21 @@ public class Inventory {
 
     public void setHotbar(Equipment[] hotbar) {
         this.hotbar = hotbar;
+    }
+
+    public int getHotbarIndex() {
+        return hotbarIndex;
+    }
+
+    public void setHotbarIndex(int hotbarIndex) {
+        this.hotbarIndex = hotbarIndex;
+    }
+
+    public Ring[] getRings() {
+        return rings;
+    }
+
+    public void setRings(Ring[] rings) {
+        this.rings = rings;
     }
 }

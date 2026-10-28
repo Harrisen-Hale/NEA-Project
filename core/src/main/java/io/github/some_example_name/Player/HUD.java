@@ -4,10 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Framework.Constants;
-import io.github.some_example_name.UI.StatusBar;
-import io.github.some_example_name.UI.TextBox;
-import io.github.some_example_name.UI.UIElement;
-import io.github.some_example_name.UI.UIObject;
+import io.github.some_example_name.UI.*;
 
 public class HUD {
 
@@ -15,6 +12,7 @@ public class HUD {
     private StatusBar playerStamina;
     private StatusBar bossHealth;
     private UIObject soulCounter; // currently 6 digit max, otherwise spills off of screen
+    private ItemSlot equippedItemSlot;
 
     private boolean isInBossFight;
 
@@ -22,6 +20,7 @@ public class HUD {
         isInBossFight = false;
         playerHealth = new StatusBar(0, new Vector2(-7.9f, 4.25f), 1/6f, 8);
         playerStamina = new StatusBar(1, new Vector2(-7.9f, 4f), 1/6f, 8);
+        equippedItemSlot = new ItemSlot(new Vector2(-7.4f, 3.4f), "", 1, 0,0);
         initialiseSoulCounter();
     }
 
@@ -39,6 +38,7 @@ public class HUD {
         playerHealth.updateBar(healthCoefficient);
         playerStamina.updateBar(staminaCoefficient);
         soulCounter.getTextBoxes().get(0).setText(Integer.toString(player.getSouls()));
+        equippedItemSlot.setItem(player.getInventory().getHotbar()[player.getInventory().getHotbarIndex()]);
     }
 
     public void updateMaxHealth(float value){
@@ -57,6 +57,7 @@ public class HUD {
         playerHealth.draw(batch, screenCentre);
         playerStamina.draw(batch, screenCentre);
         soulCounter.draw(batch, screenCentre);
+        equippedItemSlot.draw(batch, screenCentre);
     }
 
 }

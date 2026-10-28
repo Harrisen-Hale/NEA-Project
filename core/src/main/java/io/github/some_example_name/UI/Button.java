@@ -9,11 +9,11 @@ import io.github.some_example_name.Framework.Utils;
 
 public class Button extends UIElement{
 
-    private boolean on;
+    protected boolean on;
 
-    private Vector2[] vertices;
+    protected Vector2[] vertices;
 
-    private TextBox textBox;
+    protected TextBox textBox;
 
 
     public Button(Vector2 screenSpacePositionArg, Vector2[] dVertices, String text, float fontScale, String spritePath, float widthArg, float heightArg, float topMarginArg, float leftMarginArg){

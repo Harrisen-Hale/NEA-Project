@@ -160,7 +160,6 @@ public class Player extends Entity {
         playerController = new PlayerController(this);
         inventory = new Inventory();
         inventory.setWeapon(new TestWeapon(this));
-        inventory.setShield(new Shield());
 
         maxHealth = 500;
         health = maxHealth;

@@ -6,15 +6,18 @@ import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Player.Inventory;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.UI.Button;
+import io.github.some_example_name.UI.ItemSlot;
 import io.github.some_example_name.UI.TextBox;
 import io.github.some_example_name.UI.UIElement;
 
 public class InventoryMenu extends Menu{
     protected Player player;
+    protected Inventory playerInventory;
 
     public InventoryMenu(OrthographicCamera cameraArg, MenuManager menuManagerArg, Player playerArg){
         super();
         player = playerArg;
+        playerInventory = player.getInventory();
 
         initialiseButtons();
         initialiseVisuals();
@@ -35,32 +38,31 @@ public class InventoryMenu extends Menu{
 
     }
 
-    private void initialiseButtons(){
-        Vector2[] buttonShape = new Vector2[]{new Vector2(-0.5f, -0.5f),new Vector2(0.5f, -0.5f),new Vector2(0.5f, 0.5f),new Vector2(-0.5f, 0.5f)};
+    private void initialiseButtons(){ // includes item slots, which inherit from Button class
         float buttonFontScale = 0.03f;
 
         buttons = new Button[12];
         // armour
-        buttons[0] = new Button(new Vector2(-3.5f,1.75f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1, 0.3f, 0.45f);
-        buttons[1] = new Button(new Vector2(-3.5f,0.5f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
-        buttons[2] = new Button(new Vector2(-3.5f,-0.75f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
-        buttons[3] = new Button(new Vector2(-3.5f,-2f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
+        buttons[0] = new ItemSlot(new Vector2(-3.5f,1.75f),  "", buttonFontScale   ,   0.3f, 0.45f);
+        buttons[1] = new ItemSlot(new Vector2(-3.5f,0.5f),  "", buttonFontScale   ,  0.3f, 0.45f);
+        buttons[2] = new ItemSlot(new Vector2(-3.5f,-0.75f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        buttons[3] = new ItemSlot(new Vector2(-3.5f,-2f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
         //weapon
-        buttons[4] = new Button(new Vector2(-2.25f,0.5f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
+        buttons[4] = new ItemSlot(new Vector2(-2.25f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
         //shield
-        buttons[5] = new Button(new Vector2(-4.75f,0.5f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
+        buttons[5] = new ItemSlot(new Vector2(-4.75f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
         // equipment
-        buttons[6] = new Button(new Vector2(-0.5f,1.75f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
-        buttons[7] = new Button(new Vector2(0.75f,1.75f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
-        buttons[8] = new Button(new Vector2(-0.5f,0.5f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
-        buttons[9] = new Button(new Vector2(0.75f,0.5f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
+        buttons[6] = new ItemSlot(new Vector2(-0.5f,1.75f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        buttons[7] = new ItemSlot(new Vector2(0.75f,1.75f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        buttons[8] = new ItemSlot(new Vector2(-0.5f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        buttons[9] = new ItemSlot(new Vector2(0.75f,0.5f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
         //rings
-        buttons[10] = new Button(new Vector2(-0.5f,-2f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
-        buttons[11] = new Button(new Vector2(0.75f,-2f), buttonShape, "", buttonFontScale, AssetDirectory.Textures.UI.BACKGROUND3,1, 1,0.3f, 0.45f);
+        buttons[10] = new ItemSlot(new Vector2(-0.5f,-2f),   "", buttonFontScale   ,  0.3f, 0.45f);
+        buttons[11] = new ItemSlot(new Vector2(0.75f,-2f),   "", buttonFontScale   ,  0.3f, 0.45f);
 
     }
 

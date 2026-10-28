@@ -1,6 +1,9 @@
 package io.github.some_example_name.Items;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import io.github.some_example_name.Framework.AssetDirectory;
 
 public class Item {
     protected Sprite icon;
@@ -11,7 +14,7 @@ public class Item {
     protected int[] statRequirements; // Vit, End, Str, Dex, Kno
 
     public Item(){
-        icon = new Sprite();
+        icon = new Sprite(new Texture(Gdx.files.internal(AssetDirectory.Textures.Misc.EMPTY)));
         name = "";
         flavourText = "";
         statRequirements = new int[]{0,0,0,0,0};
@@ -48,5 +51,9 @@ public class Item {
 
     public void setStatRequirements(int[] statRequirements) {
         this.statRequirements = statRequirements;
+    }
+
+    public Sprite getIcon() {
+        return icon;
     }
 }
