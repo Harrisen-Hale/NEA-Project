@@ -1,16 +1,19 @@
-package io.github.some_example_name.Items;
+package io.github.some_example_name.Items.Armour;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import io.github.some_example_name.Framework.AssetDirectory;
+import io.github.some_example_name.Items.Item;
+import io.github.some_example_name.Items.ItemType;
 
-public class Armour extends Item{
-    protected int piece; // 0 - Head, 1 - Torso, 2 - Legs, 3 - Feet
+public class Armour extends Item {
+    protected ArmourPiece piece;
     protected float defense;
 
-    public Armour(int pieceArg, float defenseArg, String spritePath){
+    public Armour(ArmourPiece pieceArg, float defenseArg, String spritePath){
         super();
+        itemType = ItemType.ARMOUR;
         piece = pieceArg;
         defense = defenseArg;
         icon = new Sprite(new Texture(Gdx.files.internal(spritePath)));
@@ -20,7 +23,8 @@ public class Armour extends Item{
 
     public Armour(){
         super();
-        piece = 0;
+        itemType = ItemType.ARMOUR;
+        piece = ArmourPiece.HEAD;
         defense = 0;
         icon = new Sprite(new Texture(AssetDirectory.Textures.Misc.EMPTY));
         icon.setSize(1,1);

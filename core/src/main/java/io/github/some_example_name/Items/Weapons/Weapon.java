@@ -2,6 +2,7 @@ package io.github.some_example_name.Items.Weapons;
 
 import io.github.some_example_name.Attacks.Attack;
 import io.github.some_example_name.Items.Item;
+import io.github.some_example_name.Items.ItemType;
 
 public class Weapon extends Item {
     protected float damageModifier;
@@ -9,6 +10,7 @@ public class Weapon extends Item {
 
     public Weapon(){
         super();
+        itemType = ItemType.WEAPON;
         damageModifier = 1f;
         attack = new Attack();
         modifyAttackDamage(1);

@@ -10,14 +10,14 @@ public class HUD {
 
     private StatusBar playerHealth;
     private StatusBar playerStamina;
-    private StatusBar bossHealth;
+    private StatusBar bossHealthBar;
     private UIObject soulCounter; // currently 6 digit max, otherwise spills off of screen
     private ItemSlot equippedItemSlot;
 
-    private boolean isInBossFight;
+    private boolean inBossFight;
 
     public HUD(){
-        isInBossFight = false;
+        inBossFight = false;
         playerHealth = new StatusBar(0, new Vector2(-7.9f, 4.25f), 1/6f, 8);
         playerStamina = new StatusBar(1, new Vector2(-7.9f, 4f), 1/6f, 8);
         equippedItemSlot = new ItemSlot(new Vector2(-7.4f, 3.4f), "", 1, 0,0);

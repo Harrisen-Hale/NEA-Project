@@ -2,6 +2,8 @@ package io.github.some_example_name.Player;
 
 import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Items.*;
+import io.github.some_example_name.Items.Armour.Armour;
+import io.github.some_example_name.Items.Armour.ArmourPiece;
 import io.github.some_example_name.Items.Weapons.Weapon;
 import io.github.some_example_name.Levels.Level;
 
@@ -36,10 +38,10 @@ public class Inventory {
 
         // debug loadout
         hotbar[0] = new IgnisVial();
-        armour[0] = new Armour(0, 10, AssetDirectory.Textures.Items.Armour.SALLET_HELM);
-        armour[1] = new Armour(1, 10, AssetDirectory.Textures.Items.Armour.STEEL_BREASTPLATE);
-        armour[2] = new Armour(2, 10, AssetDirectory.Textures.Items.Armour.STEEL_GREAVES);
-        armour[3] = new Armour(3, 10, AssetDirectory.Textures.Items.Armour.LEATHER_BOOTS);
+        armour[0] = new Armour(ArmourPiece.HEAD, 10, AssetDirectory.Textures.Items.Armour.SALLET_HELM);
+        armour[1] = new Armour(ArmourPiece.TORSO, 10, AssetDirectory.Textures.Items.Armour.STEEL_BREASTPLATE);
+        armour[2] = new Armour(ArmourPiece.LEGS, 10, AssetDirectory.Textures.Items.Armour.STEEL_GREAVES);
+        armour[3] = new Armour(ArmourPiece.FEET, 10, AssetDirectory.Textures.Items.Armour.LEATHER_BOOTS);
         shield = new Shield(10f, AssetDirectory.Textures.Items.Shields.CROSS_HEATER);
         rings[0] = new Ring(AssetDirectory.Textures.Items.Rings.MERCHANTS_RING);
         rings[1] = new Ring(AssetDirectory.Textures.Items.Rings.STAMINA_RING);

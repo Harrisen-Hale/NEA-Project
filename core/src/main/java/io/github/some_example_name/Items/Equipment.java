@@ -11,6 +11,7 @@ public class Equipment extends Item{
 
     public Equipment(EquipmentAction actionArg, String spritePath){
         super();
+        itemType = ItemType.EQUIPMENT;
         action = actionArg;
         icon = new Sprite(new Texture(Gdx.files.internal(spritePath)));
         icon.setSize(1,1);
@@ -19,6 +20,7 @@ public class Equipment extends Item{
 
     public Equipment(){
         super();
+        itemType = ItemType.EQUIPMENT;
         action = new EquipmentAction();
     }
 

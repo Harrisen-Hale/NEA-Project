@@ -8,6 +8,7 @@ import io.github.some_example_name.Framework.AssetDirectory;
 public class Ring extends Item{
     public Ring(String spritePath){
         super();
+        itemType = ItemType.RING;
         icon = new Sprite(new Texture(spritePath));
         icon.setSize(1,1);
         icon.setOriginCenter();
@@ -15,5 +16,6 @@ public class Ring extends Item{
 
     public Ring(){
         super();
+        itemType = ItemType.RING;
     }
 }

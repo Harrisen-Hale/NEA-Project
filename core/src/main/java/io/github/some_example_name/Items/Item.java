@@ -10,15 +10,17 @@ public class Item {
     protected String name;
     protected String flavourText;
 
-    protected int ID;
     protected int[] statRequirements; // Vit, End, Str, Dex, Kno
+    protected boolean equipped;
+    protected ItemType itemType;
 
     public Item(){
         icon = new Sprite(new Texture(Gdx.files.internal(AssetDirectory.Textures.Misc.EMPTY)));
         name = "";
         flavourText = "";
         statRequirements = new int[]{0,0,0,0,0};
-        ID = -1;
+        equipped = false;
+        itemType = ItemType.EMPTY;
     }
 
     public String getName() {
@@ -37,14 +39,6 @@ public class Item {
         this.flavourText = flavourText;
     }
 
-    public int getID() {
-        return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
     public int[] getStatRequirements() {
         return statRequirements;
     }
@@ -56,4 +50,6 @@ public class Item {
     public Sprite getIcon() {
         return icon;
     }
+
+
 }

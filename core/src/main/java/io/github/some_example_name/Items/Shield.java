@@ -15,6 +15,7 @@ public class Shield extends Item{
 
     public Shield(float blockStaminaCostArg, String spritePath){
         super();
+        itemType = ItemType.SHIELD;
         blockStaminaCost = blockStaminaCostArg;
         shieldCollider =  new Collider(new Vector2(0,0), 0,0,new Vector2[]{new Vector2(0, -5/16f), new Vector2(1/8f, -5/16f), new Vector2(1/8f, 5/16f), new Vector2(0, 5/16f)}, 0, false, Color.GREEN, false, false);
         icon = new Sprite(new Texture(Gdx.files.internal(spritePath)));
@@ -24,6 +25,7 @@ public class Shield extends Item{
 
     public Shield(){
         super();
+        itemType = ItemType.SHIELD;
         blockStaminaCost = 0f;
         shieldCollider =  new Collider(new Vector2(0,0), 0,0,new Vector2[]{new Vector2(0, -5/16f), new Vector2(1/8f, -5/16f), new Vector2(1/8f, 5/16f), new Vector2(0, 5/16f)}, 0, false, Color.GREEN, false, false);
     }
