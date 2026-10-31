@@ -8,13 +8,11 @@ import io.github.some_example_name.Items.Item;
 import io.github.some_example_name.Items.ItemType;
 
 public class Armour extends Item {
-    protected ArmourPiece piece;
     protected float defense;
 
-    public Armour(ArmourPiece pieceArg, float defenseArg, String spritePath){
+    public Armour( float defenseArg, String spritePath){
         super();
         itemType = ItemType.ARMOUR;
-        piece = pieceArg;
         defense = defenseArg;
         icon = new Sprite(new Texture(Gdx.files.internal(spritePath)));
         icon.setSize(1,1);
@@ -24,7 +22,6 @@ public class Armour extends Item {
     public Armour(){
         super();
         itemType = ItemType.ARMOUR;
-        piece = ArmourPiece.HEAD;
         defense = 0;
         icon = new Sprite(new Texture(AssetDirectory.Textures.Misc.EMPTY));
         icon.setSize(1,1);

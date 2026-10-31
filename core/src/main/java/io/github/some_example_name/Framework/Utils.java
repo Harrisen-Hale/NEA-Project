@@ -2,8 +2,10 @@ package io.github.some_example_name.Framework;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
+import io.github.some_example_name.Items.Item;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Utils {
     public static float[] findDistances(Vector2 refPos, Vector2[] positions){ // returns array of distances from refPos to each element of positions
@@ -197,6 +199,14 @@ public class Utils {
 
     public static Vector2[] vectorArrayListToArray(ArrayList<Vector2> arrayList){
         Vector2[] output = new Vector2[arrayList.size()];
+        for (int i = 0; i < arrayList.size(); i++){
+            output[i] = arrayList.get(i);
+        }
+        return output;
+    }
+
+    public static Item[] itemArrayListToArray(ArrayList<Item> arrayList){
+        Item[] output = new Item[arrayList.size()];
         for (int i = 0; i < arrayList.size(); i++){
             output[i] = arrayList.get(i);
         }

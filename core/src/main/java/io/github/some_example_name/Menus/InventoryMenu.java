@@ -1,17 +1,27 @@
 package io.github.some_example_name.Menus;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.AssetDirectory;
+import io.github.some_example_name.Framework.Utils;
+import io.github.some_example_name.Items.Item;
+import io.github.some_example_name.Items.ItemType;
 import io.github.some_example_name.Player.Inventory;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.UI.*;
+
+import java.util.ArrayList;
 
 public class InventoryMenu extends Menu{
     protected Player player;
     protected Inventory playerInventory;
     protected ItemSlot[] itemSlots;
+
+    private ItemSelectionMenu[] itemSelectionMenus;
+    private int itemSelectionMenuIndex;
 
     public InventoryMenu(OrthographicCamera cameraArg, MenuManager menuManagerArg, Player playerArg){
         super();
@@ -26,6 +36,9 @@ public class InventoryMenu extends Menu{
         camera = cameraArg;
         active = false;
         pausesGame = false;
+
+        itemSelectionMenus = new ItemSelectionMenu[]{new ItemSelectionMenu()};
+        itemSelectionMenuIndex = 0;
     }
 
     public void logicTick(){
@@ -34,8 +47,76 @@ public class InventoryMenu extends Menu{
     }
 
     private void buttonFunctionality(){
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)){
+            itemSelection(10);
+        }
     }
+
+    private Item[] collateItemsOfType(ItemType itemType){
+        ArrayList<Item> arrayList = new ArrayList<>();
+        for (int i = 0; i < playerInventory.getInventory().size(); i++){
+            if (playerInventory.getInventory().get(i).getItemType() == itemType){
+                arrayList.add(playerInventory.getInventory().get(i));
+            }
+        }
+        return Utils.itemArrayListToArray(arrayList);
+    }
+
+    private ItemSelectionMenu[] generateItemSelectionMenus(ItemType slotItemType){
+        int ITEMS_PER_PAGE = 8; // must be even
+        Item[] itemsOfType = collateItemsOfType(slotItemType);
+        int numOfItems = itemsOfType.length;
+        if (numOfItems > 0) {
+            int pages = (int) Math.ceil((double) numOfItems / ITEMS_PER_PAGE);
+            int remainder = numOfItems % ITEMS_PER_PAGE;
+            Item[][] itemPages = new Item[pages][ITEMS_PER_PAGE];
+
+            int count = 0;
+            for (int i = 0; i < pages; i++) {
+                for (int j = 0; j < ITEMS_PER_PAGE; j++) {
+                    if (i == pages - 1 && j >= remainder) { // last page may not be full
+                        itemPages[i][j] = new Item();
+                    } else {
+                        itemPages[i][j] = itemsOfType[count];
+                        count++;
+                    }
+                }
+            }
+
+            ItemSelectionMenu[] menus = new ItemSelectionMenu[pages];
+            for (int k = 0; k < pages; k++) {
+                menus[k] = new ItemSelectionMenu(itemPages[k], k, pages);
+            }
+            return menus;
+        }else {
+            return new ItemSelectionMenu[]{new ItemSelectionMenu()};
+        }
+    }
+
+    private void itemSelection(int itemSlotIndex){
+        ItemType slotItemType = ItemType.EMPTY;
+        if (itemSlotIndex == 0){
+            slotItemType = ItemType.HEAD;
+        }
+        else if (itemSlotIndex == 1){
+            slotItemType = ItemType.TORSO;
+        }else if (itemSlotIndex == 2){
+            slotItemType = ItemType.LEGS;
+        }else if (itemSlotIndex == 3){
+            slotItemType = ItemType.FEET;
+        }else if (itemSlotIndex == 4){
+            slotItemType = ItemType.WEAPON;
+        }else if (itemSlotIndex == 5){
+            slotItemType = ItemType.SHIELD;
+        }else if (itemSlotIndex >= 6 && itemSlotIndex <= 9){
+            slotItemType = ItemType.EQUIPMENT;
+        }else if (itemSlotIndex == 10 || itemSlotIndex == 11){
+            slotItemType = ItemType.RING;
+        }
+
+        itemSelectionMenus = generateItemSelectionMenus(slotItemType);
+    }
+
 
     private void initialiseButtons(){ // includes item slots, which inherit from Button class
         float buttonFontScale = 0.03f;
@@ -142,6 +223,7 @@ public class InventoryMenu extends Menu{
             active = true;
             updatePlayerStats();
             updatePlayerItems();
+
         }
     }
 
@@ -160,6 +242,63 @@ public class InventoryMenu extends Menu{
         }
         for (ItemSlot i : itemSlots){
             i.draw(batch, new Vector2(camera.position.x, camera.position.y));
+        }
+        itemSelectionMenus[itemSelectionMenuIndex].draw(batch, new Vector2(camera.position.x, camera.position.y));
+    }
+
+    private class ItemSelectionMenu extends Menu{
+
+        private ItemSlot[] itemSlots;
+
+        public ItemSelectionMenu(Item[] items, int index, int maxIndex){
+            initialiseItemSlotsButtonsAndTextboxes(items, index, maxIndex);
+            initialiseVisuals();
+        }
+
+        public ItemSelectionMenu(){
+            itemSlots = new ItemSlot[]{};
+        }
+
+        private void initialiseVisuals(){
+            UIElements = new UIElement[1];
+            UIElements[0] = new UIElement(new Vector2(0,0f), AssetDirectory.Textures.UI.BACKGROUND2, 12, 6.75f);
+        }
+
+        private void initialiseItemSlotsButtonsAndTextboxes(Item[] items, int index, int maxIndex){
+            float VERT_SPACING = 1.25f;
+            float HOR_SPACING = 5.75f;
+
+            itemSlots = new ItemSlot[items.length];
+            textBoxes = new TextBox[items.length+1];
+            buttons = new Button[3];
+            for (int i = 0; i < items.length; i++){
+                itemSlots[i] = new ItemSlot(new Vector2(-5f+(HOR_SPACING*((2*i)/items.length)),2.5f-(VERT_SPACING*(i%(items.length/2)))), "", 1f, 0f, 0f, items[i]);
+                textBoxes[i] = new TextBox(new Vector2(-4.5f+(HOR_SPACING*((2*i)/items.length)),3f-(VERT_SPACING*(i%(items.length/2)))), 0.25f, 0.25f, items[i].getFlavourText(), 0.02f, 0 ,0.15f);
+            }
+            textBoxes[items.length] = new TextBox(new Vector2(2.75f,-2.3f), 1, 1, (index+1)+"/"+maxIndex, 0.035f, 0,0);
+            buttons[0] = new Button(new Vector2(4.65f,-2.5f), new Vector2[]{}, "", 1, AssetDirectory.Textures.UI.ARROW_BUTTON, 2, 1, 0, 0);// need to do vertices
+            buttons[1] = new Button(new Vector2(1.5f,-2.5f), new Vector2[]{}, "", 1, AssetDirectory.Textures.UI.ARROW_BUTTON, 2, 1, 0, 0);// need to do vertices
+            buttons[1].flipSprite();
+            buttons[2] = new Button(new Vector2(-4.5f,-2.5f), new Vector2[]{}, "Back To\nInventory", 0.02f, AssetDirectory.Textures.UI.BACKGROUND1, 2, 1, 0.2f, 0.4f);// need to do vertices
+
+        }
+
+        public void draw(SpriteBatch batch, Vector2 adjust){
+            for (UIObject u : UIObjects){
+                u.draw(batch, adjust);
+            }
+            for (UIElement v : UIElements){
+                v.draw(batch, adjust);
+            }
+            for (TextBox t : textBoxes){
+                t.draw(batch, adjust);
+            }
+            for (Button b : buttons){
+                b.draw(batch, adjust);
+            }
+            for (ItemSlot i : itemSlots){
+                i.draw(batch, adjust);
+            }
         }
     }
 

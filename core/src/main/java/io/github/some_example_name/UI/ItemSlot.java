@@ -14,6 +14,11 @@ public class ItemSlot extends Button{
         item = new Item();
     }
 
+    public ItemSlot(Vector2 screenSpacePositionArg, String text, float fontScale, float topMarginArg, float leftMarginArg, Item itemArg) {
+        super(screenSpacePositionArg, new Vector2[]{new Vector2(-0.5f, -0.5f),new Vector2(0.5f, -0.5f),new Vector2(0.5f, 0.5f),new Vector2(-0.5f, 0.5f)}, text, fontScale, AssetDirectory.Textures.UI.BACKGROUND3, 1,1, topMarginArg, leftMarginArg);
+        item = itemArg;
+    }
+
     public void draw(SpriteBatch batch, Vector2 screenCentre){
         Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre).sub(0.5f*width, 0.5f*height);
         currentSprite.setPosition(adjustedPosition.x, adjustedPosition.y);

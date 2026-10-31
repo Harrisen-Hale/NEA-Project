@@ -56,6 +56,10 @@ public class Button extends UIElement{
         return false;
     }
 
+    public void flipSprite(){
+        currentSprite.rotate(180);
+    }
+
     public void draw(SpriteBatch batch, Vector2 screenCentre){
         Vector2 adjustedPosition = this.screenSpacePosition.cpy().add(screenCentre).sub(0.5f*width, 0.5f*height);
         currentSprite.setPosition(adjustedPosition.x, adjustedPosition.y);

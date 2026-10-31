@@ -13,6 +13,7 @@ public class Item {
     protected int[] statRequirements; // Vit, End, Str, Dex, Kno
     protected boolean equipped;
     protected ItemType itemType;
+    protected int index; // the index that this item is located at within the inventory
 
     public Item(){
         icon = new Sprite(new Texture(Gdx.files.internal(AssetDirectory.Textures.Misc.EMPTY)));
@@ -21,6 +22,7 @@ public class Item {
         statRequirements = new int[]{0,0,0,0,0};
         equipped = false;
         itemType = ItemType.EMPTY;
+        index = -1;
     }
 
     public String getName() {
@@ -51,5 +53,27 @@ public class Item {
         return icon;
     }
 
+    public int getIndex() {
+        return index;
+    }
 
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public ItemType getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(ItemType itemType) {
+        this.itemType = itemType;
+    }
+
+    public boolean isEquipped() {
+        return equipped;
+    }
+
+    public void setEquipped(boolean equipped) {
+        this.equipped = equipped;
+    }
 }
