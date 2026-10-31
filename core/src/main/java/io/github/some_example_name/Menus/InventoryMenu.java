@@ -5,8 +5,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Framework.Utils;
+import io.github.some_example_name.IO.ControlsDirectory;
 import io.github.some_example_name.Items.Item;
 import io.github.some_example_name.Items.ItemType;
 import io.github.some_example_name.Player.Inventory;
@@ -43,12 +45,26 @@ public class InventoryMenu extends Menu{
 
     public void logicTick(){
         super.logicTick();
+        checkItemSlotClicks();
         buttonFunctionality();
+        itemSelectionMenus[itemSelectionMenuIndex].logicTick(playerInventory);
+    }
+
+    private void checkItemSlotClicks(){
+        Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(mouse);
+        for (Button i : itemSlots){
+            if (Gdx.input.isButtonJustPressed(ControlsDirectory.Menu.CLICK)) {
+                i.click(new Vector2(mouse.x, mouse.y).sub(camera.position.x, camera.position.y));
+            }
+        }
     }
 
     private void buttonFunctionality(){
-        if (Gdx.input.isKeyJustPressed(Input.Keys.L)){
-            itemSelection(10);
+        for (int i = 0; i < itemSlots.length; i++){
+            if (itemSlots[i].readValue()){
+                itemSelection(i);
+            }
         }
     }
 
@@ -62,7 +78,7 @@ public class InventoryMenu extends Menu{
         return Utils.itemArrayListToArray(arrayList);
     }
 
-    private ItemSelectionMenu[] generateItemSelectionMenus(ItemType slotItemType){
+    private ItemSelectionMenu[] generateItemSelectionMenus(ItemType slotItemType, int itemSlotIndex){
         int ITEMS_PER_PAGE = 8; // must be even
         Item[] itemsOfType = collateItemsOfType(slotItemType);
         int numOfItems = itemsOfType.length;
@@ -85,7 +101,7 @@ public class InventoryMenu extends Menu{
 
             ItemSelectionMenu[] menus = new ItemSelectionMenu[pages];
             for (int k = 0; k < pages; k++) {
-                menus[k] = new ItemSelectionMenu(itemPages[k], k, pages);
+                menus[k] = new ItemSelectionMenu(itemPages[k], k, pages, itemSlotIndex);
             }
             return menus;
         }else {
@@ -114,9 +130,8 @@ public class InventoryMenu extends Menu{
             slotItemType = ItemType.RING;
         }
 
-        itemSelectionMenus = generateItemSelectionMenus(slotItemType);
+        itemSelectionMenus = generateItemSelectionMenus(slotItemType, itemSlotIndex);
     }
-
 
     private void initialiseButtons(){ // includes item slots, which inherit from Button class
         float buttonFontScale = 0.03f;
@@ -223,7 +238,7 @@ public class InventoryMenu extends Menu{
             active = true;
             updatePlayerStats();
             updatePlayerItems();
-
+            itemSelectionMenus = new ItemSelectionMenu[]{new ItemSelectionMenu()};
         }
     }
 
@@ -249,14 +264,46 @@ public class InventoryMenu extends Menu{
     private class ItemSelectionMenu extends Menu{
 
         private ItemSlot[] itemSlots;
+        private int itemSlotIndex;
 
-        public ItemSelectionMenu(Item[] items, int index, int maxIndex){
+        public ItemSelectionMenu(Item[] items, int index, int maxIndex, int itemSlotIndexArg){
             initialiseItemSlotsButtonsAndTextboxes(items, index, maxIndex);
             initialiseVisuals();
+            itemSlotIndex = itemSlotIndexArg;
         }
 
         public ItemSelectionMenu(){
             itemSlots = new ItemSlot[]{};
+            itemSlotIndex = 0;
+        }
+
+        public void logicTick(Inventory playerInventory){
+            super.logicTick();
+            checkItemSlotClicks();
+            equipItem(playerInventory);
+            buttonFunctionality();
+        }
+
+        private void buttonFunctionality(){
+
+        }
+
+        private void equipItem(Inventory playerInventory){
+            for (ItemSlot i : itemSlots) {
+                if (i.readValue()) {
+                    playerInventory.equipItem(i.getItem(), itemSlotIndex);
+                }
+            }
+        }
+
+        private void checkItemSlotClicks(){
+            Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(mouse);
+            for (Button i : itemSlots){
+                if (Gdx.input.isButtonJustPressed(ControlsDirectory.Menu.CLICK)) {
+                    i.click(new Vector2(mouse.x, mouse.y).sub(camera.position.x, camera.position.y));
+                }
+            }
         }
 
         private void initialiseVisuals(){

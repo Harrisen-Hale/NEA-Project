@@ -153,10 +153,7 @@ public class Player extends Entity {
         lookTarget = new Vector2(0,0);
 
         playerController = new PlayerController(this);
-        inventory = new Inventory();
-
-        // debug
-        inventory.setWeapon(new TestWeapon(this));
+        inventory = new Inventory(this);
 
         maxHealth = 250;
         health = maxHealth;

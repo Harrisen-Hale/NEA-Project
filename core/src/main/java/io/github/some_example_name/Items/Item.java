@@ -3,7 +3,12 @@ package io.github.some_example_name.Items;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
+import io.github.some_example_name.Attacks.Attack;
 import io.github.some_example_name.Framework.AssetDirectory;
+import io.github.some_example_name.Framework.Collider;
+import io.github.some_example_name.Framework.DamageSource;
+import io.github.some_example_name.Framework.Entity;
 
 public class Item {
     protected Sprite icon;
@@ -75,5 +80,34 @@ public class Item {
 
     public void setEquipped(boolean equipped) {
         this.equipped = equipped;
+    }
+
+
+    // THESE MUST NEVER BE REACHED
+
+    public Attack getAttack() {
+        return new Attack(new Entity());
+    }
+
+    public void activateAttack() {
+    }
+
+    public void attack() {
+    }
+
+    public Collider getShieldCollider() {
+        return new Collider();
+    }
+
+    public void activate() {
+    }
+
+    public void logicTick(Vector2 add, float v) {
+    }
+
+    public void logicTick() {
+    }
+
+    public void deactivate() {
     }
 }

@@ -41,4 +41,8 @@ public class ItemSlot extends Button{
     public void setItem(Item item) {
         this.item = item;
     }
+
+    public Item getItem() {
+        return item;
+    }
 }

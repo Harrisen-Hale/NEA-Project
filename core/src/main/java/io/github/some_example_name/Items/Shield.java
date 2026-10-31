@@ -26,7 +26,7 @@ public class Shield extends Item{
     public Shield(){
         super();
         itemType = ItemType.SHIELD;
-        blockStaminaCost = 0f;
+        blockStaminaCost = 500f;
         shieldCollider =  new Collider(new Vector2(0,0), 0,0,new Vector2[]{new Vector2(0, -5/16f), new Vector2(1/8f, -5/16f), new Vector2(1/8f, 5/16f), new Vector2(0, 5/16f)}, 0, false, Color.GREEN, false, false);
     }
 

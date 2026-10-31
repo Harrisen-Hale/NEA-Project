@@ -13,16 +13,16 @@ public class Attack extends DamageSource {
     protected boolean active = false;
     protected float baseDamage;
 
-    public Attack(){
+    public Attack(Entity ownerArg){
         super();
-        owner = new Entity();
+        owner = ownerArg;
         damageSourceFlagManager = new DamageSourceFlagManager();
         hitbox = new Collider[]{};
         baseDamage = damage;
     }
 
     public void execute(){
-
+        owner.concludeAttack();
     }
 
     public void reset(){

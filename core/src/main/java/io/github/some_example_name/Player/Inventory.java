@@ -1,8 +1,10 @@
 package io.github.some_example_name.Player;
 
 import io.github.some_example_name.Framework.AssetDirectory;
+import io.github.some_example_name.Framework.Entity;
 import io.github.some_example_name.Items.*;
 import io.github.some_example_name.Items.Armour.*;
+import io.github.some_example_name.Items.Weapons.TestWeapon;
 import io.github.some_example_name.Items.Weapons.Weapon;
 import io.github.some_example_name.Levels.Level;
 
@@ -11,18 +13,20 @@ import java.util.ArrayList;
 public class Inventory {
 
     protected ArrayList<Item> inventory;
+    protected Entity owner;
 
     // slots
-    protected Weapon weapon;
-    protected Shield shield;
+    protected Item weapon;
+    protected Item shield;
     protected Armour[] armour; // Head, Torso, Legs, Boots
     protected Ring[] rings;
     protected Equipment[] hotbar;
     protected int hotbarIndex;
 
-    public Inventory(){
+    public Inventory(Entity ownerArg){
+        owner = ownerArg;
         inventory = new ArrayList<>();
-        weapon = new Weapon();
+        weapon = new Weapon(owner);
         shield = new Shield();
         armour = new Armour[4];
         hotbar = new Equipment[4];
@@ -41,12 +45,12 @@ public class Inventory {
         giveItem(new Ring(AssetDirectory.Textures.Items.Rings.STAMINA_RING));
         inventory.get(1).setFlavourText("A gold ring that belonged to a\nwealthy merchant,\ngrants additional souls");
         inventory.get(2).setFlavourText("A ring set with a vibrant emerald,\nimproves stamina regeneration");
-        armour[0] = new Head( 10, AssetDirectory.Textures.Items.Armour.SALLET_HELM);
-        armour[1] = new Torso( 10, AssetDirectory.Textures.Items.Armour.STEEL_BREASTPLATE);
-        armour[2] = new Legs( 10, AssetDirectory.Textures.Items.Armour.STEEL_GREAVES);
-        armour[3] = new Feet( 10, AssetDirectory.Textures.Items.Armour.LEATHER_BOOTS);
-        shield = new Shield(10f, AssetDirectory.Textures.Items.Shields.CROSS_HEATER);
-
+        giveItem(new Head( 10, AssetDirectory.Textures.Items.Armour.SALLET_HELM));
+        giveItem(new Torso( 10, AssetDirectory.Textures.Items.Armour.STEEL_BREASTPLATE));
+        giveItem(new Legs( 10, AssetDirectory.Textures.Items.Armour.STEEL_GREAVES));
+        giveItem(new Feet( 10, AssetDirectory.Textures.Items.Armour.LEATHER_BOOTS));
+        giveItem(new Shield(10f, AssetDirectory.Textures.Items.Shields.CROSS_HEATER));
+        giveItem(new TestWeapon(owner));
     }
 
     public void logicTick(Level currentLevel){
@@ -60,6 +64,10 @@ public class Inventory {
     public void giveItem(Item item){
         item.setIndex(inventory.size());
         inventory.add(item);
+    }
+
+    public void equipItem(Item item, int itemSlotIndex){
+
     }
 
     public Item takeItem(int index){
@@ -82,7 +90,7 @@ public class Inventory {
         this.inventory = inventory;
     }
 
-    public Weapon getWeapon() {
+    public Item getWeapon() {
         return weapon;
     }
 
@@ -90,7 +98,7 @@ public class Inventory {
         this.weapon = weapon;
     }
 
-    public Shield getShield() {
+    public Item getShield() {
         return shield;
     }
 

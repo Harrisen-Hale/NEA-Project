@@ -29,6 +29,18 @@ public class Collider extends GameObject {
         normalsVisible = normalsVisibleArg;
     }
 
+    public Collider(){
+        position = new Vector2();
+        normals = new Vector2[0];
+        angle = 0;
+        dVertices = new Vector2[]{};
+        active = false;
+        setVertices();
+        debugColour = Color.NAVY;
+        visible = false;
+        normalsVisible = false;
+    }
+
     public void setPosition(Vector2 positionArg) {
         this.position = new Vector2(positionArg.x, positionArg.y);
     }

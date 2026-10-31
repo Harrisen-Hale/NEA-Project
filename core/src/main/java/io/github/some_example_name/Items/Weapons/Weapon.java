@@ -1,6 +1,7 @@
 package io.github.some_example_name.Items.Weapons;
 
 import io.github.some_example_name.Attacks.Attack;
+import io.github.some_example_name.Framework.Entity;
 import io.github.some_example_name.Items.Item;
 import io.github.some_example_name.Items.ItemType;
 
@@ -8,11 +9,11 @@ public class Weapon extends Item {
     protected float damageModifier;
     protected Attack attack;
 
-    public Weapon(){
+    public Weapon(Entity ownerArg){
         super();
         itemType = ItemType.WEAPON;
         damageModifier = 1f;
-        attack = new Attack();
+        attack = new Attack(ownerArg);
         modifyAttackDamage(1);
     }
 

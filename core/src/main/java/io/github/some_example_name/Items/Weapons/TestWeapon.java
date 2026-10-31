@@ -10,7 +10,7 @@ import io.github.some_example_name.Framework.Entity;
 public class TestWeapon extends Weapon {
 
     public TestWeapon(Entity ownerArg){
-        super();
+        super(ownerArg);
         damageModifier = 1.25f;
         attack = new PlayerLightAttack(ownerArg);
         attack.setDamage(attack.getDamage()*damageModifier);
