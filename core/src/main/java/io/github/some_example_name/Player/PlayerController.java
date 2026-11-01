@@ -25,11 +25,11 @@ public class PlayerController {
 
     public void logicTick(){
         resolveAttack();
-        inputController();
         if (rotationalTrackingEnabled) {
             player.rotation(player.getLookTarget());
         }
         resolveRoll();
+        inputController();
     }
 
     private void directionalMovement(){
@@ -205,11 +205,12 @@ public class PlayerController {
     }
 
     private void inputController(){
+        System.out.println(inControl);
         if (inControl){
             directionalMovement();
         }
-        player.setPosition(player.getPosition().cpy().add(player.getVelocity()));
         combatController();
+        player.setPosition(player.getPosition().cpy().add(player.getVelocity()));
     }
 
     private void initialiseValues(){

@@ -22,7 +22,10 @@ public class Attack extends DamageSource {
     }
 
     public void execute(){
-        owner.concludeAttack();
+        if (active) {
+            owner.concludeAttack();
+            active = false;
+        }
     }
 
     public void reset(){
