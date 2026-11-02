@@ -54,7 +54,7 @@ public class Forlorn extends Enemy {
     }
 
     public void drawDebug(ShapeRenderer sr){
-        super.drawDebug(sr);
+        //super.drawDebug(sr);
         //sr.line(screenSpacePosition, residentLevel.getPlayer().getPosition());
         ai.f.debugRender(sr);
     }

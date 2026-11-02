@@ -205,7 +205,6 @@ public class PlayerController {
     }
 
     private void inputController(){
-        System.out.println(inControl);
         if (inControl){
             directionalMovement();
         }

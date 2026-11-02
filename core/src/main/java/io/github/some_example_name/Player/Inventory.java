@@ -51,6 +51,11 @@ public class Inventory {
         giveItem(new Feet( 10, AssetDirectory.Textures.Items.Armour.LEATHER_BOOTS));
         giveItem(new Shield(10f, AssetDirectory.Textures.Items.Shields.CROSS_HEATER));
         giveItem(new TestWeapon(owner));
+        setArmour(new Armour[]{new Head( 10, AssetDirectory.Textures.Items.Armour.SALLET_HELM), new Torso( 10, AssetDirectory.Textures.Items.Armour.STEEL_BREASTPLATE), new Legs( 10, AssetDirectory.Textures.Items.Armour.STEEL_GREAVES), new Feet( 10, AssetDirectory.Textures.Items.Armour.LEATHER_BOOTS)});
+        setShield(new Shield(10f, AssetDirectory.Textures.Items.Shields.CROSS_HEATER));
+        setWeapon(new TestWeapon(owner));
+        setRings(new Ring[]{new Ring(AssetDirectory.Textures.Items.Rings.MERCHANTS_RING),new Ring(AssetDirectory.Textures.Items.Rings.STAMINA_RING)});
+        hotbar[0] = new IgnisVial();
     }
 
     public void logicTick(Level currentLevel){

@@ -108,7 +108,6 @@ public class Player extends Entity {
     }
 
     public void concludeAttack(){
-        System.out.println("OI");
         playerController.setInControl(true);
         playerController.setRotationalTrackingEnabled(true);
     }

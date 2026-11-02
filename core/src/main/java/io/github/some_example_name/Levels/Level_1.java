@@ -42,6 +42,7 @@ public class Level_1 extends Level {
         obstacles[5] = new Rock(-4, 4);
         entities = new Entity[1];
         entities[0] = new Forlorn(2, new Vector2(-3.475f,3.05f), this);
+        entities[0].damageHealth(75f);
         initialiseTestNavNodes();
         player.setPosition(new Vector2(-3.475f,2.95f));
         cameraPos = cameraPosArg;
