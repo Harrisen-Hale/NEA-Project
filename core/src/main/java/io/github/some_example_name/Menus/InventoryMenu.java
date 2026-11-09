@@ -82,15 +82,16 @@ public class InventoryMenu extends Menu{
         int ITEMS_PER_PAGE = 8; // must be even
         Item[] itemsOfType = collateAvailableItemsOfType(slotItemType);
         int numOfItems = itemsOfType.length;
-        if (numOfItems > 0) {
-            int pages = (int) Math.ceil((double) numOfItems / ITEMS_PER_PAGE);
-            int remainder = numOfItems % ITEMS_PER_PAGE;
-            Item[][] itemPages = new Item[pages][ITEMS_PER_PAGE];
-
-            int count = 0;
-            for (int i = 0; i < pages; i++) {
-                for (int j = 0; j < ITEMS_PER_PAGE; j++) {
-                    if (i == pages - 1 && j >= remainder) { // last page may not be full
+        int pages = (int) Math.ceil((double) numOfItems / ITEMS_PER_PAGE);
+        if (numOfItems == 0){
+            pages = 1;
+        }
+        int remainder = numOfItems % ITEMS_PER_PAGE;
+        Item[][] itemPages = new Item[pages][ITEMS_PER_PAGE];
+        int count = 0;
+        for (int i = 0; i < pages; i++) {
+            for (int j = 0; j < ITEMS_PER_PAGE; j++) {
+                if (i == pages - 1 && j >= remainder) { // last page may not be full
                         if (slotItemType == ItemType.HEAD) { // could rework items slightly to reduce this elif stack (pass in itemType to constructor instead of unique inheritors)
                             itemPages[i][j] = new Head();
                         }else if (slotItemType == ItemType.TORSO) {
@@ -120,9 +121,6 @@ public class InventoryMenu extends Menu{
                 menus[k] = new ItemSelectionMenu(itemPages[k], k, pages, itemSlotIndex, this, camera);
             }
             return menus;
-        }else {
-            return new ItemSelectionMenu[]{new ItemSelectionMenu()};
-        }
     }
 
     private void itemSelection(int itemSlotIndex){
@@ -251,14 +249,16 @@ public class InventoryMenu extends Menu{
 
     public void toggle(){
         active = !active;
-        player.getPlayerController().setCanAttack(!player.getPlayerController().isCanAttack());
         if (active) {
+            player.getPlayerController().setCanAttack(false);
             menuManager.setCurrentMenu(this);
             menuManager.deactivateAll();
             active = true;
             updatePlayerStats();
             updatePlayerItems();
             itemSelectionMenus = new ItemSelectionMenu[]{new ItemSelectionMenu()};
+        }else {
+            player.getPlayerController().setCanAttack(true);
         }
     }
 
