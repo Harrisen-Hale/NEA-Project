@@ -17,10 +17,12 @@ public class PlayerController {
     private boolean rolling;
     private int currentRollTick;
     private CircularQueue actionBuffer;
+    protected boolean canAttack;
 
     public PlayerController(Player playerArg){
         player = playerArg;
         initialiseValues();
+        canAttack = true;
     }
 
     public void logicTick(){
@@ -137,7 +139,7 @@ public class PlayerController {
         block(blockHeld); // cannot be doing any other action to block
         if (action == 1){
             rolling = true;
-        }else if (action == 2){
+        }else if (action == 2 && canAttack){
             beginAttack(player.getInventory().getWeapon().getAttack());
         }
     }
@@ -258,4 +260,11 @@ public class PlayerController {
         this.rotationalTrackingEnabled = rotationalTrackingEnabled;
     }
 
+    public boolean isCanAttack() {
+        return canAttack;
+    }
+
+    public void setCanAttack(boolean canAttack) {
+        this.canAttack = canAttack;
+    }
 }

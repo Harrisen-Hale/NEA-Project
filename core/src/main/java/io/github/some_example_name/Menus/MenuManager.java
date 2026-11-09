@@ -40,8 +40,14 @@ public class MenuManager{
     public void inputs(){
         if (!(currentMenu.getPausesGame() && currentMenu.isActive())) {
             if (Gdx.input.isKeyJustPressed(ControlsDirectory.Menu.PAUSE)){
+                if (currentMenu != pauseMenu) {
+                    currentMenu.toggle();
+                }
                 pauseMenu.toggle();
             }else if(Gdx.input.isKeyJustPressed(ControlsDirectory.Menu.INVENTORY)){
+                if (currentMenu != inventoryMenu) {
+                    currentMenu.toggle();
+                }
                 inventoryMenu.toggle();
             }
         }

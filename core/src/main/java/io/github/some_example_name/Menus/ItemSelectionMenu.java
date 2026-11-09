@@ -1,6 +1,7 @@
 package io.github.some_example_name.Menus;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -14,19 +15,26 @@ public class ItemSelectionMenu extends Menu{
 
     private ItemSlot[] itemSlots;
     private int itemSlotIndex;
+    private InventoryMenu inventoryMenu;
+    private Inventory playerInventory;
 
-    public ItemSelectionMenu(Item[] items, int index, int maxIndex, int itemSlotIndexArg){
+    public ItemSelectionMenu(Item[] items, int index, int maxIndex, int itemSlotIndexArg, InventoryMenu inventoryMenuArg, OrthographicCamera cameraArg){
         initialiseItemSlotsButtonsAndTextboxes(items, index, maxIndex);
         initialiseVisuals();
+        active = true;
+        camera = cameraArg;
         itemSlotIndex = itemSlotIndexArg;
+        inventoryMenu = inventoryMenuArg;
+        playerInventory = inventoryMenu.getPlayerInventory();
     }
 
     public ItemSelectionMenu(){
         itemSlots = new ItemSlot[]{};
         itemSlotIndex = 0;
+        //ensure that inventoryMenu is never accessed from this object
     }
 
-    public void logicTick(Inventory playerInventory){
+    public void logicTick(){
         super.logicTick();
         checkItemSlotClicks();
         equipItem(playerInventory);
@@ -41,6 +49,7 @@ public class ItemSelectionMenu extends Menu{
         for (ItemSlot i : itemSlots) {
             if (i.readValue()) {
                 playerInventory.equipItem(i.getItem(), itemSlotIndex);
+                inventoryMenu.toggle();
             }
         }
     }
@@ -79,21 +88,21 @@ public class ItemSelectionMenu extends Menu{
 
     }
 
-    public void draw(SpriteBatch batch, Vector2 adjust){
+    public void draw(SpriteBatch batch){
         for (UIObject u : UIObjects){
-            u.draw(batch, adjust);
+            u.draw(batch, new Vector2(camera.position.x, camera.position.y));
         }
         for (UIElement v : UIElements){
-            v.draw(batch, adjust);
+            v.draw(batch, new Vector2(camera.position.x, camera.position.y));
         }
         for (TextBox t : textBoxes){
-            t.draw(batch, adjust);
+            t.draw(batch, new Vector2(camera.position.x, camera.position.y));
         }
         for (Button b : buttons){
-            b.draw(batch, adjust);
+            b.draw(batch, new Vector2(camera.position.x, camera.position.y));
         }
         for (ItemSlot i : itemSlots){
-            i.draw(batch, adjust);
+            i.draw(batch, new Vector2(camera.position.x, camera.position.y));
         }
     }
 }

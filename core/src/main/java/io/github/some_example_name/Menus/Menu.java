@@ -60,6 +60,10 @@ public class Menu {
         }
     }
 
+    public void toggle(){
+
+    }
+
     public boolean isActive() {
         return active;
     }

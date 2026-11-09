@@ -18,9 +18,9 @@ public class Inventory {
     // slots
     protected Item weapon;
     protected Item shield;
-    protected Armour[] armour; // Head, Torso, Legs, Boots
-    protected Ring[] rings;
-    protected Equipment[] hotbar;
+    protected Item[] armour; // Head, Torso, Legs, Boots
+    protected Item[] rings;
+    protected Item[] hotbar;
     protected int hotbarIndex;
 
     public Inventory(Entity ownerArg){
@@ -51,11 +51,7 @@ public class Inventory {
         giveItem(new Feet( 10, AssetDirectory.Textures.Items.Armour.LEATHER_BOOTS));
         giveItem(new Shield(10f, AssetDirectory.Textures.Items.Shields.CROSS_HEATER));
         giveItem(new TestWeapon(owner));
-        setArmour(new Armour[]{new Head( 10, AssetDirectory.Textures.Items.Armour.SALLET_HELM), new Torso( 10, AssetDirectory.Textures.Items.Armour.STEEL_BREASTPLATE), new Legs( 10, AssetDirectory.Textures.Items.Armour.STEEL_GREAVES), new Feet( 10, AssetDirectory.Textures.Items.Armour.LEATHER_BOOTS)});
-        setShield(new Shield(10f, AssetDirectory.Textures.Items.Shields.CROSS_HEATER));
-        setWeapon(new TestWeapon(owner));
-        setRings(new Ring[]{new Ring(AssetDirectory.Textures.Items.Rings.MERCHANTS_RING),new Ring(AssetDirectory.Textures.Items.Rings.STAMINA_RING)});
-        hotbar[0] = new IgnisVial();
+
     }
 
     public void logicTick(Level currentLevel){
@@ -72,7 +68,38 @@ public class Inventory {
     }
 
     public void equipItem(Item item, int itemSlotIndex){
+        item.setEquipped(true);
+        if (itemSlotIndex >= 0 && itemSlotIndex <= 3){
+            armour[itemSlotIndex] = item;
+        }else if (itemSlotIndex == 4){
+            weapon = item;
+        }else if (itemSlotIndex == 5){
+            shield = item;
+        }else if(itemSlotIndex >= 6 && itemSlotIndex <= 9){
+            hotbar[itemSlotIndex-6] = item;
+        }else if(itemSlotIndex == 10 || itemSlotIndex == 11){
+            rings[itemSlotIndex-10] = item;
+        }
 
+        //updating equipped states
+        for (Item i : inventory){
+            boolean equipped = false;
+            for (Item a : armour){
+                if (i == a) {
+                    equipped = true;
+                    break;
+                }
+            }for (Item e : hotbar){
+                if (i == e) {
+                    equipped = true;
+                    break;
+                }
+            }
+            if((i == weapon) || (i == shield) || (i == rings[0]) || (i == rings[1])){
+                equipped = true;
+            }
+            i.setEquipped(equipped);
+        }
     }
 
     public Item takeItem(int index){
@@ -111,7 +138,7 @@ public class Inventory {
         this.shield = shield;
     }
 
-    public Armour[] getArmour() {
+    public Item[] getArmour() {
         return armour;
     }
 
@@ -119,7 +146,7 @@ public class Inventory {
         this.armour = armour;
     }
 
-    public Equipment[] getHotbar() {
+    public Item[] getHotbar() {
         return hotbar;
     }
 
@@ -135,7 +162,7 @@ public class Inventory {
         this.hotbarIndex = hotbarIndex;
     }
 
-    public Ring[] getRings() {
+    public Item[] getRings() {
         return rings;
     }
 

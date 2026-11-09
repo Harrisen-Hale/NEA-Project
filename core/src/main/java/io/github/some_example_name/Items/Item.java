@@ -9,6 +9,7 @@ import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Framework.Collider;
 import io.github.some_example_name.Framework.DamageSource;
 import io.github.some_example_name.Framework.Entity;
+import io.github.some_example_name.Levels.Level;
 
 public class Item {
     protected Sprite icon;
@@ -109,5 +110,8 @@ public class Item {
     }
 
     public void deactivate() {
+    }
+
+    public void logicTick(Level currentLevel) {
     }
 }

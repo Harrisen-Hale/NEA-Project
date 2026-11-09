@@ -9,8 +9,9 @@ import com.badlogic.gdx.math.Vector3;
 import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Framework.Utils;
 import io.github.some_example_name.IO.ControlsDirectory;
-import io.github.some_example_name.Items.Item;
-import io.github.some_example_name.Items.ItemType;
+import io.github.some_example_name.Items.*;
+import io.github.some_example_name.Items.Armour.*;
+import io.github.some_example_name.Items.Weapons.Weapon;
 import io.github.some_example_name.Player.Inventory;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.UI.*;
@@ -47,7 +48,6 @@ public class InventoryMenu extends Menu{
         super.logicTick();
         checkItemSlotClicks();
         buttonFunctionality();
-        itemSelectionMenus[itemSelectionMenuIndex].logicTick(playerInventory);
     }
 
     private void checkItemSlotClicks(){
@@ -68,10 +68,10 @@ public class InventoryMenu extends Menu{
         }
     }
 
-    private Item[] collateItemsOfType(ItemType itemType){
+    private Item[] collateAvailableItemsOfType(ItemType itemType){
         ArrayList<Item> arrayList = new ArrayList<>();
         for (int i = 0; i < playerInventory.getInventory().size(); i++){
-            if (playerInventory.getInventory().get(i).getItemType() == itemType){
+            if (playerInventory.getInventory().get(i).getItemType() == itemType && !playerInventory.getInventory().get(i).isEquipped()){
                 arrayList.add(playerInventory.getInventory().get(i));
             }
         }
@@ -80,7 +80,7 @@ public class InventoryMenu extends Menu{
 
     private ItemSelectionMenu[] generateItemSelectionMenus(ItemType slotItemType, int itemSlotIndex){
         int ITEMS_PER_PAGE = 8; // must be even
-        Item[] itemsOfType = collateItemsOfType(slotItemType);
+        Item[] itemsOfType = collateAvailableItemsOfType(slotItemType);
         int numOfItems = itemsOfType.length;
         if (numOfItems > 0) {
             int pages = (int) Math.ceil((double) numOfItems / ITEMS_PER_PAGE);
@@ -91,7 +91,23 @@ public class InventoryMenu extends Menu{
             for (int i = 0; i < pages; i++) {
                 for (int j = 0; j < ITEMS_PER_PAGE; j++) {
                     if (i == pages - 1 && j >= remainder) { // last page may not be full
-                        itemPages[i][j] = new Item();
+                        if (slotItemType == ItemType.HEAD) { // could rework items slightly to reduce this elif stack (pass in itemType to constructor instead of unique inheritors)
+                            itemPages[i][j] = new Head();
+                        }else if (slotItemType == ItemType.TORSO) {
+                            itemPages[i][j] = new Torso();
+                        }else if (slotItemType == ItemType.LEGS) {
+                            itemPages[i][j] = new Legs();
+                        }else if (slotItemType == ItemType.FEET) {
+                            itemPages[i][j] = new Feet();
+                        }else if (slotItemType == ItemType.WEAPON) {
+                            itemPages[i][j] = new Weapon(player);
+                        }else if (slotItemType == ItemType.SHIELD) {
+                            itemPages[i][j] = new Shield();
+                        }else if (slotItemType == ItemType.EQUIPMENT) {
+                            itemPages[i][j] = new Equipment();
+                        }else if (slotItemType == ItemType.RING) {
+                            itemPages[i][j] = new Ring();
+                        }
                     } else {
                         itemPages[i][j] = itemsOfType[count];
                         count++;
@@ -101,7 +117,7 @@ public class InventoryMenu extends Menu{
 
             ItemSelectionMenu[] menus = new ItemSelectionMenu[pages];
             for (int k = 0; k < pages; k++) {
-                menus[k] = new ItemSelectionMenu(itemPages[k], k, pages, itemSlotIndex);
+                menus[k] = new ItemSelectionMenu(itemPages[k], k, pages, itemSlotIndex, this, camera);
             }
             return menus;
         }else {
@@ -131,6 +147,9 @@ public class InventoryMenu extends Menu{
         }
 
         itemSelectionMenus = generateItemSelectionMenus(slotItemType, itemSlotIndex);
+        toggle();
+        player.getPlayerController().setCanAttack(false);
+        menuManager.setCurrentMenu(itemSelectionMenus[0]);
     }
 
     private void initialiseButtons(){ // includes item slots, which inherit from Button class
@@ -232,6 +251,7 @@ public class InventoryMenu extends Menu{
 
     public void toggle(){
         active = !active;
+        player.getPlayerController().setCanAttack(!player.getPlayerController().isCanAttack());
         if (active) {
             menuManager.setCurrentMenu(this);
             menuManager.deactivateAll();
@@ -258,7 +278,17 @@ public class InventoryMenu extends Menu{
         for (ItemSlot i : itemSlots){
             i.draw(batch, new Vector2(camera.position.x, camera.position.y));
         }
-        itemSelectionMenus[itemSelectionMenuIndex].draw(batch, new Vector2(camera.position.x, camera.position.y));
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Inventory getPlayerInventory() {
+        return playerInventory;
+    }
+
+    public ItemSlot[] getItemSlots() {
+        return itemSlots;
+    }
 }
