@@ -1,5 +1,6 @@
 package io.github.some_example_name.Levels;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Player.Player;
@@ -13,12 +14,12 @@ public class Level_1 extends Level {
         initialiseTiles();
         initialiseObstacles();
         initialiseEntities();
-
+        defaultPlayerPosition = new Vector2(5,5);
     }
 
     private void initialiseTiles(){
-        tiles = new Tile[4225];
-        for (int i = 0; i < 4225; i++){
+        tiles = new Tile[5625];
+        for (int i = 0; i < 5625; i++){
             String texture;
             double rand = Math.random();
             if (rand > 0.95){
@@ -34,8 +35,9 @@ public class Level_1 extends Level {
             }else {
                 texture = AssetDirectory.Textures.Scene.FLOWERS;
             }
-            tiles[i] = new Tile((i % 65), (i/65), texture);
+            tiles[i] = new Tile((i % 75)-10, (i/75)-10, texture); // fills left to right, bottom to top
         }
+
     }
 
     private void initialiseObstacles(){

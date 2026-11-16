@@ -9,7 +9,7 @@ import io.github.some_example_name.Items.EquipmentActions.HealPlayer;
 public class IgnisVial extends Equipment{ // testing class, should be a serialised Equipment in full game
     public IgnisVial(){
         super();
-        action = new HealPlayer(10f);
+        action = new HealPlayer(75f);
         icon = new Sprite(new Texture(Gdx.files.internal(AssetDirectory.Textures.Items.Equipment.IGNIS_VIAL)));
         icon.setSize(1,1);
         icon.setOriginCenter();

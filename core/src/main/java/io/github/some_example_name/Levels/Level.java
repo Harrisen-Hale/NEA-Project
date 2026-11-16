@@ -19,6 +19,7 @@ public class Level {
     protected NavMesh navMesh;
     protected Player player; // stores a reference to the player
     protected Vector3 cameraPos;
+    protected Vector2 defaultPlayerPosition;
 
     public Level(Player playerArg){
         entities = new Entity[0];
@@ -26,6 +27,7 @@ public class Level {
         obstacles = new Obstacle[0];
         navMesh = new NavMesh();
         player = playerArg;
+        defaultPlayerPosition = new Vector2(0,0);
     }
 
 
@@ -105,5 +107,9 @@ public class Level {
 
     private boolean cullCheck(Vector2 refPos){
         return (refPos.cpy().sub(new Vector2(cameraPos.x, cameraPos.y)).y < 5 && refPos.cpy().sub(new Vector2(cameraPos.x, cameraPos.y)).x < 9);
+    }
+
+    public Vector2 getDefaultPlayerPosition() {
+        return defaultPlayerPosition;
     }
 }

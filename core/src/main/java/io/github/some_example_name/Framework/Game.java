@@ -28,8 +28,6 @@ public class Game {
     private FitViewport viewport;
     private TickManager tickManager;
 
-    private Level level1;
-    private Level testLevel;
     //private DeveloperTools developerTools;
 
     private LevelManager levelManager;
@@ -58,10 +56,6 @@ public class Game {
 
         levelManager = new LevelManager();
         menuManager = new MenuManager(camera, batch, player);
-
-        level1 = new Level_1(player, camera.position);
-        testLevel = new Test_Level(player, camera.position);
-        levelManager.setCurrentLevel(level1);
 
         //developerTools = new DeveloperTools();
     }
@@ -206,10 +200,15 @@ public class Game {
     public class LevelManager{
         protected Level[] levels;
         protected Level currentLevel;
+        protected Level level1;
+        protected Level testLevel;
 
         public LevelManager(){
-            currentLevel = new Level(player);
-            levels = new Level[]{};
+            level1 = new Level_1(player, camera.position);
+            testLevel = new Test_Level(player, camera.position);
+            levels = new Level[]{level1};
+            this.setCurrentLevel(levels[0]);
+            player.setPosition(currentLevel.getDefaultPlayerPosition());
         }
 
         public void collision(){
