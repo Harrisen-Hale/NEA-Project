@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.github.some_example_name.IO.ControlsDirectory;
 import io.github.some_example_name.Levels.Level;
 import io.github.some_example_name.Levels.Level_1;
+import io.github.some_example_name.Levels.Test_Level;
 import io.github.some_example_name.Menus.MenuManager;
 import io.github.some_example_name.Player.HUD;
 import io.github.some_example_name.Player.Player;
@@ -27,7 +28,8 @@ public class Game {
     private FitViewport viewport;
     private TickManager tickManager;
 
-    private Level_1 level1;
+    private Level level1;
+    private Level testLevel;
     //private DeveloperTools developerTools;
 
     private LevelManager levelManager;
@@ -58,6 +60,7 @@ public class Game {
         menuManager = new MenuManager(camera, batch, player);
 
         level1 = new Level_1(player, camera.position);
+        testLevel = new Test_Level(player, camera.position);
         levelManager.setCurrentLevel(level1);
 
         //developerTools = new DeveloperTools();
@@ -66,7 +69,7 @@ public class Game {
     public void gameUpdate(){
         tickManager.update();
 
-        while (tickManager.acceptTick()){
+        if (tickManager.acceptTick()){
             logicTick();
             renderTick();
             //developerTools.navNodePlacement(); //debug

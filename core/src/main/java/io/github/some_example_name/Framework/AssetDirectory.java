@@ -58,6 +58,10 @@ public final class AssetDirectory {
             public static final String MUD3 = "textures/scene/mud_3.png";
             public static final String GRASS1 = "textures/scene/grass_1.png";
             public static final String ROCK = "textures/scene/rock_1.png";
+            public static final String STUMP = "textures/scene/tree_stump.png";
+            public static final String CANOPY = "textures/scene/leaf_canopy.png";
+            public static final String FLOWERS = "textures/scene/flowers.png";
+            public static final String LOG = "textures/scene/log.png";
         }
     }
     public static final class Audio{
