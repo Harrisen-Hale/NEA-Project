@@ -6,9 +6,7 @@ import io.github.some_example_name.Framework.*;
 import io.github.some_example_name.Levels.Level;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.World.NavMesh;
-import io.github.some_example_name.World.Obstacle;
-
-import java.util.Arrays;
+import io.github.some_example_name.World.Obstacles.Obstacle;
 
 public class Enemy extends Entity {
 

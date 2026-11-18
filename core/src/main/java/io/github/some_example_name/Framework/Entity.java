@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import io.github.some_example_name.World.Obstacle;
+import io.github.some_example_name.World.Obstacles.Obstacle;
 
 public class Entity extends GameObject {
     protected int ID;

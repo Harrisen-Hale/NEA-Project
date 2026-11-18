@@ -18,7 +18,7 @@ import io.github.some_example_name.Levels.Test_Level;
 import io.github.some_example_name.Menus.MenuManager;
 import io.github.some_example_name.Player.HUD;
 import io.github.some_example_name.Player.Player;
-import io.github.some_example_name.World.Obstacle;
+import io.github.some_example_name.World.Obstacles.Obstacle;
 
 public class Game {
     private SpriteBatch batch;

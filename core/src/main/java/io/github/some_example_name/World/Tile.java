@@ -10,6 +10,11 @@ public class Tile extends GameObject {
 
     protected Texture texture;
 
+    public Tile(Vector2 positionArg, String textureName){
+        position = positionArg;
+        loadTextures(textureName);
+    }
+
     public Tile(int x, int y, String textureName){
         position = new Vector2(x,y);
         loadTextures(textureName);

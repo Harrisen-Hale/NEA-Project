@@ -6,8 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.github.some_example_name.Framework.Entity;
 import io.github.some_example_name.World.NavMesh;
-import io.github.some_example_name.World.NavNode;
-import io.github.some_example_name.World.Obstacle;
+import io.github.some_example_name.World.Obstacles.Obstacle;
 import io.github.some_example_name.Player.Player;
 import io.github.some_example_name.World.Tile;
 

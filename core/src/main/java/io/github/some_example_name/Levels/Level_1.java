@@ -22,15 +22,9 @@ public class Level_1 extends Level {
         for (int i = 0; i < 5625; i++){
             String texture;
             double rand = Math.random();
-            if (rand > 0.95){
-                texture = AssetDirectory.Textures.Scene.MUD1;
-            }else if (rand > 0.9){
-                texture = AssetDirectory.Textures.Scene.MUD2;
-            }else if (rand > 0.8){
-                texture = AssetDirectory.Textures.Scene.MUD2;
-            }else if (rand > 0.6){
+            if (rand > 0.6){
                 texture = AssetDirectory.Textures.Scene.MUD3;
-            }else if (rand > 0.25){
+            }else if (rand > 0.2){
                 texture = AssetDirectory.Textures.Scene.GRASS1;
             }else {
                 texture = AssetDirectory.Textures.Scene.FLOWERS;

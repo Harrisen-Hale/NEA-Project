@@ -1,12 +1,18 @@
-package io.github.some_example_name.World;
+package io.github.some_example_name.World.Obstacles;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import io.github.some_example_name.Framework.Collider;
 import io.github.some_example_name.Framework.Constants;
+import io.github.some_example_name.World.Tile;
 
 public class Obstacle extends Tile {
     protected Collider[] body; // collision region
+
+    public Obstacle(Vector2 positionArg, String textureName){
+        super(positionArg, textureName);
+    }
 
     public Obstacle(int x, int y, String textureName){
         super(x, y, textureName);
