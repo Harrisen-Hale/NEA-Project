@@ -29,10 +29,16 @@ public class Level {
         defaultPlayerPosition = new Vector2(0,0);
     }
 
+    public void loadLevel(){
+        player.setPosition(defaultPlayerPosition);
+    }
+
 
     public void logicTick(){
         for (Entity e : entities){
-            e.logicTick();
+            if (e.isAlive()) {
+                e.logicTick();
+            }
         }
     }
 
@@ -66,7 +72,7 @@ public class Level {
 
     private void drawEntityBodies(SpriteBatch batch){
         for (Entity e : entities){
-            if (cullCheck(e.getPosition())) {
+            if (cullCheck(e.getPosition()) && e.isAlive()) {
                 e.drawBody(batch);
             }
         }
@@ -82,7 +88,7 @@ public class Level {
 
     private void drawEntityEffects(SpriteBatch batch){
         for (Entity e : entities){
-            if (cullCheck(e.getPosition())) {
+            if (cullCheck(e.getPosition()) && e.isAlive()) {
                 e.drawEffects(batch);
             }
         }

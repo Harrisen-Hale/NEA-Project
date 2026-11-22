@@ -30,6 +30,7 @@ public class Forlorn extends Enemy {
         health = maxHealth;
         healthBar.updateBar(health/maxHealth);
         speed = 1/128f;
+        souls = 50;
         ai = new AI();
         ai.setQuarry(player);
     }
@@ -37,7 +38,7 @@ public class Forlorn extends Enemy {
     public void logicTick(){
         super.logicTick();
         healthBar.updateBar(health/maxHealth);
-        //ai.tick();
+        ai.tick();
     }
 
     public void drawEffects(SpriteBatch batch){
@@ -54,14 +55,12 @@ public class Forlorn extends Enemy {
     }
 
     public void drawDebug(ShapeRenderer sr){
-        //super.drawDebug(sr);
-        //sr.line(screenSpacePosition, residentLevel.getPlayer().getPosition());
-        ai.f.debugRender(sr);
+        ai.forlornSwipe.debugRender(sr);
     }
 
 
     public DamageSource[] getDamageSources() {
-        return new DamageSource[]{ai.f};
+        return new DamageSource[]{ai.forlornSwipe};
     }
 
     protected class AI{
@@ -69,10 +68,10 @@ public class Forlorn extends Enemy {
         protected float engagementRadius;
         protected Entity quarry;
         protected Vector2 targetPosition;
-        public ForlornSwipe f = new ForlornSwipe(Forlorn.this);
+        public ForlornSwipe forlornSwipe = new ForlornSwipe(Forlorn.this);
 
         protected AI(){
-            state = 1;
+            state = 0;
             engagementRadius = 1.25f;
             quarry = new Entity();
             targetPosition = quarry.getPosition();
@@ -101,7 +100,7 @@ public class Forlorn extends Enemy {
 
         private void combat(){
             velocity = new Vector2(0,0);
-            f.execute();
+            forlornSwipe.execute();
         }
 
         private void updateState(){
@@ -117,7 +116,7 @@ public class Forlorn extends Enemy {
             float sightRange = 7.5f;
             boolean seenTarget = state == 0 && pathfinder.pathClear(targetPosition) && Utils.findDistance(position, targetPosition) <= sightRange;
             boolean leftCombat = state == 2 && Utils.findDistance(position, targetPosition) > engagementRadius;
-            boolean attacking = f.isActive();
+            boolean attacking = forlornSwipe.isActive();
             return (seenTarget || leftCombat) && !attacking;
         }
 

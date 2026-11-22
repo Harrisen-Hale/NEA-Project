@@ -34,12 +34,12 @@ public class Test_Level extends Level{
         }
 
         obstacles = new Obstacle[6];
-        obstacles[0] = new Rock(-2, -2);
-        obstacles[1] = new Rock(-5, 2);
-        obstacles[2] = new Rock(-1, 4);
-        obstacles[3] = new Rock(-6, 6);
-        obstacles[4] = new Rock(-4, -1);
-        obstacles[5] = new Rock(-4, 4);
+        obstacles[0] = new Rock(new Vector2(-2, -2), 1, 0);
+        obstacles[1] = new Rock(new Vector2(-5, 2), 1, 0);
+        obstacles[2] = new Rock(new Vector2(-1, 4), 1, 0);
+        obstacles[3] = new Rock(new Vector2(-6, 6), 1, 0);
+        obstacles[4] = new Rock(new Vector2(-4, -1), 1, 37);
+        obstacles[5] = new Rock(new Vector2(-4, 4), 1, 0);
         entities = new Entity[1];
         entities[0] = new Forlorn(2, new Vector2(-3.475f,3.05f), this);
         entities[0].damageHealth(75f);

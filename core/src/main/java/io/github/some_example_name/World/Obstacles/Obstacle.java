@@ -1,21 +1,28 @@
 package io.github.some_example_name.World.Obstacles;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import io.github.some_example_name.Framework.AssetDirectory;
 import io.github.some_example_name.Framework.Collider;
 import io.github.some_example_name.Framework.Constants;
+import io.github.some_example_name.Framework.GameObject;
 import io.github.some_example_name.World.Tile;
 
-public class Obstacle extends Tile {
+public class Obstacle extends GameObject {
     protected Collider[] body; // collision region
+    protected Sprite currentSprite;
 
-    public Obstacle(Vector2 positionArg, String textureName){
-        super(positionArg, textureName);
-    }
-
-    public Obstacle(int x, int y, String textureName){
-        super(x, y, textureName);
+    public Obstacle(Vector2 positionArg, String spritePath, float widthArg, float heightArg, float angle){ // angle in degrees
+        position = positionArg;
+        currentSprite = new Sprite(new Texture(Gdx.files.internal(spritePath)));
+        currentSprite.setSize(widthArg, heightArg);
+        currentSprite.setOriginCenter();
+        currentSprite.setPosition(position.x-(0.5f*widthArg), position.y-(0.5f*heightArg));
+        currentSprite.rotate(angle);
     }
 
     public void drawDebug(ShapeRenderer sr){
@@ -25,7 +32,7 @@ public class Obstacle extends Tile {
     }
 
     public void draw(Batch batch){
-        batch.draw(texture, position.x - (float) texture.getWidth() /(Constants.PIXELS_PER_UNIT*2), position.y - (float) texture.getHeight() /(Constants.PIXELS_PER_UNIT*2), 1f, 1f);
+        currentSprite.draw(batch);
     }
 
     public Collider[] getBody() {

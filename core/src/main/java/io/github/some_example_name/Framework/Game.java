@@ -213,18 +213,22 @@ public class Game {
 
         public void collision(){
             for (Entity e : currentLevel.getEntities()){
-                e.collision(player); // entity-on-player collision
-                player.hitboxOnHurtboxCollision(e.getDamageSources());
-                for (Entity p : currentLevel.getEntities()){ // entity-on-entity collision
-                    if (p.getID() != e.getID()){ // no colliding with self
-                        e.bodyCollision(p);
+                if (e.isAlive()) {
+                    e.collision(player); // entity-on-player collision
+                    player.hitboxOnHurtboxCollision(e.getDamageSources());
+                    for (Entity p : currentLevel.getEntities()){ // entity-on-entity collision
+                        if (p.getID() != e.getID()){ // no colliding with self
+                            e.bodyCollision(p);
+                        }
                     }
                 }
             }
             for (Obstacle o : currentLevel.getObstacles()){ // obstacle collision
                 player.bodyCollision(o);
                 for (Entity e : currentLevel.getEntities()){
-                    e.bodyCollision(o);
+                    if (e.isAlive()) {
+                        e.bodyCollision(o);
+                    }
                 }
             }
         }

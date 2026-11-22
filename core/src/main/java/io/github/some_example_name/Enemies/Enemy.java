@@ -20,6 +20,7 @@ public class Enemy extends Entity {
         player = residentLevelArg.getPlayer();
         pathfinder = new Pathfinder();
         speed = 0;
+        alive = true;
     }
 
     public Level getResidentLevel() {
@@ -29,6 +30,11 @@ public class Enemy extends Entity {
     public void setResidentLevel(Level residentLevel) {
         this.residentLevel = residentLevel;
         player = residentLevel.getPlayer();
+    }
+
+    protected void die(){
+        alive = false;
+        player.addSouls(souls);
     }
 
     protected class Pathfinder{

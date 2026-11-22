@@ -221,7 +221,12 @@ public class Entity extends GameObject {
         this.health -= damage;
         if (health < 0){
             health = 0;
+            die();
         }
+    }
+
+    protected void die(){
+        alive = false;
     }
 
     public void healHealth(float heal) {
