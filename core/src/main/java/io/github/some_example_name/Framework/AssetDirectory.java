@@ -7,7 +7,7 @@ public final class AssetDirectory {
 
     public static final class Textures{
         public static final class Player {
-            public static final String IDLE = "textures/player/player_idle.png";
+            public static final String IDLE = "textures/player/player_idle_sword_shield.png";
             public static final String ROLL = "textures/player/player_roll.png";
         }
         public static final class UI {

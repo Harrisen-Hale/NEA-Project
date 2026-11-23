@@ -136,6 +136,7 @@ public class Player extends Entity {
 
     protected void loadTextures(){
         Texture textureIdle = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.IDLE));
+
         Texture textureRoll = new Texture(Gdx.files.internal(AssetDirectory.Textures.Player.ROLL));
 
         rollAnim = new AnimationStateMachine(new Texture[]{textureIdle, textureRoll, textureIdle}, new int[]{10,20,10});

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class Inventory {
 
     protected ArrayList<Item> inventory;
-    protected Entity owner;
+    protected Player owner;
 
     // slots
     protected Item weapon;
@@ -23,7 +23,7 @@ public class Inventory {
     protected Item[] hotbar;
     protected int hotbarIndex;
 
-    public Inventory(Entity ownerArg){
+    public Inventory(Player ownerArg){
         owner = ownerArg;
         inventory = new ArrayList<>();
         weapon = new Weapon(owner);
@@ -100,6 +100,7 @@ public class Inventory {
             }
             i.setEquipped(equipped);
         }
+        boolean[] swordShield = new boolean[]{weapon.getItemType() == ItemType.WEAPON, shield.getItemType() == ItemType.SHIELD};
     }
 
     public Item takeItem(int index){
